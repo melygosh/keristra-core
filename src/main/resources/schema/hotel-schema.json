@@ -1,0 +1,15 @@
+{
+  "name": "string",
+  "rooms": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "number": "integer",
+        "price": "decimal",
+        "quantity": "integer",
+        "rate": "double"
+      }
+    }
+  }
+}

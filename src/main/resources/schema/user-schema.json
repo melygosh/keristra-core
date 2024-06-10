@@ -1,0 +1,32 @@
+{
+  "id": "integer",
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "gender": "string",
+  "age": "integer",
+  "language": "string",
+  "university": "string",
+  "car": {
+    "type": "object",
+    "properties": {
+      "make": "string",
+      "model": "string",
+      "modelYear": "integer"
+    }
+  },
+  "pet": "string",
+  "phoneOS": "string",
+  "comments": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": [
+        {
+          "title": "string",
+          "text": "string"
+        }
+      ]
+    }
+  }
+}
