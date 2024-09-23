@@ -19,6 +19,6 @@ class DecisionTableController {
 
     @RequestMapping(value = ["/test"], produces = ["application/json"], method = [RequestMethod.POST])
     fun test(@RequestBody bean: DecisionTableTestRequest): List<DmnItemResponse>? {
-        return this.decisionService?.evaluate(bean.decisionTable, bean.context)
+        return this.decisionService?.evaluate(bean.decisionTable)
     }
 }

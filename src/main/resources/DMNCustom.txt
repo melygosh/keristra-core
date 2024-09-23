@@ -1,0 +1,549 @@
+<decisionTable id="decisionTable" hitPolicy="<policy>">
+<input id="input-1" label="<extraVariable>"><inputExpression id="input-1-exp" typeRef="<extraVariableType>"><text> <extraVariableExpression> </text></inputExpression></input>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Age">
+                <inputExpression id="input-1-exp" typeRef="integer">
+                    <text> age </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Code" name="code" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> &gt; 60 </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "RISKY" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> &gt; 40 </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "MAYBE" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> &gt; 25 </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "GOOD" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text> &gt; 18 </text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> "RISKY" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Age">
+                <inputExpression id="input-1-exp" typeRef="integer" expressionLanguage="feel">
+                    <text> age </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Risk" name="risk" typeRef="double" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> [18..25] </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> 0.6 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> [25..40] </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> 0.3 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> [40..60] </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> 0.5 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text> &gt; 60 </text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> 0.8 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-5">
+                <inputEntry id="rule-5-input-1">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-5-output-1">
+                    <text> 1 </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Age">
+                <inputExpression id="input-1-exp" typeRef="integer">
+                    <text> age </text>
+                </inputExpression>
+            </input>
+            <input id="input-2" label="Has Comments">
+                <inputExpression id="input-2-exp" typeRef="integer">
+                    <text> count(comments) </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Code" name="code" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> &gt; 60 </text>
+                </inputEntry>
+                <inputEntry id="rule-1-input-2">
+                    <text> 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "RISKY" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> &gt; 60 </text>
+                </inputEntry>
+                <inputEntry id="rule-2-input-2">
+                    <text> &gt; 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "RISKY COMMENTER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> &gt; 40 </text>
+                </inputEntry>
+                <inputEntry id="rule-3-input-2">
+                    <text> 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "MAYBE" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text> &gt; 40 </text>
+                </inputEntry>
+                <inputEntry id="rule-4-input-2">
+                    <text> &gt; 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> "MAYBE COMMENTER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-5">
+                <inputEntry id="rule-5-input-1">
+                    <text> &gt; 25 </text>
+                </inputEntry>
+                <inputEntry id="rule-5-input-2">
+                    <text> 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-5-output-1">
+                    <text> "GOOD" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-6">
+                <inputEntry id="rule-6-input-1">
+                    <text> &gt; 25 </text>
+                </inputEntry>
+                <inputEntry id="rule-6-input-2">
+                    <text> &gt; 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-6-output-1">
+                    <text> "GOOD COMMENTER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-7">
+                <inputEntry id="rule-7-input-1">
+                    <text> &gt; 18 </text>
+                </inputEntry>
+                <inputEntry id="rule-7-input-2">
+                    <text> 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-7-output-1">
+                    <text> "RISKY" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-8">
+                <inputEntry id="rule-8-input-1">
+                    <text> &gt; 18 </text>
+                </inputEntry>
+                <inputEntry id="rule-8-input-2">
+                    <text> &gt; 0 </text>
+                </inputEntry>
+                <outputEntry id="rule-8-output-1">
+                    <text> "RISKY COMMENTER" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Comment Title">
+                <inputExpression id="input-1-exp" typeRef="string" expressionLanguage="feel">
+                    <text> comments.title </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Code" name="code" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> contains(?, "title 1") </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "MATCH" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "NO_MATCH" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="RULE ORDER">
+            <input id="input-1" label="Has Car">
+                <inputExpression id="input-1-exp" typeRef="boolean"
+                    expressionLanguage="feel">
+                    <text> car != null </text>
+                </inputExpression>
+            </input>
+            <input id="input-2" label="Car Make">
+                <inputExpression id="input-2-exp" typeRef="string"
+                    expressionLanguage="feel">
+                    <text> car.make </text>
+                </inputExpression>
+            </input>
+            <input id="input-3" label="Car Model">
+                <inputExpression id="input-3-exp" typeRef="string"
+                    expressionLanguage="feel">
+                    <text> car.model </text>
+                </inputExpression>
+            </input>
+            <input id="input-4" label="Car Model Year">
+                <inputExpression id="input-4-exp" typeRef="integer"
+                    expressionLanguage="feel">
+                    <text> car.modelYear </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Code" name="code" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <inputEntry id="rule-1-input-2">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-1-input-3">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-1-input-4">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "CAR_OWNER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <inputEntry id="rule-2-input-2">
+                    <text> "Porsche" </text>
+                </inputEntry>
+                <inputEntry id="rule-2-input-3">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-2-input-4">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "PORSCHE_OWNER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <inputEntry id="rule-3-input-2">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-3-input-3">
+                    <text> "Crossfire" </text>
+                </inputEntry>
+                <inputEntry id="rule-3-input-4">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "CROSSFIRE_OWNER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <inputEntry id="rule-4-input-2">
+                    <text> "Austin" </text>
+                </inputEntry>
+                <inputEntry id="rule-4-input-3">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-4-input-4">
+                    <text> &lt; 1970 </text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> "RETRO_AUSTIN_OWNER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-5">
+                <inputEntry id="rule-5-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <inputEntry id="rule-5-input-2">
+                    <text> "Austin" </text>
+                </inputEntry>
+                <inputEntry id="rule-5-input-3">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-5-input-4">
+                    <text> &gt; 1970 </text>
+                </inputEntry>
+                <outputEntry id="rule-5-output-1">
+                    <text> "AUSTIN_OWNER" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-6">
+                <inputEntry id="rule-6-input-1">
+                    <text> false </text>
+                </inputEntry>
+                <inputEntry id="rule-6-input-2">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-6-input-3">
+                    <text></text>
+                </inputEntry>
+                <inputEntry id="rule-6-input-4">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-6-output-1">
+                    <text> "NO_CAR" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Has University">
+                <inputExpression id="input-1-exp" typeRef="boolean"
+                    expressionLanguage="feel">
+                    <text> string length(university) &gt; 0 </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Code" name="code" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> true </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "HAS_EDUCATION" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> false </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-2">
+                    <text> "HAS_NO_EDUCATION" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="">
+                <inputExpression id="input-1-exp" typeRef="string" expressionLanguage="feel">
+                    <text> email </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="" name="domain" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> contains(?, "surveymonkey") </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "SURVEYMONKEY" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> contains(?, "fotki") </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "FOTKI" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "OTHER" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Average Rooms Rate">
+                <inputExpression id="input-1-exp" typeRef="double" expressionLanguage="feel">
+                    <text> sum(rooms.rate) / count(rooms.rate) </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Rate" name="rate" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> &lt; 3 </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "BAD_HOTEL" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> &lt; 8 </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "AVERAGE_HOTEL" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> &lt; 11 </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "GOOD_HOTEL" </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Room Quantity">
+                <inputExpression id="input-1-exp" typeRef="" expressionLanguage="feel">
+                    <text> rooms </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Result" name="result" typeRef="string" />
+            <output id="output-2" label="Comment" name="comment" typeRef="string" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> list contains(cellInput.quantity, 3) </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> "MATCH" </text>
+                </outputEntry>
+                <outputEntry id="rule-1-output-2">
+                    <text> "Here" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> list contains(cellInput.quantity, 2) </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> "MAYBE" </text>
+                </outputEntry>
+                <outputEntry id="rule-2-output-2">
+                    <text> "Has 2" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> list contains(cellInput.quantity, 4) </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> "MAYBE" </text>
+                </outputEntry>
+                <outputEntry id="rule-3-output-2">
+                    <text> "Has 4" </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> "NO" </text>
+                </outputEntry>
+                <outputEntry id="rule-4-output-2">
+                    <text></text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>

@@ -1,0 +1,12 @@
+{
+  "id": "number",
+  "first_name": "string",
+  "last_name": "string",
+  "email": "string",
+  "gender": "string",
+  "weight": "number",
+  "length": "number",
+
+  "yearsOfService": "number",
+  "age": "number"
+}

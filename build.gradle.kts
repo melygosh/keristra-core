@@ -27,6 +27,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j
+    implementation("dev.langchain4j:langchain4j:0.33.0")
+    // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-anthropic
+    implementation("dev.langchain4j:langchain4j-anthropic:0.33.0")
+    implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:0.33.0")
+
 }
 
 tasks.withType<KotlinCompile> {

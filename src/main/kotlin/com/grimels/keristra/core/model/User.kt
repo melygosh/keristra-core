@@ -3,14 +3,14 @@ package com.grimels.keristra.core.model
 import com.fasterxml.jackson.annotation.JsonProperty
 
 class User {
-    val id: Int? = null
+    var id: Int? = null
     @JsonProperty("first_name")
-    val firstName: String? = null
+    var firstName: String? = null
     @JsonProperty("last_name")
-    val lastName: String? = null
-    val email: String? = null
+    var lastName: String? = null
+    var email: String? = null
     val gender: String? = null
-    val age: Int? = null
+    var age: Int? = null
     val language: String? = null
     val university: String? = null
     val car: Car? = null

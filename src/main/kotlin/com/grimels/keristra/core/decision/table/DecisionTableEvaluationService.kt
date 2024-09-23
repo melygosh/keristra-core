@@ -1,5 +1,7 @@
 package com.grimels.keristra.core.decision.table
 
+import com.grimels.keristra.core.model.Bmi
+import com.grimels.keristra.core.model.BmiJsonRepo
 import com.grimels.keristra.core.model.HotelRepo
 import com.grimels.keristra.core.model.User
 import com.grimels.keristra.core.model.UserJsonRepo
@@ -25,6 +27,8 @@ class DecisionTableEvaluationService {
 
     @Autowired
     private val userRepo: UserJsonRepo? = null
+    @Autowired
+    private val bmiRepo: BmiJsonRepo? = null
 
     @Autowired
     private val hotelRepo: HotelRepo? = null
@@ -33,23 +37,22 @@ class DecisionTableEvaluationService {
         return ObjectUtils.toMap(user)
     }
 
-    fun evaluate(decisionTableContent: String, context: String): List<DmnItemResponse>? {
-        val decisionTableModel: DmnModelInstance = Dmn.readModelFromStream(decisionTableContent.byteInputStream(StandardCharsets.UTF_8))
+    fun toBmiMap(user: Bmi): Map<String, Any?> {
+        return ObjectUtils.toMap(user)
+    }
+
+    fun evaluate(decisionTableContent: String): List<DmnItemResponse>? {
+        val decisionTableModel: DmnModelInstance =
+            Dmn.readModelFromStream(decisionTableContent.byteInputStream(StandardCharsets.UTF_8))
         val decisionTable: DmnDecision = dmnEngine?.parseDecision("decision", decisionTableModel)
             ?: throw IllegalArgumentException("Decision Table does not exist")
 
-        return toEvaluationResult(context, decisionTable)
+        return toEvaluationResult(decisionTable)
     }
 
-    private fun toEvaluationResult(context: String, decisionTable: DmnDecision): List<DmnItemResponse> {
-        if (context == "users") {
-            return userRepo?.getUsers()
-                ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, toUserMap(user))) }
-                ?: emptyList()
-        }
-
-        return hotelRepo?.getHotels()
-            ?.map { hotel -> DmnItemResponse(hotel, evaluate(decisionTable, ObjectUtils.toMap(hotel))) }
+    private fun toEvaluationResult(decisionTable: DmnDecision): List<DmnItemResponse> {
+        return bmiRepo?.getBmiList()
+            ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, toBmiMap(user))) }
             ?: emptyList()
     }
 
