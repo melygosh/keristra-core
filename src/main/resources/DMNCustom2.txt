@@ -14,7 +14,7 @@
 <expression> <text> [<value1>..<value2>) </text> </expression>
 
 <rule> <variable> is present</rule>
-<expression> <text>  <variable>  != null </text> </expression> 
+<expression> <text> <variable>  != null </text> </expression>
 
 <rule> <variable>  is not empty</rule> 
 <expression> <text> count(<variable> ) </text> </expression>
@@ -22,8 +22,8 @@
 <rule> <variable>  is empty </rule>
 <expression> <text> count(<variable> ) = 0 </text> </expression>
 
-<rule type="string"> <variable>  contains <value> </rule>
-<expression> <text> contains(?, "<value> ") </text> </expression>
+<ruleForString> <variable> contains <value> </ruleForString>
+<expression> <text> contains(?, "<value>") </text> </expression>
 
-<rule type="array"> <variable> contains <value> </rule>
-<expression> <text> list contains(?, "<value> ") </text> </expression>
+<ruleForArray> <variable> contains <value> </ruleForArray>
+<expression> <text>list contains(?, "<value>")</text> </expression>

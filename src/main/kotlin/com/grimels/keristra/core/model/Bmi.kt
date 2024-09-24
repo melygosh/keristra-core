@@ -1,9 +1,13 @@
 package com.grimels.keristra.core.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 class Bmi(
     val id: Long,
-    val first_name: String,
-    val last_name: String,
+    @JsonProperty("first_name")
+    val firstName: String,
+    @JsonProperty("last_name")
+    val lastName: String,
     val email: String,
     val gender: String,
     val weight: Double,

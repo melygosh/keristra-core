@@ -1,0 +1,10 @@
+<hotel>
+    <property name="name" type="string"/>
+    <property name="rooms" type="array">
+        <property name="room" type="object">
+            <property name="number" type="integer"/>
+            <property name="type" type="string"/>
+            <property name="price" type="number"/>
+        </property>
+    </property>
+</hotel>

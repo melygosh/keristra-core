@@ -1,23 +1,26 @@
 package com.grimels.keristra.core.ai.anthropic
 
-import com.grimels.keristra.core.ai.AiDMNGenerator
+import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationRequest
+import java.io.File
+import java.nio.file.Files
 import org.springframework.http.MediaType
 import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import java.io.File
-import java.nio.file.Files
 
 @RestController
 @RequestMapping("api/anthropic-dmn")
 class AnthropicDMNController(
     private val dmnGenerator: AnthropicDMNService,
-) : AiDMNGenerator {
+) {
 
-    @RequestMapping(value = ["/generate"], produces = [MediaType.TEXT_XML_VALUE], method = [RequestMethod.POST])
-    override fun generateDMNTableContent(@RequestBody request: String): String {
+    @RequestMapping(value = ["/generate"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.TEXT_XML_VALUE], method = [RequestMethod.POST])
+    fun generateDMNTableContent(@RequestBody request: DmnGenerationRequest): String {
+        if (request.rules == null || request.context == null) {
+            throw IllegalArgumentException("Rules and context are required")
+        }
         val chatRequest =
             """RETURN ONLY AND ONLY XML CODE IT'S VERY IMPORTANT!Generate DMN table that can be applied to following schema and rules. Make sure the table can be read horizontally.
 the column headers contain the inputs and output.
@@ -27,17 +30,28 @@ If rule don't start with "create " and contains the name of the variable from ob
 If <outputEntry> <text> is a string type than wrap the value in double quotes.
 Use <schema> to find correct <variable> path for <expression> from the <rules>.
 <schema>
-    ${getSchema()}
+    ${getSchema(request.context)}
 </schema>
 <rules>
-    $request
+    ${request.rules}
 </rules>"""
         val response: String = dmnGenerator.generateDMNTable(chatRequest)
         return response
     }
 
-    private fun getSchema(): String {
-        val file: File = ResourceUtils.getFile("classpath:schema/bmi-schema.xml")
+    private fun getSchema(context: String): String {
+        if (context == "bmi") {
+            return getSchemaByPath("bmi-schema.xml")
+        }
+        if (context == "hotels") {
+            return getSchemaByPath("hotel-schema.xml")
+        }
+
+        return getSchemaByPath("user-schema.xml")
+    }
+
+    private fun getSchemaByPath(path: String): String {
+        val file: File = ResourceUtils.getFile("classpath:schema/$path")
         val encoded = Files.readAllBytes(file.toPath())
         return String(encoded)
     }

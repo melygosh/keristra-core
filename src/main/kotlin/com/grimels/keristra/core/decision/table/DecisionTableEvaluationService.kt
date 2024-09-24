@@ -1,9 +1,7 @@
 package com.grimels.keristra.core.decision.table
 
-import com.grimels.keristra.core.model.Bmi
 import com.grimels.keristra.core.model.BmiJsonRepo
 import com.grimels.keristra.core.model.HotelRepo
-import com.grimels.keristra.core.model.User
 import com.grimels.keristra.core.model.UserJsonRepo
 import com.grimels.keristra.core.rest.bean.DmnItemResponse
 import com.grimels.keristra.core.util.ObjectUtils
@@ -27,33 +25,38 @@ class DecisionTableEvaluationService {
 
     @Autowired
     private val userRepo: UserJsonRepo? = null
+
     @Autowired
     private val bmiRepo: BmiJsonRepo? = null
 
     @Autowired
     private val hotelRepo: HotelRepo? = null
 
-    fun toUserMap(user: User): Map<String, Any?> {
-        return ObjectUtils.toMap(user)
-    }
-
-    fun toBmiMap(user: Bmi): Map<String, Any?> {
-        return ObjectUtils.toMap(user)
-    }
-
-    fun evaluate(decisionTableContent: String): List<DmnItemResponse>? {
+    fun evaluate(decisionTableContent: String, context: String): List<DmnItemResponse>? {
         val decisionTableModel: DmnModelInstance =
             Dmn.readModelFromStream(decisionTableContent.byteInputStream(StandardCharsets.UTF_8))
         val decisionTable: DmnDecision = dmnEngine?.parseDecision("decision", decisionTableModel)
             ?: throw IllegalArgumentException("Decision Table does not exist")
 
-        return toEvaluationResult(decisionTable)
+        return toEvaluationResult(decisionTable, context)
     }
 
-    private fun toEvaluationResult(decisionTable: DmnDecision): List<DmnItemResponse> {
-        return bmiRepo?.getBmiList()
-            ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, toBmiMap(user))) }
+    private fun toEvaluationResult(decisionTable: DmnDecision, context: String): List<DmnItemResponse> {
+        if (context == "users") {
+            return userRepo?.getUsers()
+                ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, ObjectUtils.toMap(user))) }
+                ?: emptyList()
+        }
+        if (context == "bmi") {
+            return bmiRepo?.getBmiList()
+                ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, ObjectUtils.toMap(user))) }
+                ?: emptyList()
+        }
+
+        return hotelRepo?.getHotels()
+            ?.map { user -> DmnItemResponse(user, evaluate(decisionTable, ObjectUtils.toMap(user))) }
             ?: emptyList()
+
     }
 
     private fun evaluate(decisionTable: DmnDecision, values: Map<String, Any?>): DmnDecisionTableResult {
