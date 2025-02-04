@@ -23,12 +23,12 @@ class AnthropicDMNController(
         }
         val chatRequest =
             """RETURN ONLY AND ONLY XML CODE IT'S VERY IMPORTANT!Generate DMN table that can be applied to following schema and rules. Make sure the table can be read horizontally.
-the column headers contain the inputs and output.
-Specify hitPolicy from the rules or set it as "RULE ORDER" if none specified.
+The column headers contain the inputs and output.
+Specify hitPolicy from the rules or set it as "RULE ORDER" if none is specified.
 id attribute of <decision> tag has to be "decision"
 If rule don't start with "create " and contains the name of the variable from object schema then replace it in <variableNameFromObjectSchema>
-If <outputEntry> <text> is a string type than wrap the value in double quotes.
-Use <schema> to find correct <variable> path for <expression> from the <rules>.
+If <outputEntry> <text> is a string type then wrap the value in double quotes.
+Use <schema> to find the correct <variable> path for <expression> from the <rules>.
 <schema>
     ${getSchema(request.context)}
 </schema>

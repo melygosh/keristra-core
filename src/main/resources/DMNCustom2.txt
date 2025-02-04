@@ -1,29 +1,57 @@
-<rule> hit policy is <policy> (FIRST, UNIQUE, ANY, PRIORITY, OUTPUT ORDER, COLLECT, RULE ORDER)</rule>
+hit policy is <policy> (FIRST, UNIQUE, ANY, PRIORITY, OUTPUT ORDER, COLLECT, RULE ORDER)
 <expression> <decisionTable id="decisionTable" hitPolicy="<policy>"> </expression>
 
-<rule> Create input <extraVariable>  Expression is <extraVariableExpression>  type is <extraVariableType> </rule> 
+Create input <extraVariable>  Expression is <extraVariableExpression>  type is <extraVariableType>
 <expression> <input id="input-1" label="<extraVariable>"> <inputExpression id="input-1-exp" typeRef="<extraVariableType>"> <text> <extraVariableExpression> </text> </inputExpression> </input> </expression>
 
-<rule> between <value1>  and <value2> </rule> 
+If <variable> is between <value1> and <value2>
 <expression> <text> [<value1>..<value2>]</text> </expression>
+<expression> <text> ? gt;= <value1> and ? lt;= <value2> </text> </expression>
 
-<rule> between <value1>  and <value2>  without <value1> </rule> 
-<expression> <text> (<value1>..<value2>] </text> </expression>
+If <variable> is between <value1> and <value2> without <value1>
+<expression> <text> ? gt; <value1> and ? lt;= <value2> </text> </expression>
 
-<rule> between <value1>  and <value2>  without <value2> </rule> 
+If <variable> is between <value1> and <value2> without <value2>
 <expression> <text> [<value1>..<value2>) </text> </expression>
+<expression> <text> ? gt;= <value1> and ? lt; <value2> </text> </expression>
 
-<rule> <variable> is present</rule>
-<expression> <text> <variable>  != null </text> </expression>
+<variable> is present
+<expression> <text> <variable> != null </text> </expression>
 
-<rule> <variable>  is not empty</rule> 
+<variable>  is not empty
 <expression> <text> count(<variable> ) </text> </expression>
 
-<rule> <variable>  is empty </rule>
+<variable>  is empty
 <expression> <text> count(<variable> ) = 0 </text> </expression>
 
-<ruleForString> <variable> contains <value> </ruleForString>
-<expression> <text> contains(?, "<value>") </text> </expression>
+ Type of <variable> = "string"
+ <variable> contains <value>
+   <input id="input-1" label="<variable>">
+        <inputExpression id="input-1-exp" typeRef="<variableType>" expressionLanguage="feel">
+            <text> <variable> </text>
+        </inputExpression>
+    </input>
+    <rule id="rule-1">
+        <inputEntry id="rule-1-input-1">
+            <text> contains(?, <value>) </text>
+        </inputEntry>
+    </rule>
 
-<ruleForArray> <variable> contains <value> </ruleForArray>
+Type of <variable> = "array"
+<variable> contains <value>
 <expression> <text>list contains(?, "<value>")</text> </expression>
+
+Type of <variable> = "array"
+If has <variable> with <property> <value>
+<expression>
+    <input id="input-1" label="<property> <value>">
+        <inputExpression id="input-1-exp" typeRef="boolean" expressionLanguage="feel">
+            <text> some x in <variable> satisfies x.<property> = <value< </text>
+        </inputExpression>
+    </input>
+    <rule id="rule-1">
+        <inputEntry id="rule-1-input-1">
+            <text> true </text>
+        </inputEntry>
+    </rule>
+</expression>

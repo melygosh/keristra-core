@@ -109,6 +109,61 @@
     <decision id="decision" name="Decision Table Configuration">
         <decisionTable id="decisionTable" hitPolicy="FIRST">
             <input id="input-1" label="Age">
+                <inputExpression id="input-1-exp" typeRef="integer" expressionLanguage="feel">
+                    <text> age </text>
+                </inputExpression>
+            </input>
+            <output id="output-1" label="Risk" name="risk" typeRef="double" />
+            <rule id="rule-1">
+                <inputEntry id="rule-1-input-1">
+                    <text> ? &gt;= 18 and ? &lt;= 25 </text>
+                </inputEntry>
+                <outputEntry id="rule-1-output-1">
+                    <text> 0.6 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-2">
+                <inputEntry id="rule-2-input-1">
+                    <text> ? &gt;= 25 and ? &lt;= 40 </text>
+                </inputEntry>
+                <outputEntry id="rule-2-output-1">
+                    <text> 0.3 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-3">
+                <inputEntry id="rule-3-input-1">
+                    <text> ? &gt;= 40 and ? &lt;= 60 </text>
+                </inputEntry>
+                <outputEntry id="rule-3-output-1">
+                    <text> 0.5 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-4">
+                <inputEntry id="rule-4-input-1">
+                    <text> &gt; 60 </text>
+                </inputEntry>
+                <outputEntry id="rule-4-output-1">
+                    <text> 0.8 </text>
+                </outputEntry>
+            </rule>
+            <rule id="rule-5">
+                <inputEntry id="rule-5-input-1">
+                    <text></text>
+                </inputEntry>
+                <outputEntry id="rule-5-output-1">
+                    <text> 1 </text>
+                </outputEntry>
+            </rule>
+        </decisionTable>
+    </decision>
+</definitions>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions"
+    name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+    <decision id="decision" name="Decision Table Configuration">
+        <decisionTable id="decisionTable" hitPolicy="FIRST">
+            <input id="input-1" label="Age">
                 <inputExpression id="input-1-exp" typeRef="integer">
                     <text> age </text>
                 </inputExpression>

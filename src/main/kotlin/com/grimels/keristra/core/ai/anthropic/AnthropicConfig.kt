@@ -8,6 +8,8 @@ import dev.langchain4j.model.anthropic.AnthropicChatModelName
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel
+import dev.langchain4j.model.voyageai.VoyageAiEmbeddingModel
+import dev.langchain4j.model.voyageai.VoyageAiEmbeddingModelName
 import dev.langchain4j.rag.content.retriever.ContentRetriever
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever
 import dev.langchain4j.service.AiServices
@@ -23,22 +25,48 @@ import org.springframework.core.io.ResourceLoader
 @Configuration
 class AnthropicConfig {
 
+//    @Bean
+//    fun embeddingStoreModel(): EmbeddingModel {
+//        return AllMiniLmL6V2EmbeddingModel()
+//    }
+
     @Bean
-    fun embeddingStoreModel(): EmbeddingModel {
-        return AllMiniLmL6V2EmbeddingModel()
+    fun embeddingStoreModel(@Value("\${voyage.api.key}") apiKey: String): EmbeddingModel {
+        return VoyageAiEmbeddingModel.builder()
+            .apiKey(apiKey)
+            .modelName(VoyageAiEmbeddingModelName.VOYAGE_3)
+            .build();
     }
 
     @Bean
-    fun commandLineRunner(embeddingStoreModel: EmbeddingModel, store: EmbeddingStore<TextSegment>, resourceLoader: ResourceLoader): CommandLineRunner {
+    fun commandLineRunner(
+        embeddingStoreModel: EmbeddingModel,
+        store: EmbeddingStore<TextSegment>,
+        resourceLoader: ResourceLoader
+    ): CommandLineRunner {
         return CommandLineRunner { args: Array<String?>? ->
-            this.loadDocuments(embeddingStoreModel, store, resourceLoader, listOf("classpath:DMNCustom.txt", "classpath:DMNCustom2.txt"), 1000, 200)
+            this.loadDocuments(
+                embeddingStoreModel,
+                store,
+                resourceLoader,
+                listOf("classpath:DMNCustom.txt", "classpath:DMNCustom2.txt"),
+                1000,
+                200
+            )
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
         }
     }
 
-    fun loadDocuments(embeddingStoreModel: EmbeddingModel, store: EmbeddingStore<TextSegment>, resourceLoader: ResourceLoader, paths: List<String>, maxSegmentSize: Int, maxOverlap: Int) {
+    fun loadDocuments(
+        embeddingStoreModel: EmbeddingModel,
+        store: EmbeddingStore<TextSegment>,
+        resourceLoader: ResourceLoader,
+        paths: List<String>,
+        maxSegmentSize: Int,
+        maxOverlap: Int
+    ) {
         val docs = paths
             .map { resourceLoader.getResource(it) }
             .map { loadDocument(it.file.toPath()) }
@@ -64,6 +92,7 @@ class AnthropicConfig {
             .apiKey(apiKey)
             .modelName(AnthropicChatModelName.CLAUDE_3_SONNET_20240229)
             .maxTokens(4096)
+            .cacheSystemMessages(true)
             .build()
     }
 
@@ -81,7 +110,10 @@ class AnthropicConfig {
     }
 
     @Bean
-    fun createRetriever(embeddingStoreModel: EmbeddingModel, embeddingStore: EmbeddingStore<TextSegment>): ContentRetriever {
+    fun createRetriever(
+        embeddingStoreModel: EmbeddingModel,
+        embeddingStore: EmbeddingStore<TextSegment>
+    ): ContentRetriever {
         return EmbeddingStoreContentRetriever.builder()
             .embeddingStore(embeddingStore)
             .embeddingModel(embeddingStoreModel)
