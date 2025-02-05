@@ -13,6 +13,7 @@ Here are some rules you need to follow in <text> tags:
 Do not use <= or >= or > or < in <expression> tag use &lt;= or &gt;= or &gt; or &lt; instead.
 If range is between 2 values specified then use (value1..value2) or [value1..value2] for strict range, ensure structure is valid.
 If only 1 number specified then use &gt; or &lt; for greater or less than.
+If entry is empty then leave <text></text> empty instead of <text>-</text>.
 <example> 
     <?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <definitions xmlns=\"https://www.omg.org/spec/DMN/20191111/MODEL/\" id=\"definitions\" name=\"definitions\" namespace=\"http://camunda.org/schema/1.0/dmn\">

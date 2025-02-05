@@ -12,4 +12,9 @@ class Bmi(
     val gender: String,
     val weight: Double,
     val length: Double
-)
+) {
+
+    fun calculateBmi(): Double {
+        return weight / (length * length) * 10000
+    }
+}

@@ -1,9 +1,12 @@
 <user>
-    <property name="id" type="number" />
+    <property name="id" type="integer" />
     <property name="first_name" type="string" />
     <property name="last_name" type="string" />
     <property name="email" type="string" />
-    <property name="gender" type="string" />
-    <property name="weight" type="number" />
-    <property name="length" type="number" />
+    <property name="gender" type="string">
+        <value>Male</value>
+        <value>Female</value>
+    </property>
+    <property name="weight" type="double" />
+    <property name="length" type="double" />
 </user>

@@ -90,7 +90,7 @@ class AnthropicConfig {
     fun createModel(@Value("\${anthropic.api.key}") apiKey: String): ChatLanguageModel {
         return AnthropicChatModel.builder()
             .apiKey(apiKey)
-            .modelName(AnthropicChatModelName.CLAUDE_3_SONNET_20240229)
+            .modelName(AnthropicChatModelName.CLAUDE_3_5_SONNET_20241022)
             .maxTokens(4096)
             .cacheSystemMessages(true)
             .build()
