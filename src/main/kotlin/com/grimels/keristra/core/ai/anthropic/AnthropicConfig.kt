@@ -30,34 +30,34 @@ class AnthropicConfig {
 //        return AllMiniLmL6V2EmbeddingModel()
 //    }
 
-    @Bean
-    fun embeddingStoreModel(@Value("\${voyage.api.key}") apiKey: String): EmbeddingModel {
-        return VoyageAiEmbeddingModel.builder()
-            .apiKey(apiKey)
-            .modelName(VoyageAiEmbeddingModelName.VOYAGE_3)
-            .build();
-    }
+//    @Bean
+//    fun embeddingStoreModel(@Value("\${voyage.api.key}") apiKey: String): EmbeddingModel {
+//        return VoyageAiEmbeddingModel.builder()
+//            .apiKey(apiKey)
+//            .modelName(VoyageAiEmbeddingModelName.VOYAGE_3)
+//            .build();
+//    }
 
-    @Bean
-    fun commandLineRunner(
-        embeddingStoreModel: EmbeddingModel,
-        store: EmbeddingStore<TextSegment>,
-        resourceLoader: ResourceLoader
-    ): CommandLineRunner {
-        return CommandLineRunner { args: Array<String?>? ->
-            this.loadDocuments(
-                embeddingStoreModel,
-                store,
-                resourceLoader,
-                listOf("classpath:DMNCustom.txt", "classpath:DMNCustom2.txt"),
-                1000,
-                200
-            )
-//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
-//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
-//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
-        }
-    }
+//    @Bean
+//    fun commandLineRunner(
+//        embeddingStoreModel: EmbeddingModel,
+//        store: EmbeddingStore<TextSegment>,
+//        resourceLoader: ResourceLoader
+//    ): CommandLineRunner {
+//        return CommandLineRunner { args: Array<String?>? ->
+////            this.loadDocuments(
+////                embeddingStoreModel,
+////                store,
+////                resourceLoader,
+////                listOf("classpath:DMNCustom.txt", "classpath:DMNCustom2.txt"),
+////                1000,
+////                200
+////            )
+////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
+////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
+////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
+//        }
+//    }
 
     fun loadDocuments(
         embeddingStoreModel: EmbeddingModel,
@@ -111,12 +111,12 @@ class AnthropicConfig {
 
     @Bean
     fun createRetriever(
-        embeddingStoreModel: EmbeddingModel,
+//        embeddingStoreModel: EmbeddingModel,
         embeddingStore: EmbeddingStore<TextSegment>
     ): ContentRetriever {
         return EmbeddingStoreContentRetriever.builder()
             .embeddingStore(embeddingStore)
-            .embeddingModel(embeddingStoreModel)
+//            .embeddingModel(embeddingStoreModel)
             .maxResults(4)
             .minScore(0.75)
             .build()

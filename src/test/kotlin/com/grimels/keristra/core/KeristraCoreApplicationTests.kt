@@ -37,9 +37,9 @@ class KeristraCoreApplicationTests {
         assertThat(anthropicDMNController).isNotNull();
 
         var testsPassed = 0
-        val testsCount = 100
+        val testsCount = 200
         for (i in 1..testsCount) {
-            if (test_experiment_BMI()) {
+            if (test_experiment_1()) {
                 testsPassed++
                 println("✅$i/$testsCount passed")
             } else {
@@ -77,7 +77,7 @@ Else creditRisk is 0
                 return false
             }
 
-            val resp1: List<DmnItemResponse> =
+            val resp1: List<DmnItemResponse<User>> =
                 decisionTableEvaluationService.evaluate(dmnTxt!!.body!!, "users") ?: return false
 
             // If age is between 18 and 25 (without 25) the credit risk is 0.6
@@ -152,18 +152,18 @@ If has no car then "text" is "No car"
                 return false
             }
 
-            val resp1: List<DmnItemResponse> =
+            val resp1: List<DmnItemResponse<User>> =
                 decisionTableEvaluationService.evaluate(dmnTxt!!.body!!, "users") ?: return false
 
             // If car model year is more than 2000 then text is “Car after 2000s”
             // If car make is “Porsche” then carModel is “Porsche”
-            if (!resp1?.filter { (it.item as User).car != null && (it.item as User).car!!.modelYear!! > 2000 }?.all {
-                    if ((it.item as User).car!!.model!! == "Porsche") {
+            if (!resp1?.filter { (it.item as User).asset != null && (it.item as User).asset!!.modelYear!! > 2000 }?.all {
+                    if ((it.item as User).asset!!.model!! == "Porsche") {
                         if (it.evaluation.resultList.size == 2) {
                             val isValid = it.evaluation.resultList.any { it.get("text") == "Car after 2000s" } &&
                                     it.evaluation.resultList.any { it.get("text") == "Porsche" }
 
-                            if (!isValid) println("Invalid DMN: ${it.evaluation.resultList} ${(it.item as User).car!!.model}")
+                            if (!isValid) println("Invalid DMN: ${it.evaluation.resultList} ${(it.item as User).asset!!.model}")
                             return isValid
                         }
                         return false
@@ -173,7 +173,7 @@ If has no car then "text" is "No car"
                         ) {
                             return true
                         }
-                        println("Invalid DMN: ${it.evaluation.resultList} ${(it.item as User).car!!.modelYear}")
+                        println("Invalid DMN: ${it.evaluation.resultList} ${(it.item as User).asset!!.modelYear}")
                         return false
                     }
                 }!!) {
@@ -183,13 +183,13 @@ If has no car then "text" is "No car"
 
             // If car model year is less than 2000 (without 2000) then text is “Car before 2000”
             // If car make is “Porsche” then carModel is “Porsche”
-            if (!resp1?.filter { (it.item as User).car != null && (it.item as User).car!!.modelYear!! < 2000 }?.all {
-                    if ((it.item as User).car!!.model!! == "Porsche") {
+            if (!resp1?.filter { (it.item as User).asset != null && (it.item as User).asset!!.modelYear!! < 2000 }?.all {
+                    if ((it.item as User).asset!!.model!! == "Porsche") {
                         if (it.evaluation.resultList.size == 2) {
                             val isValid = it.evaluation.resultList.any { it.get("text") == "Car before 2000" } &&
                                     it.evaluation.resultList.any { it.get("text") == "Porsche" }
 
-                            if (!isValid) println("Invalid DMN: ${(it.item as User).car!!.model}")
+                            if (!isValid) println("Invalid DMN: ${(it.item as User).asset!!.model}")
                             return isValid
                         }
                         return false
@@ -199,7 +199,7 @@ If has no car then "text" is "No car"
                         ) {
                             return true
                         }
-                        println("Invalid DMN: ${(it.item as User).car!!.modelYear}")
+                        println("Invalid DMN: ${(it.item as User).asset!!.modelYear}")
                         return false
                     }
                 }!!) {
@@ -208,7 +208,7 @@ If has no car then "text" is "No car"
             }
 
             // If has no car then text is "No car"
-            if (!resp1?.filter { (it.item as User).car == null }?.all {
+            if (!resp1?.filter { (it.item as User).asset == null }?.all {
                     it.evaluation.resultList.size == 1 && it.evaluation.resultList.get(0).get("text") == "No car"
                 }!!) {
                 println("Invalid DMN: invalid no car case \n${dmnTxt.body}")
@@ -222,171 +222,171 @@ If has no car then "text" is "No car"
         return true
     }
 
-    fun test_experiment_BMI(): Boolean {
-        assertThat(restTemplate).isNotNull();
-
-        var dmnTxt: org.springframework.http.ResponseEntity<String>? = null
-        try {
-            val request = DmnGenerationRequest(
-                """Hit policy is First
-The BMI of a person can be calculated based on weight in kgs and length of a person
-in meters by using the following formula: weight/(length*length)*10000 (type is double). If the BMI value is
-above 30, then the BMI-level is considered "obese". If you are a male and the BMI-value
-is under 18.5 then the BMI-level is "severely underweight" and if you are female, then
-you are considered "underweight" with the same bmi-value. If the BMI-value is between
-18.5 and 25 (without 25), then the BMI-level is "underweight" for a male and "normal" for
-a female. Lastly, if the BMI-value is between 25 and 30 and you are a Male then the
-BMI-level is "normal" but if you are a female then BMI-level is "overweight".
-Output: BMI_level
-                """.trimIndent(),
-                "bmi"
-            )
-            dmnTxt = restTemplate?.postForEntity(
-                "http://localhost:$port/api/anthropic-dmn/generate",
-                request,
-                String::class.java,
-            )
-            if (dmnTxt == null || dmnTxt.body == null || dmnTxt.body!!.isBlank()) {
-                println("❎Invalid DMN: empty response")
-                return false
-            }
-
-            val resp1: List<DmnItemResponse> =
-                decisionTableEvaluationService.evaluate(dmnTxt!!.body!!, "bmi") ?: return false
-
-            // If the BMI-value is above 30 then the BMI-level is considered Obese.
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() > 30 }.all {
-                    if (it.evaluation.resultList.size != 1) {
-                        println("Invalid DMN: BMI-value is above 30 \n ${it.evaluation.resultList}\n${dmnTxt.body}")
-                        return false
-                    }
-                    val bmiLevel = (it.evaluation.resultList.get(0)
-                        .get("BMI_level") as String).lowercase(Locale.getDefault())
-                    if (bmiLevel != "obese") {
-                        println("Invalid DMN: BMI-value is above 30 \n ${it.evaluation.resultList}\n${dmnTxt.body}")
-                        return false
-                    }
-                    return true
-                }) {
-                println("Invalid DMN: invalid BMI-value is above 30 \n${dmnTxt.body}")
-                return false
-            }
-            // If gender is "Male" and the BMI-value is under 18.5 then the BMI-level is severely underweight
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() < 18.5 && (it.item as Bmi).gender.lowercase() == "male" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Male BMI-value is under 18.5\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "underweight") {
-                            println("Invalid DMN: Male BMI-value is under 18.5\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        return true
-                    }) {
-                println("Invalid DMN: invalid Male BMI-value is under 18.5 \n${dmnTxt.body}")
-                return false
-            }
-            // if gender is "Female" and the BMI-value is under   18.5                     then the BMI-level is underweight.
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() < 18.5 && (it.item as Bmi).gender.lowercase() == "female" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Female BMI-value is under 18.5\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "underweight") {
-                            println("Invalid DMN: Female BMI-value is under 18.5\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        return true
-                    }) {
-                println("Invalid DMN: invalid Female BMI-value is under 18.5 \n${dmnTxt.body}")
-                return false
-            }
-            // If gender is "Male"   and the BMI-value is between 18.5 and 25 (without 25) then the BMI-level is underweight
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() >= 18.5 && (it.item as Bmi).calculateBmi() < 25 && (it.item as Bmi).gender.lowercase() == "male" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Male BMI-value is between 18.5 and 25 \n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "underweight") {
-                            println("Invalid DMN: Male BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        return true
-                    }) {
-                println("Invalid DMN: invalid Male BMI-value is between 18.5 and 25 \n${dmnTxt.body}")
-                return false
-            }
-            // If gender is "Female" and the BMI-value is between 18.5 and 25 (without 25) then the BMI-level is normal.
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() >= 18.5 && (it.item as Bmi).calculateBmi() < 25 && (it.item as Bmi).gender.lowercase() == "female" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Female BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "normal") {
-                            println("Invalid DMN: Female BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        return true
-                    }
-            ) {
-                println("Invalid DMN: invalid Female BMI-value is between 18.5 and 25 \n${dmnTxt.body}")
-                return false
-            }
-            // If gender is "Male"   and the BMI-value is between 25   and 30              then the BMI-level is normal
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() in 25.0..30.0 && (it.item as Bmi).gender.lowercase() == "male" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Male BMI-value is between 25 and 30\n ${it.evaluation.resultList} \n${dmnTxt.body}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "normal") {
-                            println("Invalid DMN: Male BMI-value is between 25 and 30\n ${it.evaluation.resultList} \n${dmnTxt.body}")
-                            return false
-                        }
-                        return true
-                    }) {
-                println("Invalid DMN: invalid Male BMI-value is between 25 and 30 \n${dmnTxt.body}")
-                return false
-            }
-            // if gender is "Female" and the BMI-value is between 25   and 30              then the BMI-level is overweight.
-            if (!resp1.filter { (it.item as Bmi).calculateBmi() in 25.0..30.0 && (it.item as Bmi).gender.lowercase() == "female" }
-                    .all {
-                        if (it.evaluation.resultList.size != 1) {
-                            println("Invalid DMN: Female BMI-value is between 25 and 30\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        val bmiLevel = (it.evaluation.resultList.get(0)
-                            .get("BMI_level") as String).lowercase(Locale.getDefault())
-                        if (bmiLevel != "overweight") {
-                            println("Invalid DMN: Female BMI-value is between 25 and 30\n ${it.evaluation.resultList}")
-                            return false
-                        }
-                        return true
-                    }) {
-                println("Invalid DMN: invalid Female BMI-value is between 25 and 30 \n${dmnTxt.body}")
-                return false
-            }
-
-        } catch (e: Exception) {
-            println("Invalid DMN: evaluation exception \n${e.message} \n$dmnTxt")
-            return false
-        }
-        return true
-    }
+//    fun test_experiment_BMI(): Boolean {
+//        assertThat(restTemplate).isNotNull();
+//
+//        var dmnTxt: org.springframework.http.ResponseEntity<String>? = null
+//        try {
+//            val request = DmnGenerationRequest(
+//                """Hit policy is First
+//The BMI of a person can be calculated based on weight in kgs and length of a person
+//in meters by using the following formula: weight/(length*length)*10000 (type is double). If the BMI value is
+//above 30, then the BMI-level is considered "obese". If you are a male and the BMI-value
+//is under 18.5 then the BMI-level is "severely underweight" and if you are female, then
+//you are considered "underweight" with the same bmi-value. If the BMI-value is between
+//18.5 and 25 (without 25), then the BMI-level is "underweight" for a male and "normal" for
+//a female. Lastly, if the BMI-value is between 25 and 30 and you are a Male then the
+//BMI-level is "normal" but if you are a female then BMI-level is "overweight".
+//Output: BMI_level
+//                """.trimIndent(),
+//                "bmi"
+//            )
+//            dmnTxt = restTemplate?.postForEntity(
+//                "http://localhost:$port/api/anthropic-dmn/generate",
+//                request,
+//                String::class.java,
+//            )
+//            if (dmnTxt == null || dmnTxt.body == null || dmnTxt.body!!.isBlank()) {
+//                println("❎Invalid DMN: empty response")
+//                return false
+//            }
+//
+//            val resp1: List<DmnItemResponse> =
+//                decisionTableEvaluationService.evaluate(dmnTxt!!.body!!, "bmi") ?: return false
+//
+//            // If the BMI-value is above 30 then the BMI-level is considered Obese.
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() > 30 }.all {
+//                    if (it.evaluation.resultList.size != 1) {
+//                        println("Invalid DMN: BMI-value is above 30 \n ${it.evaluation.resultList}\n${dmnTxt.body}")
+//                        return false
+//                    }
+//                    val bmiLevel = (it.evaluation.resultList.get(0)
+//                        .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                    if (bmiLevel != "obese") {
+//                        println("Invalid DMN: BMI-value is above 30 \n ${it.evaluation.resultList}\n${dmnTxt.body}")
+//                        return false
+//                    }
+//                    return true
+//                }) {
+//                println("Invalid DMN: invalid BMI-value is above 30 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // If gender is "Male" and the BMI-value is under 18.5 then the BMI-level is severely underweight
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() < 18.5 && (it.item as Bmi).gender.lowercase() == "male" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Male BMI-value is under 18.5\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "underweight") {
+//                            println("Invalid DMN: Male BMI-value is under 18.5\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        return true
+//                    }) {
+//                println("Invalid DMN: invalid Male BMI-value is under 18.5 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // if gender is "Female" and the BMI-value is under   18.5                     then the BMI-level is underweight.
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() < 18.5 && (it.item as Bmi).gender.lowercase() == "female" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Female BMI-value is under 18.5\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "underweight") {
+//                            println("Invalid DMN: Female BMI-value is under 18.5\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        return true
+//                    }) {
+//                println("Invalid DMN: invalid Female BMI-value is under 18.5 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // If gender is "Male"   and the BMI-value is between 18.5 and 25 (without 25) then the BMI-level is underweight
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() >= 18.5 && (it.item as Bmi).calculateBmi() < 25 && (it.item as Bmi).gender.lowercase() == "male" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Male BMI-value is between 18.5 and 25 \n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "underweight") {
+//                            println("Invalid DMN: Male BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        return true
+//                    }) {
+//                println("Invalid DMN: invalid Male BMI-value is between 18.5 and 25 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // If gender is "Female" and the BMI-value is between 18.5 and 25 (without 25) then the BMI-level is normal.
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() >= 18.5 && (it.item as Bmi).calculateBmi() < 25 && (it.item as Bmi).gender.lowercase() == "female" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Female BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "normal") {
+//                            println("Invalid DMN: Female BMI-value is between 18.5 and 25\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        return true
+//                    }
+//            ) {
+//                println("Invalid DMN: invalid Female BMI-value is between 18.5 and 25 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // If gender is "Male"   and the BMI-value is between 25   and 30              then the BMI-level is normal
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() in 25.0..30.0 && (it.item as Bmi).gender.lowercase() == "male" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Male BMI-value is between 25 and 30\n ${it.evaluation.resultList} \n${dmnTxt.body}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "normal") {
+//                            println("Invalid DMN: Male BMI-value is between 25 and 30\n ${it.evaluation.resultList} \n${dmnTxt.body}")
+//                            return false
+//                        }
+//                        return true
+//                    }) {
+//                println("Invalid DMN: invalid Male BMI-value is between 25 and 30 \n${dmnTxt.body}")
+//                return false
+//            }
+//            // if gender is "Female" and the BMI-value is between 25   and 30              then the BMI-level is overweight.
+//            if (!resp1.filter { (it.item as Bmi).calculateBmi() in 25.0..30.0 && (it.item as Bmi).gender.lowercase() == "female" }
+//                    .all {
+//                        if (it.evaluation.resultList.size != 1) {
+//                            println("Invalid DMN: Female BMI-value is between 25 and 30\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        val bmiLevel = (it.evaluation.resultList.get(0)
+//                            .get("BMI_level") as String).lowercase(Locale.getDefault())
+//                        if (bmiLevel != "overweight") {
+//                            println("Invalid DMN: Female BMI-value is between 25 and 30\n ${it.evaluation.resultList}")
+//                            return false
+//                        }
+//                        return true
+//                    }) {
+//                println("Invalid DMN: invalid Female BMI-value is between 25 and 30 \n${dmnTxt.body}")
+//                return false
+//            }
+//
+//        } catch (e: Exception) {
+//            println("Invalid DMN: evaluation exception \n${e.message} \n$dmnTxt")
+//            return false
+//        }
+//        return true
+//    }
 
 
 //    fun test_simple_1(): Boolean {

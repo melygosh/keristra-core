@@ -46,6 +46,9 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
         if (context == "hotels") {
             return getSchemaByPath("hotel-schema.xml")
         }
+        if (context == "vap") {
+            return getSchemaByPath("vap-schema.xml")
+        }
 
         return getSchemaByPath("user-schema.xml")
     }

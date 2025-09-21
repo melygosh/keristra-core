@@ -2,22 +2,17 @@
     <property name="id" type="integer"/>
     <property name="firstName" type="string"/>
     <property name="lastName" type="string"/>
-    <property name="email" type="string"/>
     <property name="gender" type="string"/>
     <property name="age" type="integer"/>
-    <property name="language" type="string"/>
-    <property name="university" type="string"/>
-    <property name="car" type="object">
+    <property name="hasSubsidies" type="boolean"/>
+    <property name="asset" type="object">
+        <property name="price" type="double"/>
         <property name="make" type="string"/>
         <property name="model" type="string"/>
         <property name="modelYear" type="integer"/>
-    </property>
-    <property name="pet" type="string"/>
-    <property name="phoneOS" type="string"/>
-    <property name="comments" type="array">
-        <property name="comment" type="object">
-            <property name="title" type="string"/>
-            <property name="text" type="string"/>
+        <property name="segment" type="object">
+            <property name="name" type="string"/>
+            <property name="code" type="string"/>
         </property>
     </property>
 </user>

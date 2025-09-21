@@ -1,0 +1,822 @@
+[
+  {
+    "item": {
+      "id": 1,
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "gender": "Female",
+      "age": 28,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_1",
+        "model": "MODEL_1",
+        "modelYear": 2022,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "valueAddedProduct": "Insurance",
+        "termRestriction": "MATCHING"
+      },
+      {
+        "termRestriction": "MATCHING",
+        "defaultVAPAmount": 5000,
+        "valueAddedProduct": "Service and Maintenance"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 2,
+      "firstName": "Bob",
+      "lastName": "Johnson",
+      "gender": "Male",
+      "age": 45,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_2",
+        "model": "MODEL_2",
+        "modelYear": 1995,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      },
+      {
+        "termRestriction": "MATCHING",
+        "defaultVAPAmount": 32000,
+        "valueAddedProduct": "Service and Maintenance"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 3,
+      "firstName": "Charlie",
+      "lastName": "Williams",
+      "gender": "Male",
+      "age": 32,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_3",
+        "model": "MODEL_3",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "valueAddedProduct": "Establishment Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "defaultVAPAmount": 1000
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 4,
+      "firstName": "Diana",
+      "lastName": "Brown",
+      "gender": "Female",
+      "age": 39,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_4",
+        "model": "MODEL_4",
+        "modelYear": 2020,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 5,
+      "firstName": "Edward",
+      "lastName": "Jones",
+      "gender": "Male",
+      "age": 52,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_5",
+        "model": "MODEL_5",
+        "modelYear": 2018,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 6,
+      "firstName": "Fiona",
+      "lastName": "Garcia",
+      "gender": "Female",
+      "age": 26,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_6",
+        "model": "MODEL_2",
+        "modelYear": 2023,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 7,
+      "firstName": "George",
+      "lastName": "Martinez",
+      "gender": "Male",
+      "age": 41,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_7",
+        "model": "MODEL_7",
+        "modelYear": 2017,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 8,
+      "firstName": "Hannah",
+      "lastName": "Rodriguez",
+      "gender": "Female",
+      "age": 34,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_8",
+        "model": "MODEL_8",
+        "modelYear": 2022,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "valueAddedProduct": "Establishment Fee",
+        "defaultVAPAmount": 1000,
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 9,
+      "firstName": "Ian",
+      "lastName": "Lopez",
+      "gender": "Male",
+      "age": 50,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_9",
+        "model": "MODEL_9",
+        "modelYear": 2019,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 10,
+      "firstName": "Julia",
+      "lastName": "Wilson",
+      "gender": "Female",
+      "age": 37,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_10",
+        "model": "MODEL_3",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 11,
+      "firstName": "Kevin",
+      "lastName": "Anderson",
+      "gender": "Male",
+      "age": 29,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_11",
+        "model": "MODEL_5",
+        "modelYear": 1992,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 12,
+      "firstName": "Laura",
+      "lastName": "Thomas",
+      "gender": "Female",
+      "age": 46,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_12",
+        "model": "MODEL_12",
+        "modelYear": 2020,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 13,
+      "firstName": "Michael",
+      "lastName": "Taylor",
+      "gender": "Male",
+      "age": 38,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_13",
+        "model": "MODEL_13",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "defaultVAPAmount": 1000,
+        "valueAddedProduct": "Establishment Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 14,
+      "firstName": "Nina",
+      "lastName": "Harris",
+      "gender": "Female",
+      "age": 31,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_14",
+        "model": "MODEL_14",
+        "modelYear": 1986,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 15,
+      "firstName": "Oscar",
+      "lastName": "Clark",
+      "gender": "Male",
+      "age": 55,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_15",
+        "model": "MODEL_15",
+        "modelYear": 2017,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 16,
+      "firstName": "Paula",
+      "lastName": "Lewis",
+      "gender": "Female",
+      "age": 24,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_16",
+        "model": "MODEL_3",
+        "modelYear": 2023,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 17,
+      "firstName": "Quentin",
+      "lastName": "Walker",
+      "gender": "Male",
+      "age": 43,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_17",
+        "model": "MODEL_1",
+        "modelYear": 2019,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 18,
+      "firstName": "Rachel",
+      "lastName": "Hall",
+      "gender": "Female",
+      "age": 35,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_4",
+        "model": "MODEL_3",
+        "modelYear": 2020,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "defaultVAPAmount": 1000,
+        "valueAddedProduct": "Establishment Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 19,
+      "firstName": "Samuel",
+      "lastName": "Allen",
+      "gender": "Male",
+      "age": 48,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_3",
+        "model": "MODEL_2",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 20,
+      "firstName": "Tina",
+      "lastName": "Young",
+      "gender": "Female",
+      "age": 40,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_2",
+        "model": "MODEL_4",
+        "modelYear": 2022,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 21,
+      "firstName": "Ulysses",
+      "lastName": "King",
+      "gender": "Male",
+      "age": 36,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_1",
+        "model": "MODEL_5",
+        "modelYear": 2023,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      },
+      {
+        "valueAddedProduct": "Insurance",
+        "termRestriction": "MATCHING"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 22,
+      "firstName": "Vanessa",
+      "lastName": "Scott",
+      "gender": "Female",
+      "age": 44,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_2",
+        "model": "MODEL_6",
+        "modelYear": 2020,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 23,
+      "firstName": "William",
+      "lastName": "Green",
+      "gender": "Male",
+      "age": 31,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_3",
+        "model": "MODEL_7",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      },
+      {
+        "valueAddedProduct": "Service and Maintenance",
+        "defaultVAPAmount": 16500,
+        "termRestriction": "MATCHING"
+      },
+      {
+        "valueAddedProduct": "Establishment Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "defaultVAPAmount": 1000
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 24,
+      "firstName": "Xena",
+      "lastName": "Baker",
+      "gender": "Female",
+      "age": 27,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_4",
+        "model": "MODEL_8",
+        "modelYear": 2022,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 25,
+      "firstName": "Yusuf",
+      "lastName": "Nelson",
+      "gender": "Male",
+      "age": 49,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_5",
+        "model": "MODEL_9",
+        "modelYear": 2018,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 26,
+      "firstName": "Zara",
+      "lastName": "Carter",
+      "gender": "Female",
+      "age": 23,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_6",
+        "model": "MODEL_10",
+        "modelYear": 2024,
+        "segment": {
+          "name": "Electric Vehicle",
+          "code": "ELECTRIC_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 27,
+      "firstName": "Aaron",
+      "lastName": "Mitchell",
+      "gender": "Male",
+      "age": 42,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_7",
+        "model": "MODEL_11",
+        "modelYear": 2019,
+        "segment": {
+          "name": "Commercial Vehicle",
+          "code": "COMMERCIAL_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Registration Fee"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 28,
+      "firstName": "Bella",
+      "lastName": "Perez",
+      "gender": "Female",
+      "age": 36,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_8",
+        "model": "MODEL_12",
+        "modelYear": 2022,
+        "segment": {
+          "name": "Hybrid Vehicle",
+          "code": "HYBRID_VEHICLE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      },
+      {
+        "termRestriction": "NOT_ALLOW_HIGHER",
+        "valueAddedProduct": "Establishment Fee",
+        "defaultVAPAmount": 1000
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 29,
+      "firstName": "Caleb",
+      "lastName": "Roberts",
+      "gender": "Male",
+      "age": 47,
+      "hasSubsidies": false,
+      "asset": {
+        "make": "CAR_MAKE_9",
+        "model": "MODEL_13",
+        "modelYear": 2021,
+        "segment": {
+          "name": "Boat",
+          "code": "BOAT"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 30,
+      "firstName": "Daisy",
+      "lastName": "Turner",
+      "gender": "Female",
+      "age": 41,
+      "hasSubsidies": true,
+      "asset": {
+        "make": "CAR_MAKE_10",
+        "model": "MODEL_14",
+        "modelYear": 2020,
+        "segment": {
+          "name": "Plane",
+          "code": "PLANE"
+        }
+      }
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  },
+  {
+    "item": {
+      "id": 31,
+      "firstName": "Andrew",
+      "lastName": "Tart",
+      "gender": "Male",
+      "age": 21,
+      "hasSubsidies": false,
+      "asset": null
+    },
+    "evaluation": [
+      {
+        "valueAddedProduct": "Registration Fee",
+        "termRestriction": "NOT_ALLOW_HIGHER"
+      }
+    ]
+  }
+]

@@ -1,0 +1,234 @@
+[
+  {
+    "assetMake": "CAR MAKE 1",
+    "modelCode": "CODE_7",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "ELECTRIC_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 4",
+    "modelCode": "CODE_2",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "ELECTRIC_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_3",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "ELECTRIC_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_3",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 2",
+    "modelCode": "CODE_5",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 1",
+    "modelCode": "CODE_7",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 1",
+    "modelCode": "CODE_3",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 2",
+    "modelCode": "CODE_4",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_6",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 2",
+    "modelCode": "CODE_5",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_6",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 3",
+    "modelCode": "CODE_1",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 3",
+    "modelCode": "CODE_UNKNOWN",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 3",
+    "modelCode": "CODE_UNKNOWN",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 2",
+    "modelCode": "CODE_6",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 1",
+    "modelCode": "CODE_7",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 3",
+    "modelCode": "CODE_UNKNOWN",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_7",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE X",
+    "modelCode": "CODE_7",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 2",
+    "modelCode": "CODE_4",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "UNKNOWN_SEGMENT"
+    }
+  },
+  {
+    "assetMake": "",
+    "modelCode": "",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": ""
+    }
+  },
+  {
+    "assetMake": "CAR MAKE 1",
+    "modelCode": "",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "ELECTRIC_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_1",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "ELECTRIC_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_2",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_3",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_4",
+    "hasSubsidies": true,
+    "assetSegment": {
+      "code": "COMERCIAL_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_6",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "CODE_7",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  },
+  {
+    "assetMake": "UNKNOWN",
+    "modelCode": "",
+    "hasSubsidies": false,
+    "assetSegment": {
+      "code": "HYBRID_VEHICLE"
+    }
+  }
+]

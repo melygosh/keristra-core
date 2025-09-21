@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<applicationAssetData>
+    <property name="assetMake" type="string" />
+    <property name="modelCode" type="string" />
+    <property name="hasSubsidies" type="boolean" />
+    <property name="assetSegment" type="object">
+        <property name="code" type="string" />
+    </property>
+</applicationAssetData>
