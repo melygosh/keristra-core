@@ -3,8 +3,8 @@ package com.grimels.keristra.core
 import com.grimels.keristra.core.ai.anthropic.AnthropicDMNController
 import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationRequest
 import com.grimels.keristra.core.decision.table.DecisionTableEvaluationService
-import com.grimels.keristra.core.model.Bmi
-import com.grimels.keristra.core.model.User
+import com.grimels.keristra.core.model.bmi.Bmi
+import com.grimels.keristra.core.model.user.User
 import com.grimels.keristra.core.rest.bean.DmnItemResponse
 import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat

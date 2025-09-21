@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.user
 
 class UserComment {
     val title: String? = null

@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.vap
 
 import camundajar.impl.com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -23,7 +23,7 @@ class VapJsonRepo {
     private fun convertToModel(): List<Vap> {
         try {
             val stream = BufferedReader(getDataSet())
-            val listType: Type = object : TypeToken<List<Vap>>() {}.getType()
+            val listType: Type = object : com.google.gson.reflect.TypeToken<List<Vap>>() {}.getType()
             val users: List<Vap> = Gson().fromJson(stream, listType)
 
             return users
@@ -33,7 +33,7 @@ class VapJsonRepo {
     }
 
     private fun getDataSet(): FileReader {
-        val file: File = ResourceUtils.getFile("classpath:data-set/data-set-4.json")
+        val file: File = ResourceUtils.getFile("classpath:data-set/vap.json")
         return FileReader(file)
     }
 

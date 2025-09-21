@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.hotel
 
 import camundajar.impl.com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -23,7 +23,7 @@ class HotelRepo {
     private fun convertToModel(): List<Hotel> {
         try {
             val stream = BufferedReader(getDataSet())
-            val listType: Type = object : TypeToken<List<Hotel>>() {}.getType()
+            val listType: Type = object : com.google.gson.reflect.TypeToken<List<Hotel>>() {}.getType()
             val hotels: List<Hotel> = Gson().fromJson(stream, listType)
 
             return hotels
@@ -33,7 +33,7 @@ class HotelRepo {
     }
 
     private fun getDataSet(): FileReader {
-        val file: File = ResourceUtils.getFile("classpath:data-set/data-set-2.json")
+        val file: File = ResourceUtils.getFile("classpath:data-set/hotel.json")
         return FileReader(file)
     }
 }

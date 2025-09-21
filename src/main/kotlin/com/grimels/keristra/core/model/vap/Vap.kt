@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.vap
 
 class AssetSegmentCode {
     var code: String? = null

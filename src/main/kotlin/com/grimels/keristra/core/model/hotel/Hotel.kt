@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.hotel
 
 data class HotelRoom(val number: Int, val price: Double, val quantity: Int, val rate: Double)
 

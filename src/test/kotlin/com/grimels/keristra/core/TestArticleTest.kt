@@ -5,8 +5,8 @@ import com.google.gson.reflect.TypeToken
 import com.grimels.keristra.core.ai.anthropic.AnthropicDMNController
 import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationRequest
 import com.grimels.keristra.core.decision.table.DecisionTableEvaluationService
-import com.grimels.keristra.core.model.Bmi
-import com.grimels.keristra.core.model.User
+import com.grimels.keristra.core.model.bmi.Bmi
+import com.grimels.keristra.core.model.user.User
 import com.grimels.keristra.core.rest.bean.DmnItemResponse
 import java.io.BufferedReader
 import java.io.File

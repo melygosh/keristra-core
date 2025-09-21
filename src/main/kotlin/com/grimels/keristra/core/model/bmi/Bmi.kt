@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.bmi
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

@@ -1,4 +1,4 @@
-package com.grimels.keristra.core.model
+package com.grimels.keristra.core.model.user
 
 import camundajar.impl.com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -10,21 +10,21 @@ import org.springframework.stereotype.Component
 import org.springframework.util.ResourceUtils
 
 @Component
-class BmiJsonRepo {
-    private var bmiList: List<Bmi> = listOf()
+class UserJsonRepo {
+    private var users: List<User> = listOf()
 
-    public fun getBmiList(): List<Bmi> {
-        if (bmiList.isEmpty()) {
-            bmiList = convertToModel();
+    public fun getUsers(): List<User> {
+        if (users.isEmpty()) {
+            users = convertToModel();
         }
-        return bmiList
+        return users
     }
 
-    private fun convertToModel(): List<Bmi> {
+    private fun convertToModel(): List<User> {
         try {
             val stream = BufferedReader(getDataSet())
-            val listType: Type = object : TypeToken<List<Bmi>>() {}.getType()
-            val users: List<Bmi> = Gson().fromJson(stream, listType)
+            val listType: Type = object : com.google.gson.reflect.TypeToken<List<User>>() {}.getType()
+            val users: List<User> = Gson().fromJson(stream, listType)
 
             return users
         } catch (ex: Exception) {
@@ -33,7 +33,7 @@ class BmiJsonRepo {
     }
 
     private fun getDataSet(): FileReader {
-        val file: File = ResourceUtils.getFile("classpath:data-set/data-set-3.json")
+        val file: File = ResourceUtils.getFile("classpath:data-set/user.json")
         return FileReader(file)
     }
 
