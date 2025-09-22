@@ -24,16 +24,17 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j
-    implementation("dev.langchain4j:langchain4j:0.36.2")
+    implementation("dev.langchain4j:langchain4j:1.5.0")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-anthropic
-    implementation("dev.langchain4j:langchain4j-anthropic:0.36.2")
-    implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:0.36.2")
+    implementation("dev.langchain4j:langchain4j-anthropic:1.5.0")
+    implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:1.5.0-beta11")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-voyage-ai
-    implementation("dev.langchain4j:langchain4j-voyage-ai:0.36.2")
+    implementation("dev.langchain4j:langchain4j-voyage-ai:1.5.0-beta11")
 }
 
 tasks.withType<KotlinCompile> {

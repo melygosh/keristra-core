@@ -5,11 +5,9 @@ import dev.langchain4j.data.document.splitter.DocumentSplitters
 import dev.langchain4j.data.segment.TextSegment
 import dev.langchain4j.model.anthropic.AnthropicChatModel
 import dev.langchain4j.model.anthropic.AnthropicChatModelName
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel
-import dev.langchain4j.model.voyageai.VoyageAiEmbeddingModel
-import dev.langchain4j.model.voyageai.VoyageAiEmbeddingModelName
 import dev.langchain4j.rag.content.retriever.ContentRetriever
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever
 import dev.langchain4j.service.AiServices
@@ -25,10 +23,10 @@ import org.springframework.core.io.ResourceLoader
 @Configuration
 class AnthropicConfig {
 
-//    @Bean
-//    fun embeddingStoreModel(): EmbeddingModel {
-//        return AllMiniLmL6V2EmbeddingModel()
-//    }
+    @Bean
+    fun embeddingStoreModel(): EmbeddingModel {
+        return AllMiniLmL6V2EmbeddingModel()
+    }
 
 //    @Bean
 //    fun embeddingStoreModel(@Value("\${voyage.api.key}") apiKey: String): EmbeddingModel {
@@ -38,26 +36,26 @@ class AnthropicConfig {
 //            .build();
 //    }
 
-//    @Bean
-//    fun commandLineRunner(
-//        embeddingStoreModel: EmbeddingModel,
-//        store: EmbeddingStore<TextSegment>,
-//        resourceLoader: ResourceLoader
-//    ): CommandLineRunner {
-//        return CommandLineRunner { args: Array<String?>? ->
-////            this.loadDocuments(
-////                embeddingStoreModel,
-////                store,
-////                resourceLoader,
-////                listOf("classpath:DMNCustom.txt", "classpath:DMNCustom2.txt"),
-////                1000,
-////                200
-////            )
-////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
-////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
-////            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
-//        }
-//    }
+    @Bean
+    fun commandLineRunner(
+        embeddingStoreModel: EmbeddingModel,
+        store: EmbeddingStore<TextSegment>,
+        resourceLoader: ResourceLoader
+    ): CommandLineRunner {
+        return CommandLineRunner { args: Array<String?>? ->
+            this.loadDocuments(
+                embeddingStoreModel,
+                store,
+                resourceLoader,
+                listOf("classpath:education.pdf"),
+                1000,
+                200
+            )
+//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
+//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
+//            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
+        }
+    }
 
     fun loadDocuments(
         embeddingStoreModel: EmbeddingModel,
@@ -87,19 +85,19 @@ class AnthropicConfig {
     }
 
     @Bean
-    fun createModel(@Value("\${anthropic.api.key}") apiKey: String): ChatLanguageModel {
+    fun createModel(@Value("\${anthropic.api.key}") apiKey: String): ChatModel {
         return AnthropicChatModel.builder()
             .apiKey(apiKey)
-            .modelName(AnthropicChatModelName.CLAUDE_3_5_SONNET_20241022)
+            .modelName(AnthropicChatModelName.CLAUDE_SONNET_4_20250514)
             .maxTokens(4096)
             .cacheSystemMessages(true)
             .build()
     }
 
     @Bean
-    fun createAnthropicService(chatLanguageModel: ChatLanguageModel, retriever: ContentRetriever): AnthropicDMNService {
+    fun createAnthropicService(chatLanguageModel: ChatModel, retriever: ContentRetriever): AnthropicDMNService {
         return AiServices.builder(AnthropicDMNService::class.java)
-            .chatLanguageModel(chatLanguageModel)
+            .chatModel(chatLanguageModel)
             .contentRetriever(retriever)
             .build()
     }
@@ -111,12 +109,12 @@ class AnthropicConfig {
 
     @Bean
     fun createRetriever(
-//        embeddingStoreModel: EmbeddingModel,
+        embeddingStoreModel: EmbeddingModel,
         embeddingStore: EmbeddingStore<TextSegment>
     ): ContentRetriever {
         return EmbeddingStoreContentRetriever.builder()
             .embeddingStore(embeddingStore)
-//            .embeddingModel(embeddingStoreModel)
+            .embeddingModel(embeddingStoreModel)
             .maxResults(4)
             .minScore(0.75)
             .build()

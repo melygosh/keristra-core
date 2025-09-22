@@ -1,10 +1,8 @@
 package com.grimels.keristra.core.ai.anthropic
 
 import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationRequest
-import java.io.File
-import java.nio.file.Files
+import com.grimels.keristra.core.util.SchemaResolver
 import org.springframework.http.MediaType
-import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -30,7 +28,7 @@ If rule don't start with "create " and contains the name of the variable from ob
 If <outputEntry> <text> is a string type then wrap the value in double quotes.
 Use <schema> to find the correct <variable> path for <expression> from the <rules>.
 <schema>
-    ${getSchema(request.context)}
+    ${SchemaResolver.getSchema(request.context)}
 </schema>
 <rules>
     ${request.rules}
@@ -39,25 +37,7 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
         return response
     }
 
-    private fun getSchema(context: String): String {
-        if (context == "bmi") {
-            return getSchemaByPath("bmi-schema.xml")
-        }
-        if (context == "hotels") {
-            return getSchemaByPath("hotel-schema.xml")
-        }
-        if (context == "vap") {
-            return getSchemaByPath("vap-schema.xml")
-        }
 
-        return getSchemaByPath("user-schema.xml")
-    }
-
-    private fun getSchemaByPath(path: String): String {
-        val file: File = ResourceUtils.getFile("classpath:schema/$path")
-        val encoded = Files.readAllBytes(file.toPath())
-        return String(encoded)
-    }
 
 //    Replace <variable> with <variableNameFromObjectSchema> if it present in rules.
 //    Specify the input variables using the object schema and rules.

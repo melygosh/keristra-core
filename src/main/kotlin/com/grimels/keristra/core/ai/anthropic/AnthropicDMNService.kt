@@ -38,4 +38,27 @@ If entry is empty then leave <text></text> empty instead of <text>-</text>.
     """
     )
     fun generateDMNTable(@UserMessage request: String): String
+
+    @SystemMessage(
+        """
+You are generator of JSON array containing an objects that fulfills the structure from <objectSchema> and the values from <rules>.
+So that the generated objects can be used to test the decision table that was created based on the same <rules> and <objectSchema> in the format below:
+[
+  {
+    "name": "<testCaseName>",
+    "description": "<testCaseDescription>",
+    "expected": [
+      { ... } // object that matches <rules> expected output (as key-value pairs)
+      // if hit policy is FIRST or UNIQUE then only one object is expected
+      // if hit policy is RULE ORDER or COLLECT then multiple objects can be expected
+    ],
+    "object": { ... } // object that matches the <objectSchema> and the values from <rules>
+  }
+  ...
+]
+Return only and only JSON code for given rules by the schema you receive with no other text. 
+RETURN NOTHING EXCEPT JSON CODE IT'S VERY IMPORTANT!
+    """
+    )
+    fun generateEntities(@UserMessage request: String): String
 }
