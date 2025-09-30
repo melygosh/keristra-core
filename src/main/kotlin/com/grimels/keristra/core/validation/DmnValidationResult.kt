@@ -14,4 +14,23 @@ class DmnValidationResult(val case: Map<String, Any>?, val result: DmnDecisionRe
         return errorMessage
     }
 
+    fun isValid(): String? {
+        if (result == null || errorMessage != null) {
+            return "Error: ${errorMessage ?: "No result"}"
+        }
+        val expectedResult = case?.get("expected") as List<Map<String, Any?>>
+        for (item in result) {
+            for (expected in expectedResult) {
+                for ((key, value) in expected) {
+                    val actualValue = item.get(key)
+                    if (actualValue != value) {
+                        val studentId = ((case.get("object") as Map<String, Any>).get("student") as Map<String, Any>).get("id");
+                        return "[$studentId] Mismatch on key '$key': expected '$value', got '$actualValue'"
+                    }
+                }
+            }
+        }
+        return null
+    }
+
 }

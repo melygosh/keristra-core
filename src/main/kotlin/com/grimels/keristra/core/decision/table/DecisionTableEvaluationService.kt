@@ -1,6 +1,7 @@
 package com.grimels.keristra.core.decision.table
 
 import com.grimels.keristra.core.model.bmi.BmiJsonRepo
+import com.grimels.keristra.core.model.education.StudentApplicationJsonRepo
 import com.grimels.keristra.core.model.hotel.HotelRepo
 import com.grimels.keristra.core.model.user.UserJsonRepo
 import com.grimels.keristra.core.model.vap.VapJsonRepo
@@ -36,6 +37,9 @@ class DecisionTableEvaluationService {
     @Autowired
     private val hotelRepo: HotelRepo? = null
 
+    @Autowired
+    private val studentApplicationRepo: StudentApplicationJsonRepo? = null
+
     fun <T> evaluate(decisionTableContent: String, context: String): List<DmnItemResponse<T>>? {
         val decisionTableModel: DmnModelInstance =
             Dmn.readModelFromStream(decisionTableContent.byteInputStream(StandardCharsets.UTF_8))
@@ -59,6 +63,11 @@ class DecisionTableEvaluationService {
         if (context == "vap") {
             return vapRepo?.getBmiList()
                 ?.map { vap -> DmnItemResponse(vap, evaluate(decisionTable, ObjectUtils.toMap(vap))) }
+                ?: emptyList()
+        }
+        if (context == "education") {
+            return studentApplicationRepo?.getStudentApplicationList()
+                ?.map { application -> DmnItemResponse(application, evaluate(decisionTable, ObjectUtils.toMap(application))) }
                 ?: emptyList()
         }
 

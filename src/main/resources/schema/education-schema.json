@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:edu:admissions:applicant-scores.schema.json",
+  "title": "ApplicantScores",
+  "description": "Сутність з даними абітурієнта та балами за предметами (K1..K4) для конкурсного відбору.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["student", "K1", "K2", "K3", "K4"],
+  "properties": {
+    "student": {
+      "type": "object",
+      "title": "Студент",
+      "description": "Основні ідентифікаційні дані абітурієнта.",
+      "additionalProperties": false,
+      "required": ["id", "first_name", "last_name", "age"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Унікальний ідентифікатор студента (ціле число ≥ 1)."
+        },
+        "first_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Ім’я студента."
+        },
+        "last_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Прізвище студента."
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 14,
+          "maximum": 120,
+          "description": "Вік студента у повних роках."
+        }
+      }
+    },
+    "K1": {
+      "title": "K1 — Українська мова",
+      "description": "Обов’язковий предмет K1.",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Українська Мова" } } }
+      ]
+    },
+    "K2": {
+      "title": "K2 — Математика",
+      "description": "Обов’язковий предмет K2.",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Математика" } } }
+      ]
+    },
+    "K3": {
+      "title": "K3 — Історія України",
+      "description": "Обов’язковий предмет K3.",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Історія України" } } }
+      ]
+    },
+    "K4_1": {
+      "type": "object",
+      "title": "K4_1 — Додатковий предмет Фізика",
+      "description": "Додатковий предмет K4_1 (Фізика).",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Фізика" } } }
+      ]
+    },
+    "K4_2": {
+      "type": "object",
+      "title": "K4_2 — Додатковий предмет Хімія",
+      "description": "Додатковий предмет K4_2 (Хімія).",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Хімія" } } }
+      ]
+    },
+    "K4_3": {
+      "type": "object",
+      "title": "K4_3 — Додатковий предмет Іноземна Мова",
+      "description": "Додатковий предмет K4_3 (Іноземна Мова).",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Іноземна Мова" } } }
+      ]
+    },
+    "K4_4": {
+      "type": "object",
+      "title": "K4_4 — Додатковий предмет Біологія",
+      "description": "Додатковий предмет K4_4 (Біологія).",
+      "allOf": [
+        {
+          "$ref": "#/$defs/SubjectScore"
+        },
+        {
+          "properties": {
+            "name": {
+              "const": "Біологія"
+            }
+          }
+        }
+      ]
+    },
+    "K4_5": {
+      "type": "object",
+      "title": "K4_5 — Додатковий предмет Українська література",
+      "description": "Додатковий предмет K4_5 (Українська література).",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Українська література" } } }
+      ]
+    },
+    "K4_6": {
+      "type": "object",
+      "title": "K4_6 — Додатковий предмет Географія",
+      "description": "Додатковий предмет K4_6 (Географія).",
+      "allOf": [
+        { "$ref": "#/$defs/SubjectScore" },
+        { "properties": { "name": { "const": "Географія" } } }
+      ]
+    }
+  },
+  "$defs": {
+    "SubjectScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "score"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Назва предмета українською мовою."
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200,
+          "description": "Бал за предмет (0–200)."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "student": { "id": 1, "first_name": "Іван", "last_name": "Петренко", "age": 18 },
+      "K1": { "name": "Українська Мова", "score": 142 },
+      "K2": { "name": "Математика", "score": 150 },
+      "K3": { "name": "Історія України", "score": 138 },
+      "K4_1": { "name": "Фізика", "score": 130 },
+      "K4_2": { "name": "Хімія", "score": 128 },
+      "K4_3": { "name": "Іноземна Мова", "score": 0 },
+      "K4_4": { "name": "Біологія", "score": 0 },
+      "K4_5": { "name": "Українська література", "score": 0 },
+      "K4_6": { "name": "Географія", "score": 0 }
+    }
+  ]
+}

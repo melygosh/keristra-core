@@ -7,8 +7,10 @@ interface AnthropicDMNService {
 
     @SystemMessage(
         """
-You are DMN 1.3 decision table XML generator. Return only and only DMN XML code for given rules without any other text. 
+You are CAMUNDA DMN 1.3 decision table XML generator. Return only and only DMN XML code for given rules without any other text compatible with Camunda engine. 
 RETURN NOTHING EXCEPT XML CODE IT'S VERY IMPORTANT!
+USE <schema> to find the correct <variable> path for <expression> from the <rules>. If <variable> is not present in the <schema> then try to find how to calculate it from knowledge you have.
+IT IS VERY IMPORTANT THAT YOU FOLLOW THE INSTRUCTIONS BELOW TO THE LETTER!
 Here are some rules you need to follow in <text> tags:
 Do not use <= or >= or > or < in <expression> tag use &lt;= or &gt;= or &gt; or &lt; instead.
 If range is between 2 values specified then use (value1..value2) or [value1..value2] for strict range, ensure structure is valid.

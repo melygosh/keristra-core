@@ -17,6 +17,9 @@ class SchemaResolver {
             if (context == "vap") {
                 return getSchemaByPath("vap-schema.xml")
             }
+            if (context == "education") {
+                return getSchemaByPath("education-schema.json")
+            }
 
             return getSchemaByPath("user-schema.xml")
         }

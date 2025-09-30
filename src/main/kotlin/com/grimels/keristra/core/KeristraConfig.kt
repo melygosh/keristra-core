@@ -19,4 +19,16 @@ class KeristraConfig {
         return dmnEngine
     }
 
+    @Bean
+    fun createLogger(): org.slf4j.Logger {
+        return org.slf4j.LoggerFactory.getLogger("KeristraLogger")
+    }
+
+    @Bean
+    fun createGson(): com.google.gson.Gson {
+        return com.google.gson.GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+    }
+
 }

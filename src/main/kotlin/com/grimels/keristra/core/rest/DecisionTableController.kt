@@ -29,12 +29,16 @@ class DecisionTableController {
     }
 
     @RequestMapping(value = ["/validate"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE], method = [RequestMethod.POST])
-    fun generateDMNTableContent(@RequestBody request: DmnValidationRequest): List<DmnValidationResult>? {
+    fun validateDMNTableContent(@RequestBody request: DmnValidationRequest): List<DmnValidationResult>? {
         if (request.rules == null || request.context == null) {
             throw IllegalArgumentException("Rules and context are required")
         }
+        if (dmnValidator == null) {
+            throw IllegalArgumentException("DmnValidator is not available")
+        }
         val schema = SchemaResolver.getSchema(request.context)
-        val results = dmnValidator?.validate(request.decisionTableContent, request.rules, schema)
+        val testCases = dmnValidator.generateTestCases(request.rules, schema);
+        val results = dmnValidator.validate(request.decisionTableContent, testCases)
         return results
     }
 }

@@ -1,7 +1,10 @@
 package com.grimels.keristra.core.ai.anthropic
 
 import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationRequest
+import com.grimels.keristra.core.ai.anthropic.dto.DmnGenerationResponse
 import com.grimels.keristra.core.util.SchemaResolver
+import com.grimels.keristra.core.validation.DmnValidator
+import org.slf4j.Logger
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,15 +15,24 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/anthropic-dmn")
 class AnthropicDMNController(
     private val dmnGenerator: AnthropicDMNService,
+    private val dmnValidator: DmnValidator,
+    private val logger: Logger
 ) {
 
-    @RequestMapping(value = ["/generate"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.TEXT_XML_VALUE], method = [RequestMethod.POST])
-    fun generateDMNTableContent(@RequestBody request: DmnGenerationRequest): String {
+    @RequestMapping(
+        value = ["/generate"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        method = [RequestMethod.POST]
+    )
+    fun generateDMNTableContent(@RequestBody request: DmnGenerationRequest): DmnGenerationResponse {
         if (request.rules == null || request.context == null) {
             throw IllegalArgumentException("Rules and context are required")
         }
-        val chatRequest =
-            """RETURN ONLY AND ONLY XML CODE IT'S VERY IMPORTANT!Generate DMN table that can be applied to following schema and rules. Make sure the table can be read horizontally.
+        var chatRequest =
+            """RETURN ONLY AND ONLY CAMUNDA XML CODE IT'S VERY IMPORTANT! Generate Camunda DMN table that can be applied to following schema and rules. Make sure the table can be read horizontally.
+USE <schema> to find the correct <variable> path for <expression> from the <rules>. If <variable> is not present in the <schema> then try to find how to calculate it from knowledge you have.
+IT IS VERY IMPORTANT THAT YOU FOLLOW THE INSTRUCTIONS BELOW TO THE LETTER!
 The column headers contain the inputs and output.
 Specify hitPolicy from the rules or set it as "RULE ORDER" if none is specified.
 id attribute of <decision> tag has to be "decision"
@@ -33,10 +45,41 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
 <rules>
     ${request.rules}
 </rules>"""
-        val response: String = dmnGenerator.generateDMNTable(chatRequest)
-        return response
-    }
 
+        val testCases: List<Map<String, Any>> =
+            dmnValidator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
+        var numberOfTries = 1
+        var errors = mutableListOf<String>()
+        var prevDmn: String = ""
+        while (numberOfTries < 5) {
+            try {
+                var response: String =
+                    dmnGenerator.generateDMNTable("$chatRequest ${if (numberOfTries > 1) "Previous attempt failed and DMN was $prevDmn." else ""}")
+                        .replace("\n", "")
+                        .replace("\r", "")
+                        .replace("\t", "")
+                        .removePrefix("```xml")
+                        .removeSuffix("```")
+                logger.info("Generated DMN table: $response")
+                val isValid =
+                    dmnValidator.isValidDMN(response, testCases)
+
+                if (isValid.isEmpty()) {
+                    logger.info("DMN table is valid after $numberOfTries tries.")
+                    return DmnGenerationResponse(response, numberOfTries)
+                } else {
+                    logger.warn("DMN table is not valid: ${isValid.joinToString("; ")}")
+                    errors.addAll(isValid.map { it })
+                    prevDmn = response
+                }
+            } catch (e: Exception) {
+                logger.error(e.message, e)
+                println("Error validating DMN: ${e.message}")
+            }
+            numberOfTries++
+        }
+        throw RuntimeException("Error validating DMN after $numberOfTries tries. Errors: ${errors.joinToString("; ")}")
+    }
 
 
 //    Replace <variable> with <variableNameFromObjectSchema> if it present in rules.

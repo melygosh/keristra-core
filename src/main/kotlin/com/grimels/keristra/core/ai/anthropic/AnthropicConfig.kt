@@ -47,9 +47,9 @@ class AnthropicConfig {
                 embeddingStoreModel,
                 store,
                 resourceLoader,
-                listOf("classpath:education.pdf"),
-                1000,
-                200
+                listOf("classpath:education.pdf", "classpath:KhPI.pdf"),
+                4096,
+                2048
             )
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
@@ -115,8 +115,8 @@ class AnthropicConfig {
         return EmbeddingStoreContentRetriever.builder()
             .embeddingStore(embeddingStore)
             .embeddingModel(embeddingStoreModel)
-            .maxResults(4)
-            .minScore(0.75)
+            .maxResults(6)
+            .minScore(0.8)
             .build()
     }
 
