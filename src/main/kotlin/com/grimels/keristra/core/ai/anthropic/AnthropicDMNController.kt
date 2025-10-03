@@ -46,7 +46,7 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
     ${request.rules}
 </rules>"""
 
-        val testCases: List<Map<String, Any>> =
+        val testCases: List<Map<String, Any?>> =
             dmnValidator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
         var numberOfTries = 1
         var errors = mutableListOf<String>()

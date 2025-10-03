@@ -1,0 +1,188 @@
+{
+  "$id": "https://example.org/schemas/mortgage-application-context.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mortgage Application Context (Raw)",
+  "description": "Raw application data for DMN decisions. LTV and DTI are derived in DMN from these fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Унікальний ідентифікатор студента (ціле число ≥ 1)."
+        },
+        "purpose": {
+          "type": ["string", "null"],
+          "description": "Loan purpose.",
+          "enum": ["purchase", "refinance_rate_term", "refinance_cash_out", null]
+        },
+        "creditScore": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 900,
+          "description": "FICO-like credit score."
+        },
+        "horizonYears": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Expected holding horizon of the property in years."
+        },
+        "incomeStability": {
+          "type": ["string", "null"],
+          "enum": ["stable", "variable", null],
+          "description": "Stability of applicant’s income."
+        },
+        "rateSensitivity": {
+          "type": ["string", "null"],
+          "enum": ["low", "medium", "high", null],
+          "description": "Preference/aversion to rate changes."
+        },
+        "fixedPreference": {
+          "type": ["boolean", "null"],
+          "description": "Explicit preference for fixed rate."
+        },
+        "loan": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "description": "Requested loan details.",
+          "properties": {
+            "amount": {
+              "type": ["number", "null"],
+              "minimum": 0,
+              "description": "Requested principal amount."
+            },
+            "termMonths": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Requested term in months (optional hint)."
+            }
+          }
+        },
+        "collateral": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "description": "Collateral valuation inputs for LTV.",
+          "properties": {
+            "purchasePrice": {
+              "type": ["number", "null"],
+              "minimum": 0,
+              "description": "Contract purchase price."
+            },
+            "appraisedValue": {
+              "type": ["number", "null"],
+              "minimum": 0,
+              "description": "Independent appraisal value."
+            }
+          }
+        },
+        "ltv": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Loan-to-Value ratio in percent (e.g., 80 = 80%). May be provided or left null for DMN to compute."
+        },
+        "dti": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 300,
+          "description": "Back-end Debt-to-Income ratio in percent (e.g., 42 = 42%). May be provided or left null for DMN to compute."
+        },
+        "income": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "description": "Income inputs for DTI.",
+          "properties": {
+            "grossMonthly": {
+              "type": ["number", "null"],
+              "minimum": 0,
+              "description": "Gross monthly income."
+            }
+          }
+        },
+        "housing": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "description": "Monthly housing cost components used in DTI.",
+          "properties": {
+            "principalInterest": { "type": ["number", "null"], "minimum": 0, "description": "PI payment estimate." },
+            "taxes":             { "type": ["number", "null"], "minimum": 0, "description": "Monthly property taxes." },
+            "insurance":         { "type": ["number", "null"], "minimum": 0, "description": "Homeowners insurance." },
+            "hoa":               { "type": ["number", "null"], "minimum": 0, "description": "HOA dues." },
+            "mip":               { "type": ["number", "null"], "minimum": 0, "description": "Mortgage insurance premium." }
+          }
+        },
+        "debts": {
+          "type": ["array", "null"],
+          "description": "Other monthly debt obligations included in back-end DTI.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "type": ["string", "null"],
+                "enum": ["auto", "card", "student", "personal", "alimony", "child_support", "other", null],
+                "description": "Debt category."
+              },
+              "monthlyPayment": {
+                "type": ["number", "null"],
+                "minimum": 0,
+                "description": "Monthly payment amount."
+              },
+              "include": {
+                "type": ["boolean", "null"],
+                "default": true,
+                "description": "Include in DTI calculation."
+              }
+            }
+          }
+        },
+        "cashOutAmount": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Requested cash-out amount for refinance_cash_out."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "application": {
+        "id": 1,
+        "purpose": "purchase",
+        "creditScore": 712,
+        "horizonYears": 12,
+        "incomeStability": "stable",
+        "rateSensitivity": "high",
+        "fixedPreference": true,
+        "loan": { "amount": 240000 },
+        "collateral": { "purchasePrice": 300000, "appraisedValue": 295000 },
+        "income": { "grossMonthly": 7200 },
+        "housing": { "principalInterest": 1400, "taxes": 300, "insurance": 120, "hoa": 0, "mip": 0 },
+        "debts": [
+          { "kind": "auto", "monthlyPayment": 250, "include": true },
+          { "kind": "card", "monthlyPayment": 90, "include": true }
+        ],
+        "ltv": 81.4,
+        "dti": 42.0
+      }
+    },
+    {
+      "application": {
+        "id": 2,
+        "purpose": "refinance_cash_out",
+        "loan": { "amount": 180000 },
+        "collateral": { "appraisedValue": 260000 },
+        "cashOutAmount": 15000,
+        "income": { "grossMonthly": 5200 },
+        "housing": { "principalInterest": 1100, "taxes": 250, "insurance": 90 },
+        "debts": null,
+        "ltv": null,
+        "dti": null
+      }
+    }
+  ]
+}

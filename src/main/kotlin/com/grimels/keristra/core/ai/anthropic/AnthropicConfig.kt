@@ -43,14 +43,14 @@ class AnthropicConfig {
         resourceLoader: ResourceLoader
     ): CommandLineRunner {
         return CommandLineRunner { args: Array<String?>? ->
-            this.loadDocuments(
-                embeddingStoreModel,
-                store,
-                resourceLoader,
-                listOf("classpath:education.pdf", "classpath:KhPI.pdf"),
-                4096,
-                2048
-            )
+//            this.loadDocuments(
+//                embeddingStoreModel,
+//                store,
+//                resourceLoader,
+//                listOf("classpath:education.pdf", "classpath:KhPI.pdf"),
+//                4096,
+//                2048
+//            )
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNCustom2.txt", 256, 0)
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:DMNSpec.xsd")
 //            this.loadDocument(embeddingStoreModel, store, resourceLoader, "classpath:data-set/tuning.jsonl")
@@ -89,7 +89,7 @@ class AnthropicConfig {
         return AnthropicChatModel.builder()
             .apiKey(apiKey)
             .modelName(AnthropicChatModelName.CLAUDE_SONNET_4_20250514)
-            .maxTokens(4096)
+            .maxTokens(8192)
             .cacheSystemMessages(true)
             .build()
     }

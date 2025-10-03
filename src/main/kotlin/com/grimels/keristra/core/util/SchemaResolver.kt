@@ -20,6 +20,9 @@ class SchemaResolver {
             if (context == "education") {
                 return getSchemaByPath("education-schema.json")
             }
+            if (context == "mortgage") {
+                return getSchemaByPath("mortgage-schema.json")
+            }
 
             return getSchemaByPath("user-schema.xml")
         }
