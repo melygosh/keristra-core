@@ -34,6 +34,8 @@ dependencies {
     implementation("dev.langchain4j:langchain4j:1.5.0")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-anthropic
     implementation("dev.langchain4j:langchain4j-anthropic:1.5.0")
+    // OpenAI-compatible endpoints: Ollama, LM Studio, llama.cpp server
+    implementation("dev.langchain4j:langchain4j-open-ai:1.5.0")
     implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:1.5.0-beta11")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-voyage-ai
 //    implementation("dev.langchain4j:langchain4j-voyage-ai:1.5.0-beta11")

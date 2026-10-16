@@ -45,6 +45,8 @@ Baseline **V0 must remain reproducible** — it is the dissertation code. Do not
 | F11 | DI style | Nullable `@Autowired private val x: T? = null` field injection; `Logger` injected as a bean. | Move to constructor injection. |
 | F12 | `DecisionTableEvaluationService`, `SchemaResolver` | `if (context == "...")` chains per domain. | Replace with a registry keyed by domain id. |
 | F14 | `validation/DmnValidator.kt` `isValidDMN()` | If the DMN fails to parse, `validate()` returns `null` and `isValidDMN()` maps it to an empty error list, so the controller **accepts** the unparseable table. Found while implementing step 2; reproduced by `LenientValidatorTest`. | Malformed tables could be counted as successes in V0 runs; check how often generation produced unparseable XML in the logs before quoting V0 success rates. |
+| F15 | Anthropic API, 2026-10-16 | `claude-sonnet-4-20250514` (the V0 model, F8) now returns `not_found_error`. Found by the step 3 smoke run. | Step 7 cannot rerun V0 on its own model. Closest still-served models that accept sampling parameters: `claude-sonnet-4-5-20250929`, `claude-sonnet-4-6`. The paper has to say the V0 numbers are not reproducible on the original model. |
+| F16 | Anthropic API, 2026-10-16 | Current models (Sonnet 5.5, Opus 5.5, Haiku 5.5, Sonnet 5, Opus 5) reject non-default `temperature`/`top_p`/`top_k` with a 400, and run adaptive thinking by default (it counts towards `max_tokens`; depth is set by `output_config.effort`). | `"temperature": 0.7` in the run config (section 4.6) only applies to local models and Claude ≤ 4.6. For current Claude models the sampling factor is effort, not temperature — log it. `LlmClient` sends exactly what it is given and does not strip parameters silently. |
 | F13 | `KeristraCoreApplicationTests.kt` | Experiments live in `contextLoads()` with large commented blocks; `validate_experiment_Mortgage` always returns `true`. | Replace with a dedicated experiment runner (section 4.6). |
 
 ## 3. Validator semantics (strict mode)
@@ -179,6 +181,7 @@ Steps 1–6 are a prerequisite for any new numbers. Steps 7–9 can then run in 
 
 ## 8. Open questions for Vlad
 
-- The exact Anthropic model id for the new runs (latest available at run time; it must be pinned and logged).
+- The exact Anthropic model id for the new runs (latest available at run time; it must be pinned and logged). See F15/F16: a current model means no temperature control (effort instead); a ≤ 4.6 model keeps temperature but is closer to retirement.
+- V0 reproduction (step 7) after F15: rerun on `claude-sonnet-4-5-20250929` as the nearest substitute, or drop step 7 and report V0 numbers as historical only?
 - RAG: re-enable it with a defined corpus as a factor, or declare the new experiments RAG-free (simpler, and honest given F7)?
 - Is it OK to make the repository public later (or publish a sanitized snapshot) for the EN paper's reproducibility section? The `TorqueITS` org ownership matters here.
