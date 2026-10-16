@@ -44,6 +44,7 @@ Baseline **V0 must remain reproducible** — it is the dissertation code. Do not
 | F10 | `build.gradle.kts:43,49` | `log4j-api`/`log4j-core` **2.6.1** — inside the Log4Shell range (CVE-2021-44228 affects 2.0-beta9 … 2.14.1). Spring Boot already uses Logback. | Remove both dependencies. |
 | F11 | DI style | Nullable `@Autowired private val x: T? = null` field injection; `Logger` injected as a bean. | Move to constructor injection. |
 | F12 | `DecisionTableEvaluationService`, `SchemaResolver` | `if (context == "...")` chains per domain. | Replace with a registry keyed by domain id. |
+| F14 | `validation/DmnValidator.kt` `isValidDMN()` | If the DMN fails to parse, `validate()` returns `null` and `isValidDMN()` maps it to an empty error list, so the controller **accepts** the unparseable table. Found while implementing step 2; reproduced by `LenientValidatorTest`. | Malformed tables could be counted as successes in V0 runs; check how often generation produced unparseable XML in the logs before quoting V0 success rates. |
 | F13 | `KeristraCoreApplicationTests.kt` | Experiments live in `contextLoads()` with large commented blocks; `validate_experiment_Mortgage` always returns `true`. | Replace with a dedicated experiment runner (section 4.6). |
 
 ## 3. Validator semantics (strict mode)
