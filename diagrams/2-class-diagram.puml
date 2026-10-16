@@ -1,0 +1,115 @@
+@startuml class-diagram
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam roundCorner 8
+skinparam nodesep 12
+skinparam ranksep 25
+
+' ===== REST Controllers =====
+package "REST API" #E8F5E9 {
+    class AnthropicDMNController <<@RestController>> {
+        - dmnGenerator: AnthropicDMNService
+        - dmnValidator: DmnValidator
+        --
+        + generateDMNTableContent(request): DmnGenerationResponse
+    }
+
+    class DecisionTableController <<@RestController>> {
+        - decisionService: DecisionTableEvaluationService
+        - dmnValidator: DmnValidator
+        --
+        + test(request): List<DmnItemResponse>
+        + validate(request): List<DmnValidationResult>
+    }
+}
+
+' ===== Service Layer =====
+package "Service" #E3F2FD {
+    class DmnValidator <<@Service>> {
+        - dmnEngine: DmnEngine
+        - anthropicDMNService: AnthropicDMNService
+        --
+        + isValidDMN(dmn, testCases): List<String>
+        + validate(dmn, testCases): List<DmnValidationResult>
+        + generateTestCases(input, schema): List<Map>
+    }
+
+    class DecisionTableEvaluationService <<@Service>> {
+        - dmnEngine: DmnEngine
+        - domainRepos: Map<String, DomainJsonRepo>
+        --
+        + evaluate<T>(dmn, context): List<DmnItemResponse<T>>
+        - evaluate(decision, values): DmnDecisionTableResult
+    }
+
+    interface AnthropicDMNService <<LangChain4J>> {
+        + generateDMNTable(request): String
+        + generateEntities(request): String
+    }
+}
+
+' ===== DTOs (compact) =====
+package "DTO" #ECEFF1 {
+    class DmnGenerationRequest <<data>>
+    class DmnGenerationResponse <<data>>
+    class DecisionTableTestRequest <<data>>
+    class DmnValidationRequest <<data>>
+    class "DmnItemResponse<T>" as DmnItemResponse <<data>>
+    class DmnValidationResult <<data>>
+
+    DmnGenerationRequest -[hidden]down- DecisionTableTestRequest
+    DecisionTableTestRequest -[hidden]down- DmnItemResponse
+    DmnGenerationResponse -[hidden]down- DmnValidationRequest
+    DmnValidationRequest -[hidden]down- DmnValidationResult
+    DmnGenerationRequest -[hidden]right- DmnGenerationResponse
+    DecisionTableTestRequest -[hidden]right- DmnValidationRequest
+    DmnItemResponse -[hidden]right- DmnValidationResult
+}
+
+' ===== Bottom layer =====
+package "Repository" #FFF3E0 {
+    class DomainJsonRepo <<@Component>> {
+        - entities: List<DomainEntity>
+        --
+        + getEntities(): List<DomainEntity>
+    }
+}
+
+package "Domain Model" #F3E5F5 {
+    class DomainEntity <<data class>> {
+        + fields: Map<String, Any?>
+    }
+}
+
+package "Utility" #ECEFF1 {
+    class SchemaResolver {
+        {static} + getSchema(context): String
+    }
+    class ObjectUtils {
+        {static} + toMap<T>(obj): Map<String, Any?>
+    }
+}
+
+' ===== Layout =====
+"REST API" -[hidden]down- "Service"
+"Service" -[hidden]down- "Repository"
+"Service" -[hidden]down- "DTO"
+"Repository" -[hidden]down- "Domain Model"
+
+' ===== Relationships =====
+AnthropicDMNController --> DmnValidator
+AnthropicDMNController --> AnthropicDMNService
+AnthropicDMNController --> SchemaResolver
+
+DecisionTableController --> DecisionTableEvaluationService
+DecisionTableController --> DmnValidator
+
+DmnValidator --> AnthropicDMNService
+DecisionTableEvaluationService --> DomainJsonRepo
+DecisionTableEvaluationService --> ObjectUtils
+DomainJsonRepo --> DomainEntity
+
+@enduml

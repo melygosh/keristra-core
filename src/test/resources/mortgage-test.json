@@ -1,0 +1,122 @@
+[
+  {
+    "application": {
+      "id": 1,
+      "purpose": "purchase",
+      "creditScore": 700,
+      "horizonYears": 12,
+      "incomeStability": "stable",
+      "fixedPreference": true,
+      "rateSensitivity": "low",
+      "ltv": 82,
+      "dti": 36
+    },
+    "description": "Fixed30 через явну фіксовану перевагу",
+    "expected": "Fixed30"
+  },
+  {
+    "application": {
+      "id": 2,
+      "purpose": "purchase",
+      "creditScore": 705,
+      "horizonYears": 15,
+      "incomeStability": "variable",
+      "fixedPreference": false,
+      "rateSensitivity": "high",
+      "ltv": 78,
+      "dti": 28
+    },
+    "description": "Fixed30 через високу чутливість до ставки",
+    "expected": "Fixed30"
+  },
+  {
+    "application": {
+      "id": 3,
+      "purpose": "purchase",
+      "creditScore": 730,
+      "horizonYears": 6,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 79,
+      "dti": 33
+    },
+    "description": "ARM7/1: короткий горизонт + стабільний профіль",
+    "expected": "ARM7/1"
+  },
+  {
+    "application": {
+      "id": 4,
+      "purpose": "purchase",
+      "creditScore": 760,
+      "horizonYears": 5,
+      "incomeStability": "stable",
+      "fixedPreference": true,
+      "rateSensitivity": "low",
+      "ltv": 70,
+      "dti": 25
+    },
+    "description": "Конфлікт ARM7/1 vs Fixed (пріоритет → Fixed30)\nВиконуються умови ARM7/1, але fixedPreference=true → очікувано: Fixed30",
+    "expected": "Fixed30"
+  },
+  {
+    "application": {
+      "id": 5,
+      "purpose": "purchase",
+      "creditScore": 630,
+      "horizonYears": 10,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 75,
+      "dti": 30
+    },
+    "description": "ManualReview через низький кредитний бал\nОчікувано: ManualReview (бо creditScore < 640)",
+    "expected": "ManualReview"
+  },
+  {
+    "application": {
+      "id": 6,
+      "purpose": "purchase",
+      "creditScore": 700,
+      "horizonYears": 8,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "medium",
+      "ltv": 78,
+      "dti": 51
+    },
+    "description": "ManualReview через високий DTI\nОчікувано: ManualReview (бо dti > 50)",
+    "expected": "ManualReview"
+  },
+  {
+    "application": {
+      "id": 7,
+      "purpose": "purchase",
+      "creditScore": 750,
+      "horizonYears": 9,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 96,
+      "dti": 32
+    },
+    "description": "ManualReview через високий LTV\nОчікувано: ManualReview (бо ltv > 95)",
+    "expected": "ManualReview"
+  },
+  {
+    "application": {
+      "id": 8,
+      "purpose": "purchase",
+      "creditScore": 680,
+      "horizonYears": 9,
+      "incomeStability": "variable",
+      "fixedPreference": false,
+      "rateSensitivity": "medium",
+      "ltv": 85,
+      "dti": 40
+    },
+    "description": "Нейтральний сценарій (жодне правило не підходить)\nОчікувано: null або дефолтне рішення (залежно від політики у DMN)",
+    "expected": null
+  }
+]

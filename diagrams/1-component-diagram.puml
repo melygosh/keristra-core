@@ -1,0 +1,66 @@
+@startuml component-diagram
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam arrowThickness 1.5
+skinparam roundCorner 8
+
+package "REST API Layer" as api #E8F5E9 {
+    component [AnthropicDMN\nController] as ctrl_anthropic <<@RestController>>
+    component [DecisionTable\nController] as ctrl_decision <<@RestController>>
+}
+
+package "Service Layer" as services #E3F2FD {
+    component [AnthropicDMN\nService] as svc_anthropic <<LangChain4J AiService>>
+    component [DecisionTableEvaluation\nService] as svc_evaluation <<@Service>>
+    component [DmnValidator] as svc_validator <<@Service>>
+}
+
+package "Configuration" as config #FFF3E0 {
+    component [AnthropicConfig] as cfg_anthropic <<@Configuration>>
+    component [KeristraConfig] as cfg_keristra <<@Configuration>>
+}
+
+package "Domain Model & Repositories" as domain #F3E5F5 {
+    component [DomainJsonRepo] as repo_domain <<@Component>>
+    component [SchemaResolver] as schema_resolver
+}
+
+package "Utility" as util #ECEFF1 {
+    component [ObjectUtils] as obj_utils
+}
+
+cloud "Anthropic Claude API" as claude #FFE0B2
+database "JSON Data Files\n(resources/data-set/)" as json_data #BBDEFB
+database "Schema Files\n(resources/schema/)" as schema_files #BBDEFB
+component [Camunda DMN\nEngine] as dmn_engine <<DmnEngine>> #FFF9C4
+
+' --- REST -> Services ---
+ctrl_anthropic --> svc_anthropic : generateDMNTable()
+ctrl_anthropic --> svc_validator : generateTestCases()\nisValidDMN()
+ctrl_decision --> svc_evaluation : evaluate()
+ctrl_decision --> svc_validator : validate()
+
+' --- Service internals ---
+svc_validator --> svc_anthropic : generateEntities()
+svc_validator --> dmn_engine : parseDecision()\nevaluateDecision()
+svc_evaluation --> dmn_engine : parseDecision()\nevaluateDecisionTable()
+
+' --- Evaluation -> Repos ---
+svc_evaluation --> repo_domain : getData()
+
+' --- Config -> Beans ---
+cfg_anthropic ..> svc_anthropic : <<creates>>
+cfg_anthropic ..> claude : API Key
+cfg_keristra ..> dmn_engine : <<creates>>
+
+' --- External ---
+svc_anthropic --> claude : HTTP/REST
+repo_domain --> json_data : *.json
+schema_resolver --> schema_files : *.json / *.xml
+ctrl_anthropic --> schema_resolver : getSchema()
+svc_evaluation --> obj_utils : toMap()
+
+@enduml

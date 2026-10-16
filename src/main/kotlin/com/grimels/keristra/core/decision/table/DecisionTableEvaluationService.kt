@@ -3,6 +3,7 @@ package com.grimels.keristra.core.decision.table
 import com.grimels.keristra.core.model.bmi.BmiJsonRepo
 import com.grimels.keristra.core.model.education.StudentApplicationJsonRepo
 import com.grimels.keristra.core.model.hotel.HotelRepo
+import com.grimels.keristra.core.model.mortgage.MortgageJsonRepo
 import com.grimels.keristra.core.model.user.UserJsonRepo
 import com.grimels.keristra.core.model.vap.VapJsonRepo
 import com.grimels.keristra.core.rest.bean.DmnItemResponse
@@ -38,6 +39,9 @@ class DecisionTableEvaluationService {
     private val hotelRepo: HotelRepo? = null
 
     @Autowired
+    private val mortgageRepo: MortgageJsonRepo? = null
+
+    @Autowired
     private val studentApplicationRepo: StudentApplicationJsonRepo? = null
 
     fun <T> evaluate(decisionTableContent: String, context: String): List<DmnItemResponse<T>>? {
@@ -47,6 +51,19 @@ class DecisionTableEvaluationService {
             ?: throw IllegalArgumentException("Decision Table does not exist")
 
         return toEvaluationResult(decisionTable, context) as List<DmnItemResponse<T>>
+    }
+
+    fun <T : Any> evaluate(decisionTableContent: String, testCases: List<T>): List<DmnItemResponse<T>>? {
+        val decisionTableModel: DmnModelInstance =
+            Dmn.readModelFromStream(decisionTableContent.byteInputStream(StandardCharsets.UTF_8))
+        val decisionTable: DmnDecision = dmnEngine?.parseDecision("decision", decisionTableModel)
+            ?: throw IllegalArgumentException("Decision Table does not exist")
+
+        val results = testCases.map { testCase ->
+            val evaluation = evaluate(decisionTable, ObjectUtils.toMap(testCase))
+            DmnItemResponse(testCase, evaluation)
+        }
+        return results
     }
 
     private fun toEvaluationResult(decisionTable: DmnDecision, context: String): List<DmnItemResponse<Any>> {
@@ -67,6 +84,11 @@ class DecisionTableEvaluationService {
         }
         if (context == "education") {
             return studentApplicationRepo?.getStudentApplicationList()
+                ?.map { application -> DmnItemResponse(application, evaluate(decisionTable, ObjectUtils.toMap(application))) }
+                ?: emptyList()
+        }
+        if (context == "mortgage") {
+            return mortgageRepo?.getMortgageList()
                 ?.map { application -> DmnItemResponse(application, evaluate(decisionTable, ObjectUtils.toMap(application))) }
                 ?: emptyList()
         }

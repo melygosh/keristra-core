@@ -1,0 +1,88 @@
+@startuml sequence-dmn-evaluation
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam sequenceArrowThickness 1.5
+skinparam roundCorner 8
+skinparam maxMessageSize 220
+
+title Діаграма послідовності: оцінка DMN-таблиці на контекстних даних
+
+actor "Клієнт" as client
+participant "DecisionTable\nController" as ctrl #E8F5E9
+participant "DecisionTableEvaluation\nService" as svc #E3F2FD
+participant "MortgageJsonRepo" as repo #F3E5F5
+participant "ObjectUtils" as utils #ECEFF1
+participant "Camunda\nDMN Engine" as dmn #FFF9C4
+database "mortgage.json" as json #BBDEFB
+
+client -> ctrl : POST /api/decision-tables/test\n{decisionTable, context: "mortgage"}
+activate ctrl
+
+ctrl -> svc : evaluate(decisionTable, "mortgage")
+activate svc
+
+svc -> dmn : parseDecision(dmnXml)
+activate dmn
+dmn --> svc : DmnDecision
+deactivate dmn
+
+note right of svc
+    Маршрутизація за контекстом:
+    "mortgage" → mortgageRepo
+    "education" → studentApplicationRepo
+    "bmi" → bmiRepo
+    ...
+end note
+
+svc -> repo : getMortgageList()
+activate repo
+
+alt Перше завантаження (lazy init)
+    repo -> json : Читання файлу
+    activate json
+    json --> repo : JSON
+    deactivate json
+    note right of repo
+        Десеріалізація Gson:
+        JSON → List<Mortgage>
+    end note
+end
+
+repo --> svc : List<Mortgage>
+deactivate repo
+
+loop Для кожного об'єкта Mortgage
+    svc -> utils : toMap(mortgage)
+    activate utils
+    note right of utils
+        Рекурсивна конвертація
+        data class → Map<String, Any?>
+        через Kotlin Reflection
+    end note
+    utils --> svc : Map<String, Any?>
+    deactivate utils
+
+    svc -> dmn : evaluateDecisionTable(\n  decision, variableMap)
+    activate dmn
+    note right of dmn
+        Виконання DMN FEEL-виразів
+        над вхідними змінними
+    end note
+    dmn --> svc : DmnDecisionTableResult
+    deactivate dmn
+
+    note right of svc
+        Формування DmnItemResponse:
+        {item: Mortgage, evaluation: Result}
+    end note
+end
+
+svc --> ctrl : List<DmnItemResponse<Mortgage>>
+deactivate svc
+
+ctrl --> client : 200 OK\nJSON масив результатів оцінки
+deactivate ctrl
+
+@enduml

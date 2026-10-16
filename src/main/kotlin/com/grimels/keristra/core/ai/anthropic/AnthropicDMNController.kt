@@ -46,15 +46,13 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
     ${request.rules}
 </rules>"""
 
-        val testCases: List<Map<String, Any?>> =
-            dmnValidator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
         var numberOfTries = 1
-        var errors = mutableListOf<String>()
-        var prevDmn: String = ""
-        while (numberOfTries < 5) {
+        while (numberOfTries < 10) {
             try {
+                val testCases: List<Map<String, Any?>> =
+                    dmnValidator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
                 var response: String =
-                    dmnGenerator.generateDMNTable("$chatRequest ${if (numberOfTries > 1) "Previous attempt failed and DMN was $prevDmn." else ""}")
+                    dmnGenerator.generateDMNTable("$chatRequest ")
                         .replace("\n", "")
                         .replace("\r", "")
                         .replace("\t", "")
@@ -69,16 +67,14 @@ Use <schema> to find the correct <variable> path for <expression> from the <rule
                     return DmnGenerationResponse(response, numberOfTries)
                 } else {
                     logger.warn("DMN table is not valid: ${isValid.joinToString("; ")}")
-                    errors.addAll(isValid.map { it })
-                    prevDmn = response
                 }
             } catch (e: Exception) {
                 logger.error(e.message, e)
-                println("Error validating DMN: ${e.message}")
+                logger.error("Error validating DMN: ${e.message}")
             }
             numberOfTries++
         }
-        throw RuntimeException("Error validating DMN after $numberOfTries tries. Errors: ${errors.joinToString("; ")}")
+        throw RuntimeException("Error validating DMN after $numberOfTries tries.")
     }
 
 

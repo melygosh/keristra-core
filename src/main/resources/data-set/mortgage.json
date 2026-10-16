@@ -1,90 +1,106 @@
 [
   {
-    "id": 1,
-    "purpose": "purchase",
-    "creditScore": 700,
-    "horizonYears": 12,
-    "incomeStability": "stable",
-    "fixedPreference": true,
-    "rateSensitivity": "low",
-    "ltv": 82,
-    "dti": 36
+    "application": {
+      "id": 1,
+      "purpose": "purchase",
+      "creditScore": 700,
+      "horizonYears": 12,
+      "incomeStability": "stable",
+      "fixedPreference": true,
+      "rateSensitivity": "low",
+      "ltv": 82,
+      "dti": 36
+    }
   },
   {
-    "id": 2,
-    "purpose": "purchase",
-    "creditScore": 705,
-    "horizonYears": 15,
-    "incomeStability": "variable",
-    "fixedPreference": false,
-    "rateSensitivity": "high",
-    "ltv": 78,
-    "dti": 28
+    "application": {
+      "id": 2,
+      "purpose": "purchase",
+      "creditScore": 705,
+      "horizonYears": 15,
+      "incomeStability": "variable",
+      "fixedPreference": false,
+      "rateSensitivity": "high",
+      "ltv": 78,
+      "dti": 28
+    }
   },
   {
-    "id": 3,
-    "purpose": "purchase",
-    "creditScore": 730,
-    "horizonYears": 6,
-    "incomeStability": "stable",
-    "fixedPreference": false,
-    "rateSensitivity": "low",
-    "ltv": 79,
-    "dti": 33
+    "application": {
+      "id": 3,
+      "purpose": "purchase",
+      "creditScore": 730,
+      "horizonYears": 6,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 79,
+      "dti": 33
+    }
   },
   {
-    "id": 4,
-    "purpose": "purchase",
-    "creditScore": 760,
-    "horizonYears": 5,
-    "incomeStability": "stable",
-    "fixedPreference": true,
-    "rateSensitivity": "low",
-    "ltv": 70,
-    "dti": 25
+    "application": {
+      "id": 4,
+      "purpose": "purchase",
+      "creditScore": 760,
+      "horizonYears": 5,
+      "incomeStability": "stable",
+      "fixedPreference": true,
+      "rateSensitivity": "low",
+      "ltv": 70,
+      "dti": 25
+    }
   },
   {
-    "id": 5,
-    "purpose": "purchase",
-    "creditScore": 630,
-    "horizonYears": 10,
-    "incomeStability": "stable",
-    "fixedPreference": false,
-    "rateSensitivity": "low",
-    "ltv": 75,
-    "dti": 30
+    "application": {
+      "id": 5,
+      "purpose": "purchase",
+      "creditScore": 630,
+      "horizonYears": 10,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 75,
+      "dti": 30
+    }
   },
   {
-    "id": 6,
-    "purpose": "purchase",
-    "creditScore": 700,
-    "horizonYears": 8,
-    "incomeStability": "stable",
-    "fixedPreference": false,
-    "rateSensitivity": "medium",
-    "ltv": 78,
-    "dti": 51
+    "application": {
+      "id": 6,
+      "purpose": "purchase",
+      "creditScore": 700,
+      "horizonYears": 8,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "medium",
+      "ltv": 78,
+      "dti": 51
+    }
   },
   {
-    "id": 7,
-    "purpose": "purchase",
-    "creditScore": 750,
-    "horizonYears": 9,
-    "incomeStability": "stable",
-    "fixedPreference": false,
-    "rateSensitivity": "low",
-    "ltv": 96,
-    "dti": 32
+    "application": {
+      "id": 7,
+      "purpose": "purchase",
+      "creditScore": 750,
+      "horizonYears": 9,
+      "incomeStability": "stable",
+      "fixedPreference": false,
+      "rateSensitivity": "low",
+      "ltv": 96,
+      "dti": 32
+    }
   },
   {
-    "id": 8,
-    "purpose": "purchase",
-    "creditScore": 680,
-    "horizonYears": 9,
-    "incomeStability": "variable",
-    "fixedPreference": false,
-    "rateSensitivity": "medium",
-    "ltv": 85,
-    "dti": 40
+    "application": {
+      "id": 8,
+      "purpose": "purchase",
+      "creditScore": 680,
+      "horizonYears": 9,
+      "incomeStability": "variable",
+      "fixedPreference": false,
+      "rateSensitivity": "medium",
+      "ltv": 85,
+      "dti": 40
+    }
   }
 ]

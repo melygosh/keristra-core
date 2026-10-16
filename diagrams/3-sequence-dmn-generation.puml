@@ -1,0 +1,111 @@
+@startuml sequence-dmn-generation
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam sequenceArrowThickness 1.5
+skinparam roundCorner 8
+skinparam maxMessageSize 220
+skinparam sequenceGroupBorderThickness 2
+
+title Діаграма послідовності: генерація DMN-таблиці з ітеративною валідацією
+
+actor "Клієнт" as client
+participant "AnthropicDMN\nController" as ctrl #E8F5E9
+participant "SchemaResolver" as schema #ECEFF1
+participant "DmnValidator" as validator #E3F2FD
+participant "AnthropicDMN\nService" as ai_svc #E3F2FD
+participant "Anthropic\nClaude API" as claude #FFE0B2
+participant "Camunda\nDMN Engine" as dmn #FFF9C4
+
+client -> ctrl : POST /api/anthropic-dmn/generate\n{rules, context}
+activate ctrl
+
+ctrl -> schema : getSchema(context)
+activate schema
+schema --> ctrl : schemaContent
+deactivate schema
+
+note right of ctrl
+    Формування промпту:
+    rules + schema → prompt
+end note
+
+group Ітеративна валідація [max 10 спроб]
+
+    ctrl -> validator : generateTestCases(rules, schema)
+    activate validator
+    validator -> ai_svc : generateEntities(prompt)
+    activate ai_svc
+    ai_svc -> claude : HTTP POST (LangChain4J)\n@SystemMessage: інструкції генерації тест-кейсів
+    activate claude
+    claude --> ai_svc : JSON масив тест-кейсів
+    deactivate claude
+    ai_svc --> validator : rawJson
+    deactivate ai_svc
+
+    note right of validator
+        Очищення JSON:
+        видалення ```json обгорток
+        парсинг у List<Map<String, Any?>>
+    end note
+
+    validator --> ctrl : testCases: List<Map>
+    deactivate validator
+
+    ctrl -> ai_svc : generateDMNTable(prompt)
+    activate ai_svc
+    ai_svc -> claude : HTTP POST (LangChain4J)\n@SystemMessage: інструкції генерації DMN
+    activate claude
+    claude --> ai_svc : Camunda DMN 1.3 XML
+    deactivate claude
+    ai_svc --> ctrl : rawXml
+    deactivate ai_svc
+
+    note right of ctrl
+        Очищення XML:
+        видалення ```xml обгорток
+    end note
+
+    ctrl -> validator : isValidDMN(dmnXml, testCases)
+    activate validator
+
+    validator -> dmn : parseDecision(dmnXml)
+    activate dmn
+    dmn --> validator : DmnDecision
+    deactivate dmn
+
+    loop Для кожного тест-кейсу
+        validator -> dmn : evaluateDecisionTable(\n  decision, variableMap)
+        activate dmn
+        dmn --> validator : DmnDecisionTableResult
+        deactivate dmn
+
+        note right of validator
+            Порівняння expected vs actual
+            з гнучкою типізацією
+            (equalsIgnoreType)
+        end note
+    end
+
+    validator --> ctrl : errors: List<String>
+    deactivate validator
+
+    alt errors порожній (DMN валідний)
+        ctrl --> client : 200 OK\n{decisionTableContent, numberOfTries}
+    else errors не порожній (DMN невалідний)
+        note right of ctrl
+            Логування помилок,
+            повторна ітерація
+        end note
+    end
+
+end
+
+alt Всі 10 спроб невдалі
+    ctrl --> client : 500 Error\n"Failed to generate valid DMN"
+end
+
+deactivate ctrl
+
+@enduml

@@ -1,44 +1,50 @@
 package com.grimels.keristra.core.model.mortgage
 
-data class Mortgage(val application: Application)
+open class Mortgage {
+    var application: Application
 
-data class Application(
-    val id: Int,
-    val purpose: String,
-    val creditScore: Int,
-    val horizonYears: Int,
-    val incomeStability: String,
-    val rateSensitivity: String,
-    val fixedPreference: String,
-    val loan: Amount,
-    val collateral: Collateral,
-    val cashOutAmount: Double? = null,
-    val income: Amount,
-    val housing: Housing,
-    val debts: List<Debt>? = null,
-    val dti: Double? = null,
-    val ltv: Double? = null,
+    constructor(application: Application) {
+        this.application = application
+    }
+}
+
+class Application(
+    var id: Int,
+    var purpose: String,
+    var creditScore: Int,
+    var horizonYears: Int,
+    var incomeStability: String,
+    var rateSensitivity: String,
+    var fixedPreference: String,
+    var loan: Amount,
+    var collateral: Collateral,
+    var cashOutAmount: Double? = null,
+    var income: Amount,
+    var housing: Housing,
+    var debts: List<Debt>? = null,
+    var dti: Double? = null,
+    var ltv: Double? = null,
 )
 
-data class Amount (
-    val amount: Double,
+class Amount (
+    var amount: Double,
 )
 
-data class Collateral (
-    val purchasePrice: Double? = null,
-    val appraisedValue: Double,
+class Collateral (
+    var purchasePrice: Double? = null,
+    var appraisedValue: Double,
 )
 
-data class Housing (
-    val principalInterest: Double,
-    val taxes: Double,
-    val insurance: Double,
-    val hoa: Double? = 0.0,
-    val mip: Double? = 0.0,
+class Housing (
+    var principalInterest: Double,
+    var taxes: Double,
+    var insurance: Double,
+    var hoa: Double? = 0.0,
+    var mip: Double? = 0.0,
 )
 
-data class Debt (
-    val kind: String,
-    val monthlyPayment: Double,
-    val include: Boolean,
+class Debt (
+    var kind: String,
+    var monthlyPayment: Double,
+    var include: Boolean,
 )
