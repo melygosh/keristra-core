@@ -1,5 +1,6 @@
 package com.grimels.keristra.core.rest
 
+import com.grimels.keristra.core.ai.anthropic.V0TestCaseGenerator
 import com.grimels.keristra.core.decision.table.DecisionTableEvaluationService
 import com.grimels.keristra.core.rest.bean.DecisionTableTestRequest
 import com.grimels.keristra.core.rest.bean.DmnItemResponse
@@ -22,6 +23,8 @@ class DecisionTableController {
     private val decisionService: DecisionTableEvaluationService? = null
     @Autowired
     private val dmnValidator: DmnValidator? = null
+    @Autowired
+    private val testCaseGenerator: V0TestCaseGenerator? = null
 
     @RequestMapping(value = ["/test"], produces = ["application/json"], method = [RequestMethod.POST])
     fun test(@RequestBody bean: DecisionTableTestRequest): List<DmnItemResponse<Any>>? {
@@ -33,11 +36,11 @@ class DecisionTableController {
         if (request.rules == null || request.context == null) {
             throw IllegalArgumentException("Rules and context are required")
         }
-        if (dmnValidator == null) {
+        if (dmnValidator == null || testCaseGenerator == null) {
             throw IllegalArgumentException("DmnValidator is not available")
         }
         val schema = SchemaResolver.getSchema(request.context)
-        val testCases = dmnValidator.generateTestCases(request.rules, schema);
+        val testCases = testCaseGenerator.generateTestCases(request.rules, schema);
         val results = dmnValidator.validate(request.decisionTableContent, testCases)
         return results
     }

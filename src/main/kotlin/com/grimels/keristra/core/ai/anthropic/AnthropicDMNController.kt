@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class AnthropicDMNController(
     private val dmnGenerator: AnthropicDMNService,
     private val dmnValidator: DmnValidator,
+    private val testCaseGenerator: V0TestCaseGenerator,
     private val logger: Logger
 ) {
 
@@ -29,28 +30,13 @@ class AnthropicDMNController(
         if (request.rules == null || request.context == null) {
             throw IllegalArgumentException("Rules and context are required")
         }
-        var chatRequest =
-            """RETURN ONLY AND ONLY CAMUNDA XML CODE IT'S VERY IMPORTANT! Generate Camunda DMN table that can be applied to following schema and rules. Make sure the table can be read horizontally.
-USE <schema> to find the correct <variable> path for <expression> from the <rules>. If <variable> is not present in the <schema> then try to find how to calculate it from knowledge you have.
-IT IS VERY IMPORTANT THAT YOU FOLLOW THE INSTRUCTIONS BELOW TO THE LETTER!
-The column headers contain the inputs and output.
-Specify hitPolicy from the rules or set it as "RULE ORDER" if none is specified.
-id attribute of <decision> tag has to be "decision"
-If rule don't start with "create " and contains the name of the variable from object schema then replace it in <variableNameFromObjectSchema>
-If <outputEntry> <text> is a string type then wrap the value in double quotes.
-Use <schema> to find the correct <variable> path for <expression> from the <rules>.
-<schema>
-    ${SchemaResolver.getSchema(request.context)}
-</schema>
-<rules>
-    ${request.rules}
-</rules>"""
+        var chatRequest = V0Prompts.dmnUserMessage(request.rules, SchemaResolver.getSchema(request.context))
 
         var numberOfTries = 1
         while (numberOfTries < 10) {
             try {
                 val testCases: List<Map<String, Any?>> =
-                    dmnValidator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
+                    testCaseGenerator.generateTestCases(request.rules, SchemaResolver.getSchema(request.context));
                 var response: String =
                     dmnGenerator.generateDMNTable("$chatRequest ")
                         .replace("\n", "")
