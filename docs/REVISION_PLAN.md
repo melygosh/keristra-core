@@ -113,6 +113,10 @@ enum class RepairStrategy { STATIC_ORACLE, PAIRED_REGEN, ESCALATE_ON_STABLE_DISA
 - `STATIC_ORACLE` (A): tests are generated once per cycle; only the DMN is regenerated on failure.
 - `PAIRED_REGEN` (B): both tracks are regenerated on failure (current behaviour).
 - `ESCALATE_ON_STABLE_DISAGREEMENT` (V3): if the semantic hash of the DMN is unchanged for `k` attempts **and** the failing test inputs fall in the same region, stop and return `AMBIGUOUS` with the conflicting cases instead of regenerating the oracle.
+- Decided in step 5 (Claude Code, 2026-10-16; revisit for the paper):
+  - **Region** of a failing case = its disagreement signature: outcome + expected + actual. V3 escalates when the semantic hash is identical for `k` consecutive attempts (default `k = 2`) and all of them share at least one signature; the conflicting cases returned are the latest attempt's failures in those shared regions.
+  - **V3 regenerates both tracks** (like B). Only independent oracles that keep disagreeing with the same logic in the same way point at ambiguous rule text; with a fixed oracle (A) a repeated disagreement would only measure the DMN generator's stubbornness.
+  - A test suite that does not parse fails the attempt without generating a DMN (V0 order: tests first); under A the oracle is the first suite that parses. Any other track exception (transport, auth, `not_found`) ends the cycle with `ERROR`.
 - The retry budget is configurable (default 3; the current code uses 10).
 - Cycle outcome: `ACCEPTED`, `REJECTED_BUDGET`, `AMBIGUOUS`, `ERROR`.
 
