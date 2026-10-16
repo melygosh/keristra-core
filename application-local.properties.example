@@ -1,0 +1,5 @@
+# Copy to ./application-local.properties (git-ignored) and fill in,
+# or export ANTHROPIC_API_KEY / OPENAI_API_KEY / VOYAGE_API_KEY instead.
+anthropic.api.key=
+openai.api.key=
+voyage.api.key=

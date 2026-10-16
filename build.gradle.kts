@@ -35,18 +35,6 @@ dependencies {
     implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:1.5.0-beta11")
     // https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-voyage-ai
 //    implementation("dev.langchain4j:langchain4j-voyage-ai:1.5.0-beta11")
-    // <dependency>
-    //    <groupId>org.apache.logging.log4j</groupId>
-    //    <artifactId>log4j-api</artifactId>
-    //    <version>2.6.1</version>
-    //</dependency>
-    implementation("org.apache.logging.log4j:log4j-api:2.6.1")
-    //<dependency>
-    //    <groupId>org.apache.logging.log4j</groupId>
-    //    <artifactId>log4j-core</artifactId>
-    //    <version>2.6.1</version>
-    //</dependency>
-    implementation("org.apache.logging.log4j:log4j-core:2.6.1")
 }
 
 tasks.withType<KotlinCompile> {

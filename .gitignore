@@ -38,3 +38,12 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Local secrets ###
+application-local.properties
+
+### macOS ###
+.DS_Store
+
+### Runtime logs ###
+logs/
