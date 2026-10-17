@@ -4,6 +4,7 @@ import com.grimels.keristra.core.generation.Tracks
 import com.grimels.keristra.core.generation.dmn.GeneratedDmn
 import com.grimels.keristra.core.generation.tests.TestSuite
 import com.grimels.keristra.core.generation.tests.TestSuiteParseException
+import com.grimels.keristra.core.llm.LlmResponse
 import com.grimels.keristra.core.validation.CaseOutcome
 import com.grimels.keristra.core.validation.CaseResult
 import com.grimels.keristra.core.validation.SemanticHash
@@ -24,6 +25,10 @@ data class Attempt(
     val report: ValidationReport?,
     val semanticHash: String?,
     val error: String? = null,
+    /** Added to each track's configured seed for this attempt: `cycle * 1000 + attempt`. */
+    val seedOffset: Long = 0,
+    /** Raw answer of a test track whose output did not parse, kept so the analysis needs no new calls. */
+    val failedTestsResponse: LlmResponse? = null,
 )
 
 data class CycleResult(
@@ -56,36 +61,37 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
         require(config.stableAttempts >= 1) { "stableAttempts must be at least 1" }
     }
 
-    fun runCycle(rules: String, domain: String, schemaPaths: Set<String>? = null): CycleResult {
+    fun runCycle(rules: String, domain: String, schemaPaths: Set<String>? = null, cycle: Int = 0): CycleResult {
         val attempts = mutableListOf<Attempt>()
         var oracle: TestSuite? = null
 
         for (number in 1..config.retryBudget) {
+            val seedOffset = cycle * 1000L + number
             val regenerateTests = oracle == null || config.strategy != RepairStrategy.STATIC_ORACLE
             val tests = if (!regenerateTests) {
                 oracle!!
             } else {
                 try {
-                    tracks.tests.generate(rules, domain)
+                    tracks.tests.generate(rules, domain, seedOffset)
                 } catch (e: TestSuiteParseException) {
-                    attempts += Attempt(number, true, null, null, null, null, error = e.message)
+                    attempts += Attempt(number, true, null, null, null, null, e.message, seedOffset, failedTestsResponse = e.response)
                     continue
                 } catch (e: Exception) {
-                    attempts += Attempt(number, true, null, null, null, null, error = describe(e))
+                    attempts += Attempt(number, true, null, null, null, null, describe(e), seedOffset)
                     return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e))
                 }
             }
             oracle = tests
 
             val dmn = try {
-                tracks.dmn.generate(rules, domain)
+                tracks.dmn.generate(rules, domain, seedOffset)
             } catch (e: Exception) {
-                attempts += Attempt(number, regenerateTests, tests, null, null, null, error = describe(e))
+                attempts += Attempt(number, regenerateTests, tests, null, null, null, describe(e), seedOffset)
                 return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e))
             }
 
             val report = validator.validate(dmn.xml, tests.cases, schemaPaths)
-            attempts += Attempt(number, regenerateTests, tests, dmn, report, SemanticHash.of(dmn.xml))
+            attempts += Attempt(number, regenerateTests, tests, dmn, report, SemanticHash.of(dmn.xml), seedOffset = seedOffset)
 
             if (report.accepted) return CycleResult(CycleOutcome.ACCEPTED, attempts)
             if (config.strategy == RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT) {

@@ -31,6 +31,18 @@ and application.b</text></decision></definitions>"""
     }
 
     @Test
+    fun `seed offset is added to the configured seed, and no seed stays no seed`() {
+        val (seeded, seededGenerator) = generator(xml, GenerationSettings(seed = 7))
+        val (unseeded, unseededGenerator) = generator(xml, GenerationSettings(seed = null))
+
+        seededGenerator.generate("rules", "mortgage", seedOffset = 2001)
+        unseededGenerator.generate("rules", "mortgage", seedOffset = 2001)
+
+        assertThat(seeded.requests.single().seed).isEqualTo(2008)
+        assertThat(unseeded.requests.single().seed).isNull()
+    }
+
+    @Test
     fun `returns the xml with prompt provenance and the raw response`() {
         val (_, generator) = generator(xml)
 

@@ -31,6 +31,15 @@ class TestSuiteGeneratorTest {
     }
 
     @Test
+    fun `seed offset is added to the configured seed`() {
+        val (client, generator) = generator(suiteJson, GenerationSettings(seed = 42))
+
+        generator.generate("rules", "mortgage", seedOffset = 3002)
+
+        assertThat(client.requests.single().seed).isEqualTo(3044)
+    }
+
+    @Test
     fun `parses the array into test cases with prompt provenance`() {
         val (_, generator) = generator(suiteJson)
 

@@ -1,0 +1,1 @@
+Hit policy is FIRST. If application.fixedPreference is true, product is "Fixed30". Otherwise product is "Fixed30" as well.

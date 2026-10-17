@@ -1,0 +1,9 @@
+{
+  "domain": "mortgage",
+  "hitPolicy": "FIRST",
+  "outputs": ["product"],
+  "ambiguous": true,
+  "languages": ["en"],
+  "source": "V0 mortgage experiment: KeristraCoreApplicationTests.test_experiment_Mortgage, ground truth from src/test/resources/mortgage-test.json (2025-10)",
+  "notes": "No default rule and overlapping conditions (e.g. fixed preference vs manual review) are left to the reader; case 8 expects that no rule applies."
+}

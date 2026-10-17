@@ -1,13 +1,12 @@
 package com.grimels.keristra.core.orchestration
 
+import com.grimels.keristra.core.generation.GenerationSettings
 import com.grimels.keristra.core.generation.PromptTemplate
+import com.grimels.keristra.core.generation.ScriptedLlmClient
 import com.grimels.keristra.core.generation.Tracks
 import com.grimels.keristra.core.generation.dmn.DmnGenerator
 import com.grimels.keristra.core.generation.fixedSchema
 import com.grimels.keristra.core.generation.tests.TestSuiteGenerator
-import com.grimels.keristra.core.llm.LlmClient
-import com.grimels.keristra.core.llm.LlmRequest
-import com.grimels.keristra.core.llm.LlmResponse
 import com.grimels.keristra.core.orchestration.CycleOutcome.ACCEPTED
 import com.grimels.keristra.core.orchestration.CycleOutcome.AMBIGUOUS
 import com.grimels.keristra.core.orchestration.CycleOutcome.ERROR
@@ -26,20 +25,6 @@ import com.grimels.keristra.core.validation.firstNoDefault
 import com.grimels.keristra.core.validation.testEngine
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-
-/** Answers with the scripted replies in order; a Throwable in the script is thrown instead. */
-private class ScriptedLlmClient(vararg replies: Any) : LlmClient {
-    override val modelId = "scripted"
-    private val script = ArrayDeque(replies.toList())
-    val requests = mutableListOf<LlmRequest>()
-
-    override fun complete(request: LlmRequest): LlmResponse {
-        requests += request
-        val next = script.removeFirstOrNull() ?: throw AssertionError("Unexpected LLM call #${requests.size}")
-        if (next is Throwable) throw next
-        return LlmResponse(next as String, modelId, inputTokens = 1, outputTokens = 1, latencyMs = 1)
-    }
-}
 
 class DispatcherTest {
 
@@ -61,15 +46,39 @@ class DispatcherTest {
 
     private class Run(val dmnClient: ScriptedLlmClient, val testsClient: ScriptedLlmClient, val result: CycleResult)
 
-    private fun run(config: DispatcherConfig, dmnReplies: List<Any>, testReplies: List<Any>): Run {
+    private fun run(
+        config: DispatcherConfig,
+        dmnReplies: List<Any>,
+        testReplies: List<Any>,
+        testSeed: Long? = null,
+        cycle: Int = 0,
+    ): Run {
         val dmnClient = ScriptedLlmClient(*dmnReplies.toTypedArray())
         val testsClient = ScriptedLlmClient(*testReplies.toTypedArray())
         val tracks = Tracks(
             dmn = DmnGenerator(dmnClient, PromptTemplate.load("dmn", "v1"), fixedSchema),
-            tests = TestSuiteGenerator(testsClient, PromptTemplate.load("tests", "v1"), fixedSchema),
+            tests = TestSuiteGenerator(testsClient, PromptTemplate.load("tests", "v1"), fixedSchema, GenerationSettings(seed = testSeed)),
         )
-        val result = Dispatcher(tracks, StrictValidator(testEngine), config).runCycle(rules = "rules", domain = "mortgage")
+        val result = Dispatcher(tracks, StrictValidator(testEngine), config).runCycle(rules = "rules", domain = "mortgage", cycle = cycle)
         return Run(dmnClient, testsClient, result)
+    }
+
+    @Test
+    fun `seeds differ per attempt and per cycle, so a seeded model does not repeat itself`() {
+        val cycle2 = run(DispatcherConfig(PAIRED_REGEN), listOf(badDmn, goodDmn), listOf(suite, suite), testSeed = 100, cycle = 2)
+        val cycle3 = run(DispatcherConfig(PAIRED_REGEN), listOf(goodDmn), listOf(suite), testSeed = 100, cycle = 3)
+
+        assertThat(cycle2.testsClient.requests.map { it.seed }).containsExactly(2101L, 2102L)
+        assertThat(cycle2.result.attempts.map { it.seedOffset }).containsExactly(2001L, 2002L)
+        assertThat(cycle3.testsClient.requests.map { it.seed }).containsExactly(3101L)
+    }
+
+    @Test
+    fun `an oracle that does not parse keeps its raw response`() {
+        val run = run(DispatcherConfig(STATIC_ORACLE), dmnReplies = listOf(goodDmn), testReplies = listOf("not json", suite))
+
+        assertThat(run.result.attempts[0].failedTestsResponse!!.text).isEqualTo("not json")
+        assertThat(run.result.attempts[1].failedTestsResponse).isNull()
     }
 
     @Test

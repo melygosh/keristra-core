@@ -1,0 +1,9 @@
+Hit Policy: FIRST
+Define the criteria for automatic assignment of mortgage products based on applicant attributes. 
+If the applicant has explicitly indicated a fixed-rate preference, or if their sensitivity to rate changes is high, the applicant must be assigned a 30-year fixed-rate mortgage. 
+If the applicant intends to stay in the property for seven years or less, has stable income, a Loan-to-Value (LTV) ratio of 80% or less, and a credit score of at least 720, the applicant should be assigned a 7/1 adjustable-rate mortgage. 
+If the applicant has a credit score below 640, or a Debt-to-Income (DTI) ratio above 50, or an LTV above 95, the case must be directed to manual review without automatic product assignment.
+The result must be stored in the variable product with the following possible values:
+• “Fixed30”
+• “ARM7/1”
+• “ManualReview”

@@ -1,0 +1,14 @@
+{
+  "runId": "mortgage-smoke-001",
+  "ruleSet": "mortgage",
+  "version": "ambiguous",
+  "language": "en",
+  "dmn":   {"model": "anthropic:claude-sonnet-5-5", "prompt": "v1", "maxTokens": 16000},
+  "tests": {"model": "local:gemma4:26b", "prompt": "v1", "temperature": 0.7, "seed": 42, "maxTokens": 8000},
+  "validator": "STRICT",
+  "strategy": "PAIRED_REGEN",
+  "retryBudget": 3,
+  "stableAttempts": 2,
+  "rag": {"enabled": false},
+  "cycles": 3
+}

@@ -10,11 +10,15 @@ data class TrackConfig(val model: String, val promptVersion: String = "v1", val 
 
 data class Tracks(val dmn: DmnGenerator, val tests: TestSuiteGenerator)
 
+fun interface TracksProvider {
+    fun create(dmn: TrackConfig, tests: TrackConfig): Tracks
+}
+
 /** Wires the two independent tracks; each gets its own LlmClient instance, even when both name the same model. */
 @Component
-class GenerationTracks(private val factory: LlmClientFactory, private val contextProvider: DomainContextProvider) {
+class GenerationTracks(private val factory: LlmClientFactory, private val contextProvider: DomainContextProvider) : TracksProvider {
 
-    fun create(dmn: TrackConfig, tests: TrackConfig): Tracks = Tracks(
+    override fun create(dmn: TrackConfig, tests: TrackConfig): Tracks = Tracks(
         dmn = DmnGenerator(factory.create(dmn.model), PromptTemplate.load("dmn", dmn.promptVersion), contextProvider, dmn.settings),
         tests = TestSuiteGenerator(factory.create(tests.model), PromptTemplate.load("tests", tests.promptVersion), contextProvider, tests.settings),
     )

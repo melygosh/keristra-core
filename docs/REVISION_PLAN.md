@@ -134,6 +134,18 @@ enum class RepairStrategy { STATIC_ORACLE, PAIRED_REGEN, ESCALATE_ON_STABLE_DISA
 ```
 - Ground-truth evaluation is separate from the in-loop oracle. After a cycle is accepted, the final DMN is evaluated against the human ground-truth cases of the rule set and logged.
 - Runs must be resumable: skip cycle indices already present in the JSONL.
+- As implemented in step 6 (Claude Code, 2026-10-16):
+  - Sampling is **per track** because of F16 — the flat `temperature`/`seed` above cannot express "no temperature for Claude, 0.7 for the local model":
+    ```json
+    "dmn":   {"model": "anthropic:claude-sonnet-5-5", "prompt": "v1", "maxTokens": 16000},
+    "tests": {"model": "local:gemma4:26b", "prompt": "v1", "temperature": 0.7, "seed": 42, "maxTokens": 8000}
+    ```
+    plus `"language"` (which `rules.<lang>.txt` to use) and `"stableAttempts"` (V3's `k`). Unknown fields are rejected. Example: `experiments/mortgage-smoke-001.json`.
+  - The effective seed per call is `seed + cycle * 1000 + attempt`; a fixed seed would make a local model repeat itself in every cycle and retry.
+  - Run: `java -jar build/libs/keristra-core-0.0.1-SNAPSHOT.jar --spring.profiles.active=experiment --keristra.experiment.config=experiments/<name>.json` (output `runs/<runId>.jsonl`; `--keristra.experiment.output-dir` to change).
+  - Ground truth is checked with the strict validator for **every** cycle that produced a DMN, not only accepted ones, so `run_finished` counts false accepts (`acceptedWrong`) and false rejects (`rejectedCorrect`).
+  - Resume: rerunning a runId skips cycles with a `cycle_finished`, except cycles whose latest outcome is `ERROR` (infrastructure failure, not a result: they run again); the config must match except `cycles`. Every event has a `sessionId`; attempts of a cycle that never finished are superseded by its rerun.
+  - Costs come from `keristra.pricing.*` (USD/MTok, list prices as of 2026-10-06); local providers cost 0; unknown prices give `costUsd: null`.
 
 ### 4.7 `mutation` — for E1
 `DmnMutator` operators over a ground-truth DMN, each producing a mutant together with the input region it affects:
@@ -149,7 +161,7 @@ resources/rulesets/<domain>/<version>/
     ground-truth.json   # human-labelled cases: input object + expected (null = no rule applies)
     reference.dmn       # human reference table (for E1)
 ```
-The mortgage rule set moves here from the test class as `mortgage/ambiguous` and `mortgage/disambiguated`. The ФОП rule set (`fop/2024`, `fop/2025`, `fop/2026`) is drafted in Cowork and delivered into this structure.
+The mortgage rule set moves here from the test class as `mortgage/ambiguous` and `mortgage/disambiguated`. Done in step 6 for `mortgage/ambiguous` only (V0 text verbatim, English only; ground truth converted from `src/test/resources/mortgage-test.json`): **`mortgage/disambiguated` does not exist yet** — its text and ground truth are research content to write. `meta.json` names the `domain`; the schema comes from `DomainRegistry`, which reads schemas as classpath resources (V0's `SchemaResolver` read files and failed inside the jar; fixed too). The ФОП rule set (`fop/2024`, `fop/2025`, `fop/2026`) is drafted in Cowork and delivered into this structure.
 
 ## 5. JSONL event log
 

@@ -22,10 +22,11 @@ class DmnGenerator(
     private val settings: GenerationSettings = GenerationSettings(),
 ) {
 
-    fun generate(rules: String, domain: String): GeneratedDmn {
+    /** [seedOffset] is added to the configured seed, so retries and cycles do not replay one seeded sample. */
+    fun generate(rules: String, domain: String, seedOffset: Long = 0): GeneratedDmn {
         val rendered = prompt.render(mapOf("rules" to rules, "schema" to contextProvider.schema(domain)))
         val response = client.complete(
-            LlmRequest(rendered.system, rendered.user, settings.temperature, settings.seed, settings.maxTokens),
+            LlmRequest(rendered.system, rendered.user, settings.temperature, settings.seed?.plus(seedOffset), settings.maxTokens),
         )
         return GeneratedDmn(extractXml(response.text), prompt.id, prompt.hash, response)
     }

@@ -1,8 +1,5 @@
 package com.grimels.keristra.core.util
 
-import java.io.File
-import java.nio.file.Files
-import org.springframework.util.ResourceUtils
 
 class SchemaResolver {
 
@@ -27,9 +24,10 @@ class SchemaResolver {
             return getSchemaByPath("user-schema.xml")
         }
 
+        // Classpath stream instead of File, so schemas also load from the packaged jar.
         private fun getSchemaByPath(path: String): String {
-            val file: File = ResourceUtils.getFile("classpath:schema/$path")
-            val encoded = Files.readAllBytes(file.toPath())
+            val encoded = SchemaResolver::class.java.getResourceAsStream("/schema/$path")?.use { it.readBytes() }
+                ?: throw java.io.FileNotFoundException("classpath:schema/$path")
             return String(encoded)
         }
     }
