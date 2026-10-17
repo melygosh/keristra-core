@@ -28,6 +28,24 @@ Baseline **V0 must remain reproducible** — it is the dissertation code. Do not
    - Move keys to environment variables (`ANTHROPIC_API_KEY` etc.) with `${ANTHROPIC_API_KEY:}` placeholders in properties; add a git-ignored `application-local.properties`.
    - Rewrite the unpushed history to drop the secrets (e.g. `git filter-repo --replace-text`) before the first push.
 
+**Pre-flight status (2026-10-17): done.** Keys rotated by Vlad. The unpushed history (`origin/main..`) was rewritten with `git filter-branch --index-filter`: in `application.properties` of the six affected commits the key values were replaced by `${ANTHROPIC_API_KEY:}` / `${OPENAI_API_KEY:}` / `${VOYAGE_API_KEY:}`, so V0 at the tag still starts with keys from env. Nothing else changed (same tree at the branch head, same messages, authors, dates); a scan of every file in every reachable commit finds none of the old values. All commit hashes from `9ad9960` on changed — old hashes in this document, in earlier commit messages and in `runs/mortgage-smoke-001.jsonl` (`gitCommit`) map as follows:
+
+| before | after | commit |
+|---|---|---|
+| `9ad9960` | `bb7b1da` | PoC: add VAP case |
+| `a278417` | `07ef55e` | PoC: refactor |
+| `0ae3502` | `143c1a3` | PoC: add validation |
+| `b2da9d1` | `ffaf6cc` | PoC: add education |
+| `5079be2` | `badbc85` | PoC: add mortgage |
+| `bc0c63d` | `843f4b9` | WIP commit = `main` = tag `v0-dissertation` |
+| `756a323` | `a9e7d17` | step 1, hygiene |
+| `376319c` | `89168a4` | step 2, validators |
+| `7c56cf4` | `48b48e2` | step 3, LLM clients |
+| `973da15` | `dc54f4a` | step 4, generation tracks |
+| `dbc39da` | `69bc12b` | step 5, dispatcher (the `gitCommit` of `runs/mortgage-smoke-001`) |
+| `1769d9f` | `1254cf7` | step 6, experiment runner |
+| `c60d410` | `9a56702` | step 8, mutator |
+
 ## 2. Findings in the current code
 
 | ID | Where | Problem | Impact on the article |
