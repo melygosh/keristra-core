@@ -170,7 +170,7 @@ enum class RepairStrategy { STATIC_ORACLE, PAIRED_REGEN, ESCALATE_ON_STABLE_DISA
 `THRESHOLD_SHIFT` (±1 unit / ±1%), `BOUNDARY_FLIP` (`<`↔`<=`, `[`↔`(`), `RULE_SWAP` (adjacent rules under FIRST), `RULE_DROP` (incl. default rule), `OUTPUT_SWAP`, `CONDITION_DROP`, `HIT_POLICY_CHANGE`.
 Kill = at least one test case in the suite fails under strict validation.
 - As implemented in step 8 (Claude Code, 2026-10-17): `mutation.DmnMutator` (first-order mutants, one change each, `MutationRegion` = rule ids + input/output column + entry before/after) and `MutationAnalysis.isKilled`. THRESHOLD_SHIFT is ±1 for integer literals and ±1% for decimals; BOUNDARY_FLIP covers comparison operators and each range bracket; RULE_SWAP applies under FIRST and RULE ORDER; OUTPUT_SWAP uses the other values of the same output column; HIT_POLICY_CHANGE targets UNIQUE, FIRST, ANY, COLLECT, RULE ORDER. Text inside FEEL string literals is never mutated. Equivalent mutants occur (e.g. swapping rules 1/2, both `Fixed30`) and must be handled in the E1 analysis.
-- **`mortgage/ambiguous/reference.dmn` is a DRAFT** (marked in `meta.json`): the DMN generated in `runs/mortgage-smoke-001` (claude-sonnet-5-5, semantic hash `2b2d439296c9`), which passes the ground truth 8/8. To review: it keeps the rule-text order, so a fixed preference or high rate sensitivity wins over the ManualReview risk checks (credit < 640, DTI > 50, LTV > 95), and it has no default rule (ground-truth case 8 expects no result).
+- *(Superseded 2026-10-17, see step 11: `reference.dmn` is now the human reference; the draft below is kept as `reference.draft-sonnet.dmn`.)* **`mortgage/ambiguous/reference.dmn` was a DRAFT** (marked in `meta.json`): the DMN generated in `runs/mortgage-smoke-001` (claude-sonnet-5-5, semantic hash `2b2d439296c9`), which passes the ground truth 8/8. To review: it keeps the rule-text order, so a fixed preference or high rate sensitivity wins over the ManualReview risk checks (credit < 640, DTI > 50, LTV > 95), and it has no default rule (ground-truth case 8 expects no result).
 - First data point for E1 (draft reference, 54 mutants): the 8 human ground-truth cases kill 29/54 — RULE_DROP 6/6, OUTPUT_SWAP 12/12, HIT_POLICY_CHANGE 4/4, CONDITION_DROP 5/9, THRESHOLD_SHIFT 2/12, BOUNDARY_FLIP 0/6, RULE_SWAP 0/5. The human cases barely probe boundaries.
 
 ### 4.8 Rule sets on disk
@@ -222,3 +222,51 @@ Steps 1–6 are a prerequisite for any new numbers. Steps 7–9 can then run in 
 - V0 reproduction (step 7) after F15: rerun on `claude-sonnet-4-5-20250929` as the nearest substitute, or drop step 7 and report V0 numbers as historical only?
 - RAG: re-enable it with a defined corpus as a factor, or declare the new experiments RAG-free (simpler, and honest given F7)?
 - Is it OK to make the repository public later (or publish a sanitized snapshot) for the EN paper's reproducibility section? The `TorqueITS` org ownership matters here.
+
+## 9. Additions after the smoke run (2026-10-17)
+
+### Finding F17 — the oracle still yields under the strict validator
+*(Numbered F14 by Cowork; renumbered because F14 already names the unparseable-table acceptance in section 2.)*
+`runs/mortgage-smoke-001.jsonl`, session `bb34…`, cycle 2:
+- Attempt 1: the gemma4:26b test suite has case 6 (DTI 51, ARM conditions met), which expects `ManualReview`. The Sonnet 5.5 table returns `ARM7/1`, so the result is `MISMATCH`.
+- Attempt 2: the DMN semantic hash is unchanged (`2b2d4392`), the tests were regenerated without that case, and the cycle was `ACCEPTED`.
+- The old 8-case ground truth did not cover this region, so the run reported `acceptedCorrect` 3/3.
+
+On the extended ground truth (below), this same table (`reference.draft-sonnet.dmn`) fails 8/45: every knockout-vs-product conflict.
+
+The current V3 does not catch it either: `stableDisagreement` requires a shared failure region in consecutive attempts, and a resampled oracle that simply omits the conflicting input erases it.
+
+### Step 10 — conflict memory in the Dispatcher (all strategies that resample tests)
+- Keep a per-cycle **open-conflict set**: every failing case (input object + expected + actual + DMN semantic hash) observed in any attempt.
+- On every later attempt, re-run the open conflicts against the new DMN, in addition to the fresh test suite.
+- A conflict is **closed** only when one of these holds:
+  - (a) the DMN semantic hash changed and the case now passes, or
+  - (b) an explicit re-adjudication retracts the old expectation: the test track receives the conflicting input alone, with the rule text and without the DMN, and returns a different expected output. Log it as `oracle_retraction`.
+- A cycle cannot be `ACCEPTED` while it has open conflicts.
+  - Under `PAIRED_REGEN` with conflict memory, an exhausted budget with open conflicts gives `REJECTED_BUDGET`.
+  - Under V3, open conflicts plus an unchanged semantic hash for `stableAttempts` attempts give `AMBIGUOUS`, with the open conflicts attached.
+- Keep the current behaviour available as an explicit flag (`conflictMemory: false`). The article needs both arms: with and without memory.
+- New JSONL fields:
+  - in `attempt`: `openConflicts`, `closedConflicts` (each with its close reason);
+  - in `cycle_finished`: `openConflictsAtEnd`.
+- Unit tests with `FakeLlmClient`:
+  - DMN unchanged, the oracle drops the case → not accepted;
+  - DMN fixed → conflict closed by (a);
+  - retraction → conflict closed by (b).
+
+### Step 11 — the mutation test fixture after the ground-truth change
+`mortgage/ambiguous/ground-truth.json` now has 45 cases (8 original plus conflicts, boundaries, nulls and near-misses; see `category`), and `reference.dmn` is a human reference with rule order knockouts → Fixed30 → ARM7/1. The Sonnet draft moved to `reference.draft-sonnet.dmn`.
+
+`DmnMutatorTest` is written against the draft (rule ids and order, mutant counts, which mutants are killed, line 42 `accepted`), so it **will fail** until it is updated:
+- point the structural assertions at the new `reference.dmn` and recompute the counts;
+- assert that the new reference passes 45/45 under `StrictValidator`;
+- add a test that the draft fails exactly the 8 conflict cases (ids 9–16).
+
+The 45/45 result was checked only with a Python re-implementation of the FEEL subset (Maven Central was unreachable from Cowork). This step is the real Camunda confirmation.
+
+**Status (Claude Code, 2026-10-17): done.** Confirmed with the Camunda-based `StrictValidator`: both `reference.dmn` files pass 45/45; the Sonnet draft fails exactly ids 9–16, all `conflict:knockout-vs-*`. `DmnMutatorTest` and `RuleSetRepositoryTest` now target the human reference, the 45 cases, the `uk` texts and the disambiguated variant. Mutation data point on the human reference (54 mutants): the 45 cases kill 51/54 — the 3 survivors are the equivalent rule swaps (two knockouts, or the two Fixed30 rules) — while the original 8 cases kill 29/54.
+
+### Step 12 — rule-set variants for E3
+`mortgage/disambiguated/` added: explicit priority, inclusive/exclusive boundaries, null handling, no default. Ground truth and reference DMN are identical to `mortgage/ambiguous`, so only the text differs.
+
+Both versions now have `rules.uk.txt` next to `rules.en.txt`. Language becomes a possible factor; the UA article can use `uk`.

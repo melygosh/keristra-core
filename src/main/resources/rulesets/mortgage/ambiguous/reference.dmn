@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
-  <decision id="decision" name="Decision Table Configuration">
+  <decision id="decision" name="Mortgage Product Assignment (human reference)">
     <decisionTable id="decisionTable" hitPolicy="FIRST">
       <input id="input-1" label="application.fixedPreference">
         <inputExpression id="input-1-exp" typeRef="boolean" expressionLanguage="feel">
@@ -40,7 +40,7 @@
       <output id="output-1" label="product" name="product" typeRef="string" />
       <rule id="rule-1">
         <inputEntry id="rule-1-input-1">
-          <text>true</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-1-input-2">
           <text></text>
@@ -55,13 +55,13 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-1-input-6">
-          <text></text>
+          <text>&lt; 640</text>
         </inputEntry>
         <inputEntry id="rule-1-input-7">
           <text></text>
         </inputEntry>
         <outputEntry id="rule-1-output-1">
-          <text>"Fixed30"</text>
+          <text>"ManualReview"</text>
         </outputEntry>
       </rule>
       <rule id="rule-2">
@@ -69,7 +69,7 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-2-input-2">
-          <text>"high"</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-2-input-3">
           <text></text>
@@ -84,10 +84,10 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-2-input-7">
-          <text></text>
+          <text>&gt; 50</text>
         </inputEntry>
         <outputEntry id="rule-2-output-1">
-          <text>"Fixed30"</text>
+          <text>"ManualReview"</text>
         </outputEntry>
       </rule>
       <rule id="rule-3">
@@ -98,27 +98,27 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-3-input-3">
-          <text>&lt;= 7</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-3-input-4">
-          <text>"stable"</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-3-input-5">
-          <text>&lt;= 80</text>
+          <text>&gt; 95</text>
         </inputEntry>
         <inputEntry id="rule-3-input-6">
-          <text>&gt;= 720</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-3-input-7">
           <text></text>
         </inputEntry>
         <outputEntry id="rule-3-output-1">
-          <text>"ARM7/1"</text>
+          <text>"ManualReview"</text>
         </outputEntry>
       </rule>
       <rule id="rule-4">
         <inputEntry id="rule-4-input-1">
-          <text></text>
+          <text>true</text>
         </inputEntry>
         <inputEntry id="rule-4-input-2">
           <text></text>
@@ -133,13 +133,13 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-4-input-6">
-          <text>&lt; 640</text>
+          <text></text>
         </inputEntry>
         <inputEntry id="rule-4-input-7">
           <text></text>
         </inputEntry>
         <outputEntry id="rule-4-output-1">
-          <text>"ManualReview"</text>
+          <text>"Fixed30"</text>
         </outputEntry>
       </rule>
       <rule id="rule-5">
@@ -147,7 +147,7 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-5-input-2">
-          <text></text>
+          <text>"high"</text>
         </inputEntry>
         <inputEntry id="rule-5-input-3">
           <text></text>
@@ -162,10 +162,10 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-5-input-7">
-          <text>&gt; 50</text>
+          <text></text>
         </inputEntry>
         <outputEntry id="rule-5-output-1">
-          <text>"ManualReview"</text>
+          <text>"Fixed30"</text>
         </outputEntry>
       </rule>
       <rule id="rule-6">
@@ -176,22 +176,22 @@
           <text></text>
         </inputEntry>
         <inputEntry id="rule-6-input-3">
-          <text></text>
+          <text>&lt;= 7</text>
         </inputEntry>
         <inputEntry id="rule-6-input-4">
-          <text></text>
+          <text>"stable"</text>
         </inputEntry>
         <inputEntry id="rule-6-input-5">
-          <text>&gt; 95</text>
+          <text>&lt;= 80</text>
         </inputEntry>
         <inputEntry id="rule-6-input-6">
-          <text></text>
+          <text>&gt;= 720</text>
         </inputEntry>
         <inputEntry id="rule-6-input-7">
           <text></text>
         </inputEntry>
         <outputEntry id="rule-6-output-1">
-          <text>"ManualReview"</text>
+          <text>"ARM7/1"</text>
         </outputEntry>
       </rule>
     </decisionTable>

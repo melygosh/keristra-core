@@ -1,0 +1,11 @@
+Hit Policy: FIRST
+Define the criteria for automatic assignment of mortgage products based on applicant attributes. The rules below are listed in order of priority: the first rule whose conditions are met determines the result.
+1. Manual review. If the applicant has a credit score below 640 (639 or lower), or a Debt-to-Income (DTI) ratio above 50 (exactly 50 does not trigger this rule), or a Loan-to-Value (LTV) ratio above 95 (exactly 95 does not trigger this rule), the case must be directed to manual review. This rule takes precedence over every product rule below, including an explicit fixed-rate preference.
+2. Fixed rate. Otherwise, if the applicant has explicitly indicated a fixed-rate preference, or their sensitivity to rate changes is high, the applicant must be assigned a 30-year fixed-rate mortgage. This rule takes precedence over the adjustable-rate rule.
+3. Adjustable rate. Otherwise, if the applicant intends to stay in the property for seven years or less (7 included), has stable income, an LTV of 80% or less (80 included), and a credit score of at least 720 (720 included), the applicant should be assigned a 7/1 adjustable-rate mortgage.
+4. If none of the rules above applies, no product is assigned and the result stays empty. Do not add a default product.
+A condition that depends on a missing (null) value is not satisfied.
+The result must be stored in the variable product with the following possible values:
+• “Fixed30”
+• “ARM7/1”
+• “ManualReview”

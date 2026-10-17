@@ -1,0 +1,16 @@
+{
+  "domain": "mortgage",
+  "hitPolicy": "FIRST",
+  "outputs": [
+    "product"
+  ],
+  "ambiguous": false,
+  "languages": [
+    "en",
+    "uk"
+  ],
+  "source": "Disambiguated rewrite of mortgage/ambiguous (2026-10-17, Cowork): explicit priority, inclusive/exclusive boundaries, null handling, no default. Same ground truth and reference DMN as mortgage/ambiguous.",
+  "notes": "Control condition for E3: only the rule text differs from mortgage/ambiguous.",
+  "referenceDmn": "Identical to mortgage/ambiguous/reference.dmn.",
+  "interpretation": "Agreed with Vlad 2026-10-17: manual-review knockouts override every product rule; Fixed30 overrides ARM7/1; no default rule (expected null when nothing applies); a condition on a null value is not satisfied; 'below/above' are strict, 'or less/at least' are inclusive."
+}
