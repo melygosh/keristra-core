@@ -357,3 +357,22 @@ Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompt
   For every suite × DMN pair, write an `evaluation` event: the DMN id (mutant id with operator and region), the per-outcome counts and whether the DMN was killed (= the suite rejects it).
 - **Summary.** A `run_finished` summary per DMN source: the kill rate across suites, and for mutants the mutation score per suite, both with and without the equivalent-mutant list given in the config (`equivalentMutants`).
 - **Done when:** a unit test with `FakeLlmClient` produces the kill matrix for 2 suites × the mortgage mutants, and the 45-case human ground truth, loaded as a fixed "suite", reproduces 51/54.
+
+**Status (Claude Code, 2026-10-17): done** (`SuiteModeTest`; the 45 cases kill 51/54, the original 8 kill 29/54). Details decided in implementation:
+- `"mode": "SUITES"` or no `dmn`. No DMN client is built at all, so no Anthropic key is needed. `tests` is optional when only `fixedSuites` are evaluated.
+- `fixedSuites: [{"groundTruth": "<ruleSet>/<version>", "category": "original-v0", "name": "H8"}]` adds a human ground truth (or one category of it) as a fixed suite `fixed-<name>`. It serves E1-H45 and E1-H8. Generated suites are `gen-<i>` with seed offset `i * 1000 + 1`.
+- `equivalentMutants` belongs to the `mutantsOf` source, because equivalence is per reference. Ids are mutant ids such as `RULE_SWAP:rule-1/rule-2`. Unknown ids fail the run at start.
+- `suite` event: status `OK` / `PARSE_ERROR` (model output, counts as a failed call) / `ERROR` (infrastructure, rerun on resume), `tracks.tests`, `raw`, `cases`, `size`, `schemaErrors`. `schemaErrors` lists cases with object paths absent from the domain schema, or without `object` / `expected`.
+- `evaluation` event per suite × DMN: `dmnId`, `operator`, `region`, `equivalent`, outcome `counts`, `failingCases` (indices, for E4 region analysis) and `killed`.
+- **Added beyond the protocol:** for mutants, also `killedConsistent` and `referenceRejected`. A suite that rejects the reference kills every mutant by the protocol's definition, so `killedConsistent` counts only failures on cases that pass on the reference, which is standard mutation-testing practice. `run_finished` reports both score families (`score`, `scoreWithoutEquivalent`, `scoreConsistent`, `scoreConsistentWithoutEquivalent`, with medians); the protocol's MS is `scoreWithoutEquivalent`.
+- `run_finished.suites` carries the C0 measures: `failedShare`, `medianLatencyMs`, `medianSize`, `withSchemaErrors`, tokens and cost. Per source it gives the kill rate (reference/file) or the per-suite scores plus `perOperator` and `perMutant` kill rates (mutants).
+- Resume: suites with a final status are skipped. A suite logged as `OK` whose evaluations are incomplete (crash) is re-evaluated from the logged cases, without a new call.
+- C0 configs: `experiments/c0-gemma4.json` and `experiments/c0-gptoss20b.json` (Ollama tag `gpt-oss:20b`; the protocol writes `gpt-oss-20b`). Smoke runs use separate run ids in `runs/smoke/`, so the full C0 starts empty.
+- **Smoke, 2026-10-17 (1 suite each, jar at `b0edbb0`).**
+  - gemma4:26b: the suite is OK — 10 cases, 294 s, 2.5k/5.5k tokens, no schema errors. It **rejects the human reference on 3 of 10 cases**, so it "kills" all 54 mutants: protocol MS = 1.0, consistent MS (without equivalents) = 0.63. Of the 3 cases:
+    - two read the rule priority in text order — Fixed30 over the credit < 640 knockout, ARM7/1 over DTI > 50. That is exactly the ambiguity of `mortgage/ambiguous`, against the agreed interpretation;
+    - one is an oracle error — LTV 83.3 expected `ARM7/1`.
+  - gpt-oss:20b: the model is not installed, so the suite is `ERROR` (`model 'gpt-oss:20b' not found`), as expected.
+  - Consequence for C0: on the ambiguous text, protocol MS is likely to saturate at 1.0 for any suite that adopts text-order priority, which would make the C0 rule ("higher median MS") uninformative. **Decision for Vlad:** keep the protocol MS, use `scoreConsistentWithoutEquivalent`, or run C0 on `mortgage/disambiguated`. If the protocol changes, log it in EXPERIMENTS.md section 9.
+
+
