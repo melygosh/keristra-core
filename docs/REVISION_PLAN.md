@@ -330,7 +330,17 @@ Why it was off: Voyage AI access was blocked (IP), so `loadDocuments` was droppe
 - Query = the rules text; the segments are appended to the DMN user message the way LangChain4J's `DefaultContentInjector` did in V0 (`"\n\nAnswer using the following information:\n"` + segments). The corpus is embedded once per run. The prompt id stays `dmn/v1`; RAG is visible in the log, not in the prompt id.
 - Logged: `run_started.rag.dmn` (embedding model, corpus files, corpus hash over the files, segment count, segmentation, k, minScore, score definition) and `attempt.tracks.dmn.rag` (count plus segment ids and scores; `null` = RAG off, `count: 0` = on but empty).
 - Scores are LangChain4J relevance scores, `(cosine + 1) / 2`, so `minScore` is on that scale, not raw cosine. The default `minScore` is 0.0 (always top-k) until it is calibrated.
-- **Open:** no embedding model is installed on the local Ollama yet (only `gemma4:26b`, `qwen3-vl:8b`). Calibrating `minScore` on the mortgage and ФОП rule texts needs one, e.g. `ollama pull bge-m3`.
+- **Calibration (2026-10-17, `local:bge-m3` on Ollama, V0 corpus = 139 segments of 1024/128 chars, corpus hash `d7d7974a…`, embedded in ~21 s).** Top-6 relevance scores, query = rules text:
+
+| Queries | Top-6 range |
+|---|---|
+| mortgage ambiguous/disambiguated, en/uk (4) | 0.776 – 0.822 |
+| ФОП eligibility/obligations 2024/2026, uk/en (8) | 0.723 – 0.772 |
+| Unrelated controls: recipe en/uk, weather, football, poem (5) | 0.677 – 0.711 |
+
+  - **Use `minScore: 0.72` with `k: 6` for `bge-m3`.** Every rule text keeps its full top-6 and every control query is cut. The margin is thin (0.723 vs 0.711), so log and check `attempt.tracks.dmn.rag.count` in the runs. The code default stays 0.0, because the threshold is model-specific.
+  - V0's `minScore 0.8` would give every ФОП text **zero** segments and mortgage 0–4, the "RAG on but empty" case.
+  - Retrieval barely depends on the domain: every rule text gets mostly the same general DMN text (`DMN.txt#3`, `#4`, `#22`, `#25`, `#0`). In effect RAG is a fixed DMN/FEEL syntax primer, not domain knowledge. This matters for how the article describes the RAG arm.
 
 ### tests/v2 — every output in every expectation (Claude Code, 2026-10-17)
 Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompts/tests-adjudicate/v2.txt` are v1 plus one requirement in the system message: every expected object names every output variable of the rules, and `[]` stands for "no rule applies". The user message is unchanged, so v1→v2 is a single, clean factor; v1 stays the V0 prompt. The adjudication prompt now follows the test track's prompt version (`tests.prompt: "v2"` → `tests-adjudicate/v2`).

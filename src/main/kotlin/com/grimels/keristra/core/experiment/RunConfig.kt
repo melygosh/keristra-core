@@ -38,7 +38,8 @@ data class TrackSpec(
 
 /**
  * RAG for one track (REVISION_PLAN step 14): local embeddings over a frozen corpus (default: the V0 corpus).
- * Only `dmn.rag` may be enabled. `minScore` is a LangChain4J relevance score, `(cosine + 1) / 2`.
+ * Only `dmn.rag` may be enabled. `minScore` is a LangChain4J relevance score, `(cosine + 1) / 2`; calibrated value for
+ * `local:bge-m3` on the V0 corpus: 0.72 (REVISION_PLAN step 14). The default 0.0 means plain top-k.
  */
 data class TrackRagSpec(
     val enabled: Boolean = false,
