@@ -151,6 +151,9 @@ enum class RepairStrategy { STATIC_ORACLE, PAIRED_REGEN, ESCALATE_ON_STABLE_DISA
 `DmnMutator` operators over a ground-truth DMN, each producing a mutant together with the input region it affects:
 `THRESHOLD_SHIFT` (±1 unit / ±1%), `BOUNDARY_FLIP` (`<`↔`<=`, `[`↔`(`), `RULE_SWAP` (adjacent rules under FIRST), `RULE_DROP` (incl. default rule), `OUTPUT_SWAP`, `CONDITION_DROP`, `HIT_POLICY_CHANGE`.
 Kill = at least one test case in the suite fails under strict validation.
+- As implemented in step 8 (Claude Code, 2026-10-17): `mutation.DmnMutator` (first-order mutants, one change each, `MutationRegion` = rule ids + input/output column + entry before/after) and `MutationAnalysis.isKilled`. THRESHOLD_SHIFT is ±1 for integer literals and ±1% for decimals; BOUNDARY_FLIP covers comparison operators and each range bracket; RULE_SWAP applies under FIRST and RULE ORDER; OUTPUT_SWAP uses the other values of the same output column; HIT_POLICY_CHANGE targets UNIQUE, FIRST, ANY, COLLECT, RULE ORDER. Text inside FEEL string literals is never mutated. Equivalent mutants occur (e.g. swapping rules 1/2, both `Fixed30`) and must be handled in the E1 analysis.
+- **`mortgage/ambiguous/reference.dmn` is a DRAFT** (marked in `meta.json`): the DMN generated in `runs/mortgage-smoke-001` (claude-sonnet-5-5, semantic hash `2b2d439296c9`), which passes the ground truth 8/8. To review: it keeps the rule-text order, so a fixed preference or high rate sensitivity wins over the ManualReview risk checks (credit < 640, DTI > 50, LTV > 95), and it has no default rule (ground-truth case 8 expects no result).
+- First data point for E1 (draft reference, 54 mutants): the 8 human ground-truth cases kill 29/54 — RULE_DROP 6/6, OUTPUT_SWAP 12/12, HIT_POLICY_CHANGE 4/4, CONDITION_DROP 5/9, THRESHOLD_SHIFT 2/12, BOUNDARY_FLIP 0/6, RULE_SWAP 0/5. The human cases barely probe boundaries.
 
 ### 4.8 Rule sets on disk
 ```
