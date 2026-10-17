@@ -279,3 +279,40 @@ The 45/45 result was checked only with a Python re-implementation of the FEEL su
 `mortgage/disambiguated/` added: explicit priority, inclusive/exclusive boundaries, null handling, no default. Ground truth and reference DMN are identical to `mortgage/ambiguous`, so only the text differs.
 
 Both versions now have `rules.uk.txt` next to `rules.en.txt`. Language becomes a possible factor; the UA article can use `uk`.
+
+### Step 13 — ФОП rule sets (delivered 2026-10-17 from Cowork)
+There are two decisions. Each has three versions with the same input objects, so E4 can evaluate the table of one version against the tests of another:
+
+| Rule set | Versions | Cases | Outputs | What changes between versions |
+|---|---|---|---|---|
+| `fop-eligibility` | 2024, 2025, 2026 | 38 | `eligible`, `reason` | Income limits only (167/834/1167 × minimum wage on 1 January: 7 100 / 8 000 / 8 647) |
+| `fop-obligations` | 2024, 2025, 2026 | 12 | `singleTax` (+ `militaryLevy` from 2025) | 2024→2025 is **structural** (the military levy output appears); 2025→2026 is parametric (subsistence minimum 3 028→3 328, minimum wage 8 000→8 647) |
+
+- Schema: `schema/fop-schema.json` (root `fop`). The domain `fop` is registered in `DomainRegistry.V0_SCHEMAS` (one line, added from Cowork — please compile).
+- Texts: `rules.uk.txt` (primary, for the UA article) and `rules.en.txt`. The 2024 text deliberately mentions the 1 April 2024 minimum wage (UAH 8 000) as a distractor, without saying it is irrelevant: the rule says limits and rates use the 1 January value, so they must be (7 100 → limits 1 185 700 / 5 921 400 / 8 285 700, group 2 tax 1 420).
+- Reference DMNs pass their own ground truth 38/38 and 12/12, checked with the Python FEEL-subset re-implementation. **Confirm with Camunda**, especially:
+  - `not("market_retail","household_services")`;
+  - `decimal(fop.monthlyIncome * 0.05, 2)`, which the reference uses as output expressions; the check assumes `decimal()` rounds HALF_EVEN, and the ground-truth values avoid ties;
+  - integer comparison of `requestedGroup` against JSON numbers parsed as doubles (`1` vs `1.0`).
+- Expected cross-version failures of the references (rows: DMN version, columns: ground-truth version), useful as the E4 sanity baseline:
+  - eligibility: 2024→{2025: 6, 2026: 12}, 2025→{2024: 6, 2026: 6}, 2026→{2024: 12, 2025: 6};
+  - obligations: 2024→{2025: 11, 2026: 11}, 2025→{2024: 2, 2026: 5}, 2026→{2024: 5, 2025: 5}.
+- Known validator limitation exposed by E4: only expected keys are compared, so a 2025+ table evaluated against 2024 tests does not flag the extra `militaryLevy` output. Decide whether `StrictValidator` should report unexpected output keys (e.g. an `EXTRA_OUTPUT` outcome) before running E4. *(Done — see the status below.)*
+- Not modelled yet (possible later versions): 15% on income above the limit and the forced group change; exemptions for mobilised FOPs; VAT changes for FOPs from 2027, if they are adopted.
+
+Generators: `tools/rulesets/gen_fop.py` (texts, ground truth, reference DMNs; parameters in `fop_params.py`), `tools/rulesets/check_fop.py` (FEEL-subset check and the cross-version matrix). Edit the generator, not the generated files.
+
+**Status (Claude Code, 2026-10-17): confirmed on Camunda and committed.**
+- All six references pass their own ground truth (38/38, 12/12) with the schema check on; `not(...)`, `decimal(..., 2)` and `requestedGroup` 1 vs 1.0 behave as assumed. `en` and `uk` share one ground truth per version. Pinned in `FopRuleSetsTest`.
+- **Decided: `StrictValidator` reports `EXTRA_OUTPUT`** — a non-null result output the case does not name (MISMATCH on an expected key takes precedence; `CaseResult.extraOutputs` lists the keys). The E4 baseline matrix (failing cases, DMN version → ground-truth version) is now:
+
+| DMN \ GT | eligibility 2024 | 2025 | 2026 | obligations 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| 2024 | — | 6 | 12 | — | 11 | 11 |
+| 2025 | 6 | — | 6 | **11** (9 EXTRA_OUTPUT + 2) | — | 5 |
+| 2026 | 12 | 6 | — | **11** (6 EXTRA_OUTPUT + 5) | 5 | — |
+
+  Eligibility differences are all MISMATCH (income limits). For obligations the 2024→2025 structural change is now visible in both directions; before EXTRA_OUTPUT, 2025→2024 and 2026→2024 showed only 2 and 5. The 12th obligations case (no group selected) passes everywhere.
+- Side effect to keep in mind for in-loop runs: an LLM oracle that names only some outputs of a multi-output table (e.g. only `eligible`, not `reason`) now fails with EXTRA_OUTPUT. The prompts may need to ask for every output explicitly.
+- `check_fop.py` still compares expected keys only, so its matrix for obligations 2025/2026→2024 shows the old 2 and 5; `FopRuleSetsTest` is the authoritative check.
+

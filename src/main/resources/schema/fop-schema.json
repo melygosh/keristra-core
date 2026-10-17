@@ -1,0 +1,25 @@
+{
+  "$id": "https://example.org/schemas/fop-single-tax-context.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ukrainian sole proprietor (FOP) on the simplified taxation system",
+  "description": "Context for decisions on single-tax group eligibility and monthly single-tax / military-levy payments (Tax Code of Ukraine, art. 291.4, 293).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "fop": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "integer", "minimum": 1, "description": "Case identifier." },
+        "requestedGroup": { "type": ["integer", "null"], "enum": [1, 2, 3, null], "description": "Single-tax group the FOP applies or wants to apply (1, 2 or 3)." },
+        "annualIncome": { "type": ["number", "null"], "minimum": 0, "description": "Income for the calendar (reporting) year, UAH." },
+        "monthlyIncome": { "type": ["number", "null"], "minimum": 0, "description": "Income for the month the payments are calculated for, UAH." },
+        "employeesCount": { "type": ["integer", "null"], "minimum": 0, "description": "Maximum number of hired employees at the same time." },
+        "activityType": { "type": ["string", "null"], "enum": ["market_retail", "household_services", "services", "goods_trade", "production", "restaurant", null], "description": "Main activity: retail sale from market stalls, household services to the population, other services, sale of goods, production, restaurant business." },
+        "businessClients": { "type": ["boolean", "null"], "description": "True if the FOP sells goods or provides services to legal entities or other FOPs (any taxation system)." },
+        "servicesToGeneralSystemClients": { "type": ["boolean", "null"], "description": "True if the FOP provides services to legal entities or FOPs that are NOT single-tax payers (general taxation system)." },
+        "vatPayer": { "type": ["boolean", "null"], "description": "True if the FOP is registered as a VAT payer." }
+      }
+    }
+  }
+}

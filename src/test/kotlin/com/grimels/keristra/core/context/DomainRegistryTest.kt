@@ -15,20 +15,21 @@ class DomainRegistryTest {
 
     @Test
     fun `knows the V0 domains`() {
-        assertThat(registry.domains).contains("mortgage", "education", "vap", "bmi", "hotels", "users")
+        assertThat(registry.domains).contains("mortgage", "education", "vap", "bmi", "hotels", "users", "fop")
     }
 
     @Test
     fun `an unknown domain is an error, not a silent fallback to the user schema as in V0`() {
-        assertThatThrownBy { registry.schema("fop") }
+        assertThatThrownBy { registry.schema("crypto") }
             .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("fop")
+            .hasMessageContaining("crypto")
             .hasMessageContaining("mortgage")
     }
 
     @Test
     fun `schema paths come from JSON schemas only`() {
         assertThat(registry.schemaPaths("mortgage")).contains("application.creditScore", "application.ltv")
+        assertThat(registry.schemaPaths("fop")).contains("fop.requestedGroup", "fop.monthlyIncome", "fop.vatPayer")
         assertThat(registry.schemaPaths("bmi")).isNull()
     }
 

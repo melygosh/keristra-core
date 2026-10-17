@@ -1,0 +1,285 @@
+[
+  {
+    "id": 1,
+    "category": "g1",
+    "description": "1 група, місячний дохід 20 000 грн",
+    "object": {
+      "fop": {
+        "id": 1,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 20000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 332.8,
+        "militaryLevy": 864.7
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "g1",
+    "description": "1 група, нульовий дохід — податок фіксований",
+    "object": {
+      "fop": {
+        "id": 2,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 0,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 332.8,
+        "militaryLevy": 864.7
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "category": "g1",
+    "description": "1 група, дохід не вказано — податок фіксований",
+    "object": {
+      "fop": {
+        "id": 3,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": null,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 332.8,
+        "militaryLevy": 864.7
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "category": "g2",
+    "description": "2 група, місячний дохід 150 000 грн",
+    "object": {
+      "fop": {
+        "id": 4,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 150000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 1729.4,
+        "militaryLevy": 864.7
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "category": "g2:vat-trap",
+    "description": "2 група з позначкою платника ПДВ — ПДВ на ставку 2 групи не впливає",
+    "object": {
+      "fop": {
+        "id": 5,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 150000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 1729.4,
+        "militaryLevy": 864.7
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "category": "g3",
+    "description": "3 група без ПДВ, дохід 100 000 грн",
+    "object": {
+      "fop": {
+        "id": 6,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 100000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 5000.0,
+        "militaryLevy": 1000.0
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "category": "g3:vat",
+    "description": "3 група, платник ПДВ, дохід 100 000 грн",
+    "object": {
+      "fop": {
+        "id": 7,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 100000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 3000.0,
+        "militaryLevy": 1000.0
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "category": "g3:rounding",
+    "description": "3 група без ПДВ, дохід 12 345,67 грн — округлення до копійок",
+    "object": {
+      "fop": {
+        "id": 8,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 12345.67,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 617.28,
+        "militaryLevy": 123.46
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "g3:rounding",
+    "description": "3 група, платник ПДВ, дохід 12 345,67 грн — округлення до копійок",
+    "object": {
+      "fop": {
+        "id": 9,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 12345.67,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 370.37,
+        "militaryLevy": 123.46
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "g3",
+    "description": "3 група без ПДВ, нульовий дохід",
+    "object": {
+      "fop": {
+        "id": 10,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 0,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 0.0,
+        "militaryLevy": 0.0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "g3",
+    "description": "3 група без ПДВ, дохід 841 000 грн (великий місяць)",
+    "object": {
+      "fop": {
+        "id": 11,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 841000,
+        "employeesCount": 0,
+        "activityType": "production",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "singleTax": 42050.0,
+        "militaryLevy": 8410.0
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "category": "null",
+    "description": "Групу не вказано",
+    "object": {
+      "fop": {
+        "id": 12,
+        "requestedGroup": null,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": null
+  }
+]

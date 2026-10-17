@@ -1,0 +1,909 @@
+[
+  {
+    "id": 1,
+    "category": "boundary:limit-2024",
+    "description": "1 група, дохід рівно на ліміті 2024 року (1 185 700 грн)",
+    "object": {
+      "fop": {
+        "id": 1,
+        "requestedGroup": 1,
+        "annualIncome": 1185700,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "boundary:limit-2024",
+    "description": "1 група, дохід на 1 грн більший за ліміт 2024 року",
+    "object": {
+      "fop": {
+        "id": 2,
+        "requestedGroup": 1,
+        "annualIncome": 1185701,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "category": "boundary:limit-2025",
+    "description": "1 група, дохід рівно на ліміті 2025 року (1 336 000 грн)",
+    "object": {
+      "fop": {
+        "id": 3,
+        "requestedGroup": 1,
+        "annualIncome": 1336000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "category": "boundary:limit-2025",
+    "description": "1 група, дохід на 1 грн більший за ліміт 2025 року",
+    "object": {
+      "fop": {
+        "id": 4,
+        "requestedGroup": 1,
+        "annualIncome": 1336001,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "category": "boundary:limit-2026",
+    "description": "1 група, дохід рівно на ліміті 2026 року (1 444 049 грн)",
+    "object": {
+      "fop": {
+        "id": 5,
+        "requestedGroup": 1,
+        "annualIncome": 1444049,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "category": "boundary:limit-2026",
+    "description": "1 група, дохід на 1 грн більший за ліміт 2026 року",
+    "object": {
+      "fop": {
+        "id": 6,
+        "requestedGroup": 1,
+        "annualIncome": 1444050,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "category": "boundary:limit-2024",
+    "description": "2 група, дохід рівно на ліміті 2024 року (5 921 400 грн)",
+    "object": {
+      "fop": {
+        "id": 7,
+        "requestedGroup": 2,
+        "annualIncome": 5921400,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "category": "boundary:limit-2024",
+    "description": "2 група, дохід на 1 грн більший за ліміт 2024 року",
+    "object": {
+      "fop": {
+        "id": 8,
+        "requestedGroup": 2,
+        "annualIncome": 5921401,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "boundary:limit-2025",
+    "description": "2 група, дохід рівно на ліміті 2025 року (6 672 000 грн)",
+    "object": {
+      "fop": {
+        "id": 9,
+        "requestedGroup": 2,
+        "annualIncome": 6672000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "boundary:limit-2025",
+    "description": "2 група, дохід на 1 грн більший за ліміт 2025 року",
+    "object": {
+      "fop": {
+        "id": 10,
+        "requestedGroup": 2,
+        "annualIncome": 6672001,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "boundary:limit-2026",
+    "description": "2 група, дохід рівно на ліміті 2026 року (7 211 598 грн)",
+    "object": {
+      "fop": {
+        "id": 11,
+        "requestedGroup": 2,
+        "annualIncome": 7211598,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "category": "boundary:limit-2026",
+    "description": "2 група, дохід на 1 грн більший за ліміт 2026 року",
+    "object": {
+      "fop": {
+        "id": 12,
+        "requestedGroup": 2,
+        "annualIncome": 7211599,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "category": "boundary:limit-2024",
+    "description": "3 група, дохід рівно на ліміті 2024 року (8 285 700 грн)",
+    "object": {
+      "fop": {
+        "id": 13,
+        "requestedGroup": 3,
+        "annualIncome": 8285700,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "category": "boundary:limit-2024",
+    "description": "3 група, дохід на 1 грн більший за ліміт 2024 року",
+    "object": {
+      "fop": {
+        "id": 14,
+        "requestedGroup": 3,
+        "annualIncome": 8285701,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "category": "boundary:limit-2025",
+    "description": "3 група, дохід рівно на ліміті 2025 року (9 336 000 грн)",
+    "object": {
+      "fop": {
+        "id": 15,
+        "requestedGroup": 3,
+        "annualIncome": 9336000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "category": "boundary:limit-2025",
+    "description": "3 група, дохід на 1 грн більший за ліміт 2025 року",
+    "object": {
+      "fop": {
+        "id": 16,
+        "requestedGroup": 3,
+        "annualIncome": 9336001,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "category": "boundary:limit-2026",
+    "description": "3 група, дохід рівно на ліміті 2026 року (10 091 049 грн)",
+    "object": {
+      "fop": {
+        "id": 17,
+        "requestedGroup": 3,
+        "annualIncome": 10091049,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "category": "boundary:limit-2026",
+    "description": "3 група, дохід на 1 грн більший за ліміт 2026 року",
+    "object": {
+      "fop": {
+        "id": 18,
+        "requestedGroup": 3,
+        "annualIncome": 10091050,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "INCOME_LIMIT"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "category": "g1:employees",
+    "description": "1 група, один найманий працівник",
+    "object": {
+      "fop": {
+        "id": 19,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 1,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "EMPLOYEES"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "category": "g1:activity",
+    "description": "1 група, надання послуг (не побутових)",
+    "object": {
+      "fop": {
+        "id": 20,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "ACTIVITY"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "category": "g1:activity",
+    "description": "1 група, продаж товарів поза ринком",
+    "object": {
+      "fop": {
+        "id": 21,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "goods_trade",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "ACTIVITY"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "category": "g1:ok",
+    "description": "1 група, побутові послуги населенню",
+    "object": {
+      "fop": {
+        "id": 22,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "household_services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "category": "g1:clients",
+    "description": "1 група, продаж на ринку, але покупці — юрособи",
+    "object": {
+      "fop": {
+        "id": 23,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "category": "g1:priority",
+    "description": "1 група, 2 працівники і перевищення доходу — першим іде порушення щодо працівників",
+    "object": {
+      "fop": {
+        "id": 24,
+        "requestedGroup": 1,
+        "annualIncome": 2000000,
+        "monthlyIncome": 40000,
+        "employeesCount": 2,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "EMPLOYEES"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "category": "g1:priority",
+    "description": "1 група, послуги і покупці-юрособи — першим іде вид діяльності",
+    "object": {
+      "fop": {
+        "id": 25,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "ACTIVITY"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "category": "g1:clients",
+    "description": "1 група, побутові послуги ФОП-платнику єдиного податку — теж заборонено",
+    "object": {
+      "fop": {
+        "id": 26,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "household_services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "category": "g2:employees",
+    "description": "2 група, рівно 10 найманих працівників",
+    "object": {
+      "fop": {
+        "id": 27,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 10,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "category": "g2:employees",
+    "description": "2 група, 11 найманих працівників",
+    "object": {
+      "fop": {
+        "id": 28,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 11,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "EMPLOYEES"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "category": "g2:clients",
+    "description": "2 група, послуги юрособам на загальній системі",
+    "object": {
+      "fop": {
+        "id": 29,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "category": "g2:clients",
+    "description": "2 група, побутові послуги юрособам на загальній системі",
+    "object": {
+      "fop": {
+        "id": 30,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "household_services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "category": "g2:ok",
+    "description": "2 група, продаж товарів юрособам на загальній системі — дозволено",
+    "object": {
+      "fop": {
+        "id": 31,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "goods_trade",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "category": "g2:ok",
+    "description": "2 група, ресторан, серед клієнтів юрособи на загальній системі — дозволено",
+    "object": {
+      "fop": {
+        "id": 32,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "restaurant",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "category": "g2:ok",
+    "description": "2 група, послуги платникам єдиного податку",
+    "object": {
+      "fop": {
+        "id": 33,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "category": "g2:priority",
+    "description": "2 група, 11 працівників і заборонені клієнти — першим іде порушення щодо працівників",
+    "object": {
+      "fop": {
+        "id": 34,
+        "requestedGroup": 2,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 11,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "EMPLOYEES"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "category": "g2:priority",
+    "description": "2 група, заборонені клієнти і перевищення доходу — першими йдуть покупці",
+    "object": {
+      "fop": {
+        "id": 35,
+        "requestedGroup": 2,
+        "annualIncome": 9000000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "category": "g3:ok",
+    "description": "3 група, 50 працівників, послуги юрособам на загальній системі",
+    "object": {
+      "fop": {
+        "id": 36,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 50,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "category": "g3:ok",
+    "description": "3 група, платник ПДВ, виробництво",
+    "object": {
+      "fop": {
+        "id": 37,
+        "requestedGroup": 3,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 5,
+        "activityType": "production",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": [
+      {
+        "eligible": true,
+        "reason": "OK"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "category": "null",
+    "description": "Групу не вказано",
+    "object": {
+      "fop": {
+        "id": 38,
+        "requestedGroup": null,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": null
+  }
+]

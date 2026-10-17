@@ -35,6 +35,7 @@ class DomainRegistry(extraSchemas: Map<String, String> = emptyMap()) : DomainCon
             "bmi" to "schema/bmi-schema.xml",
             "hotels" to "schema/hotel-schema.xml",
             "users" to "schema/user-schema.xml",
+            "fop" to "schema/fop-schema.json",
         )
     }
 }

@@ -1,0 +1,10 @@
+Hit Policy: FIRST
+Determine whether a Ukrainian sole proprietor (FOP) may apply the selected group of the simplified taxation system (single tax) in 2026, according to article 291.4 of the Tax Code of Ukraine.
+The annual income limit is a multiple of the minimum wage set by law on 1 January of the reporting year. On 1 January 2026 the minimum wage is UAH 8,647. The annual income limit is 167 minimum wages for group 1, 834 for group 2 and 1167 minimum wages for group 3.
+Group 1: the FOP may not have hired employees. Only retail sale of goods from market stalls (market_retail) or household services to the population (household_services) are allowed. A group 1 FOP may not sell goods or provide services to legal entities or other FOPs.
+Group 2: the FOP may have at most 10 hired employees at the same time. A group 2 FOP may not provide services (services, household_services) to legal entities and FOPs that are not single-tax payers. Sale of goods (goods_trade), production (production), the restaurant business (restaurant) and retail sale from market stalls are allowed for any buyer.
+Group 3: there are no restrictions on the number of hired employees, on the listed activity types or on buyers.
+For every group: if the annual income exceeds the limit of the selected group, the FOP may not apply it. Income equal to the limit is not an excess.
+The checks are applied in this order, and the first violation found determines the result: number of hired employees, activity type, buyers, annual income.
+The result is stored in the variables eligible (true if the group may be applied, false otherwise) and reason with one of the values: "OK", "EMPLOYEES", "ACTIVITY", "CLIENTS", "INCOME_LIMIT".
+If no group is selected, the result stays empty.

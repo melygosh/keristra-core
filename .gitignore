@@ -47,3 +47,7 @@ application-local.properties
 
 ### Runtime logs ###
 logs/
+
+### Python ###
+__pycache__/
+*.pyc

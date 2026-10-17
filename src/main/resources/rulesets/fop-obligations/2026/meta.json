@@ -1,0 +1,33 @@
+{
+  "domain": "fop",
+  "hitPolicy": "FIRST",
+  "outputs": [
+    "singleTax",
+    "militaryLevy"
+  ],
+  "ambiguous": false,
+  "languages": [
+    "uk",
+    "en"
+  ],
+  "version": "2026",
+  "parameters": {
+    "minimumWageJan1": 8647,
+    "subsistenceMinimumJan1": 3328,
+    "incomeLimits": {
+      "1": 1444049,
+      "2": 7211598,
+      "3": 10091049
+    },
+    "militaryLevyForSingleTaxPayers": true
+  },
+  "source": "Tax Code of Ukraine (ПКУ), п. 291.4 (groups, limits as 167/834/1167 minimum wages on 1 January), п. 293.2-293.3 (single-tax rates). Values cross-checked 2026-10-17 against: biz.ligazakon.net/news/224492 (2024: MZP 7 100, PM 3 028, limits 1 185 700 / 5 921 400 / 8 285 700, single tax 302.80 / 1 420); news.dtkt.ua/.../107438 and buhplatforma.com.ua/news/113456 (2025: MZP 8 000, PM 3 028; 2026: MZP 8 647, PM 3 328, limits 1 444 049 / 7 211 598 / 10 091 049, military levy 10% MZP for groups 1-2, 1% income for group 3); biz.ligazakon.net/news/232910 (military levy for single-tax payers from 1 January 2025).",
+  "unverified": [
+    "Exact number and article of the law that introduced the military levy for single-tax FOPs (sources disagree: bill 9319 vs law 4015-IX) — only the start date 2025-01-01 is cross-checked.",
+    "Group 1/2 single-tax amounts are the statutory maxima; real rates are set by local councils (modelled as maxima on purpose, stated in the rule text).",
+    "Client restrictions are simplified to two flags (businessClients, servicesToGeneralSystemClients); non-residents, budget institutions and excise goods are out of scope."
+  ],
+  "notes": "Same input objects in every version (E4): expected outputs differ only where the version's parameters or structure differ. 2024 has no militaryLevy output (structural change in 2025). Known limitation: the validator compares expected keys only, so a 2025+ table evaluated against 2024 tests does not flag the extra militaryLevy output. ",
+  "referenceDmn": "Human reference written 2026-10-17 in Cowork; checked with a Python re-implementation of the FEEL subset; pending Camunda confirmation (StrictValidator).",
+  "createdBy": "Cowork 2026-10-17"
+}
