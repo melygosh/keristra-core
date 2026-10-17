@@ -52,3 +52,18 @@ internal val firstNoDefault = dmn(
 
 internal fun app(fixedPreference: Boolean, creditScore: Int) =
     """{"application": {"fixedPreference": $fixedPreference, "creditScore": $creditScore}}"""
+
+/** Two outputs, like fop-eligibility: score >= 900 -> eligible with no reason (null), >= 700 -> eligible "OK", else "SCORE". */
+internal val twoOutputs = """<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="decision" name="Two outputs">
+    <decisionTable id="decisionTable" hitPolicy="FIRST">
+      <input id="input-1"><inputExpression id="input-1-exp" typeRef="double"><text>application.creditScore</text></inputExpression></input>
+      <output id="output-1" name="eligible" typeRef="boolean" />
+      <output id="output-2" name="reason" typeRef="string" />
+      <rule id="rule-1"><inputEntry id="r1-i"><text>&gt;= 900</text></inputEntry><outputEntry id="r1-o1"><text>true</text></outputEntry><outputEntry id="r1-o2"><text></text></outputEntry></rule>
+      <rule id="rule-2"><inputEntry id="r2-i"><text>&gt;= 700</text></inputEntry><outputEntry id="r2-o1"><text>true</text></outputEntry><outputEntry id="r2-o2"><text>"OK"</text></outputEntry></rule>
+      <rule id="rule-3"><inputEntry id="r3-i"><text>&lt; 700</text></inputEntry><outputEntry id="r3-o1"><text>false</text></outputEntry><outputEntry id="r3-o2"><text>"SCORE"</text></outputEntry></rule>
+    </decisionTable>
+  </decision>
+</definitions>"""

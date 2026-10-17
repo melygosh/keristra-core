@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component
  * the table is accepted only when it parses, passes the schema check (if requested) and every case is PASS.
  *
  * `expected` of `null`, `[]` or rows whose values are all null means "no rule applies".
- * Rows are compared pairwise in result order, for every hit policy.
+ * Rows are compared pairwise in result order, for every hit policy. A result output with a non-null value that the
+ * case does not name is EXTRA_OUTPUT (e.g. a 2025 tax table with `militaryLevy` against 2024 tests); MISMATCH on an
+ * expected key takes precedence, and the extra outputs are recorded either way.
  */
 @Component
 class StrictValidator(private val dmnEngine: DmnEngine) : Validator {
@@ -61,8 +63,20 @@ class StrictValidator(private val dmnEngine: DmnEngine) : Validator {
         }
 
         val mismatches = compareRows(expected, actual)
-        return CaseResult(index, if (mismatches.isEmpty()) CaseOutcome.PASS else CaseOutcome.MISMATCH, actual, mismatches)
+        val extraOutputs = extraOutputs(expected, actual)
+        val outcome = when {
+            mismatches.isNotEmpty() -> CaseOutcome.MISMATCH
+            extraOutputs.isNotEmpty() -> CaseOutcome.EXTRA_OUTPUT
+            else -> CaseOutcome.PASS
+        }
+        return CaseResult(index, outcome, actual, mismatches, extraOutputs = extraOutputs)
     }
+
+    /** Non-null result outputs that the matching expected row does not name (`expected` = null means absent). */
+    private fun extraOutputs(expected: List<Map<String, Any?>>, actual: List<Map<String, Any?>>): List<KeyMismatch> =
+        (0 until minOf(expected.size, actual.size)).flatMap { row ->
+            actual[row].filter { (key, value) -> value != null && key !in expected[row] }.map { (key, value) -> KeyMismatch(row, key, null, value) }
+        }
 
     private fun compareRows(expected: List<Map<String, Any?>>, actual: List<Map<String, Any?>>): List<KeyMismatch> {
         val mismatches = mutableListOf<KeyMismatch>()

@@ -183,4 +183,45 @@ class StrictValidatorTest {
             .containsEntry(MISMATCH, 1).containsEntry(UNEXPECTED_RESULT, 1)
         assertThat(report.accepted).isFalse()
     }
+
+    // --- EXTRA_OUTPUT: outputs the case does not expect (e.g. a 2025 table with militaryLevy against 2024 tests) ---
+
+    private fun scoreCase(score: Int, expected: String) =
+        """{"object": {"application": {"creditScore": $score}}, "expected": $expected}"""
+
+    @Test
+    fun `EXTRA_OUTPUT when the result carries an output the case does not expect`() {
+        val report = validator.validate(twoOutputs, cases("[${scoreCase(720, """[{"eligible": true}]""")}]"))
+
+        val result = report.cases.single()
+        assertThat(result.outcome).isEqualTo(CaseOutcome.EXTRA_OUTPUT)
+        assertThat(result.extraOutputs).containsExactly(KeyMismatch(row = 0, key = "reason", expected = null, actual = "OK"))
+        assertThat(result.mismatches).isEmpty()
+        assertThat(report.accepted).isFalse()
+    }
+
+    @Test
+    fun `MISMATCH takes precedence over EXTRA_OUTPUT, which is still recorded`() {
+        val report = validator.validate(twoOutputs, cases("[${scoreCase(650, """[{"eligible": true}]""")}]"))
+
+        val result = report.cases.single()
+        assertThat(result.outcome).isEqualTo(MISMATCH)
+        assertThat(result.mismatches).containsExactly(KeyMismatch(0, "eligible", true, false))
+        assertThat(result.extraOutputs.map { it.key }).containsExactly("reason")
+    }
+
+    @Test
+    fun `an extra output whose value is null is not EXTRA_OUTPUT`() {
+        val report = validator.validate(twoOutputs, cases("[${scoreCase(950, """[{"eligible": true}]""")}]"))
+
+        assertThat(report.cases.single().outcome).isEqualTo(PASS)
+    }
+
+    @Test
+    fun `a case that names every output passes`() {
+        val report = validator.validate(twoOutputs, cases("[${scoreCase(720, """[{"eligible": true, "reason": "OK"}]""")}]"))
+
+        assertThat(report.cases.single().outcome).isEqualTo(PASS)
+        assertThat(report.accepted).isTrue()
+    }
 }

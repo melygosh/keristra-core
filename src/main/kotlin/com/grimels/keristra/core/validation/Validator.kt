@@ -3,7 +3,7 @@ package com.grimels.keristra.core.validation
 enum class ValidatorMode { LENIENT, STRICT }
 
 /** Per-test-case outcome. LENIENT only ever produces PASS, MISMATCH and EVAL_ERROR (that is all V0 can tell apart). */
-enum class CaseOutcome { PASS, MISMATCH, EMPTY_RESULT, UNEXPECTED_RESULT, MULTI_RESULT, EVAL_ERROR }
+enum class CaseOutcome { PASS, MISMATCH, EMPTY_RESULT, UNEXPECTED_RESULT, MULTI_RESULT, EVAL_ERROR, EXTRA_OUTPUT }
 
 enum class TableError { PARSE_ERROR, SCHEMA_ERROR }
 
@@ -16,6 +16,7 @@ data class CaseResult(
     val actual: List<Map<String, Any?>> = emptyList(),
     val mismatches: List<KeyMismatch> = emptyList(),
     val message: String? = null,
+    val extraOutputs: List<KeyMismatch> = emptyList(),
 )
 
 data class ValidationReport(
