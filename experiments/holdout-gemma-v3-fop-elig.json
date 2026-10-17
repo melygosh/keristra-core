@@ -1,0 +1,13 @@
+{
+  "runId": "holdout-gemma-v3-fop-elig",
+  "ruleSet": "fop-eligibility",
+  "version": "2026",
+  "language": "uk",
+  "mode": "SUITES",
+  "tests": {"model": "local:gemma4:26b", "prompt": "v3", "temperature": 0.7, "seed": 42},
+  "validator": "STRICT",
+  "cycles": 10,
+  "evaluate": [
+    {"mutantsOf": "fop-eligibility/2026"}
+  ]
+}
