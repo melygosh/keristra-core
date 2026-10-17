@@ -67,4 +67,12 @@ class PromptTemplateTest {
             .getAnnotation(SystemMessage::class.java).value.joinToString("\n")
 
     private fun normalize(text: String) = text.trim().replace(Regex("\\s+"), " ")
+
+    @Test
+    fun `the adjudication prompt takes rules, schema and one object`() {
+        val prompt = PromptTemplate.load("tests-adjudicate", "v1").render(mapOf("rules" to "R", "schema" to "S", "object" to "{\"a\":1}"))
+
+        assertThat(prompt.user).contains("R").contains("S").contains("{\"a\":1}")
+        assertThat(prompt.system).contains("do not see the table")
+    }
 }

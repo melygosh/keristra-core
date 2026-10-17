@@ -56,11 +56,13 @@ class ExperimentRunnerTest {
         cycles: Int = 2,
         validator: ValidatorMode = ValidatorMode.STRICT,
         strategy: RepairStrategy = RepairStrategy.PAIRED_REGEN,
+        conflictMemory: Boolean = false,
+        retryBudget: Int = 3,
     ) = RunConfig(
         runId = runId, ruleSet = "toy", version = "v1", language = "en",
         dmn = TrackSpec(model = "anthropic:priced-model"),
         tests = TrackSpec(model = "local:free-model", temperature = 0.7, seed = 42),
-        validator = validator, strategy = strategy, cycles = cycles,
+        validator = validator, strategy = strategy, cycles = cycles, conflictMemory = conflictMemory, retryBudget = retryBudget,
     )
 
     /** Each created track pair answers from its own script. */
@@ -76,7 +78,10 @@ class ExperimentRunnerTest {
             val registry = DomainRegistry()
             return Tracks(
                 DmnGenerator(dmnClient, PromptTemplate.load("dmn", dmn.promptVersion), registry, dmn.settings),
-                TestSuiteGenerator(testsClient, PromptTemplate.load("tests", tests.promptVersion), registry, tests.settings),
+                TestSuiteGenerator(
+                    testsClient, PromptTemplate.load("tests", tests.promptVersion), registry, tests.settings,
+                    PromptTemplate.load("tests-adjudicate", "v1"),
+                ),
             )
         }
     }
@@ -205,7 +210,7 @@ class ExperimentRunnerTest {
         val json = """{"runId": "r1", "ruleSet": "mortgage", "version": "ambiguous", "language": "en",
             "dmn": {"model": "anthropic:claude-sonnet-5-5", "maxTokens": 16000},
             "tests": {"model": "local:gemma4:26b", "temperature": 0.7, "seed": 42},
-            "validator": "STRICT", "strategy": "ESCALATE_ON_STABLE_DISAGREEMENT", "retryBudget": 3, "rag": {"enabled": false}, "cycles": 3}"""
+            "validator": "STRICT", "strategy": "ESCALATE_ON_STABLE_DISAGREEMENT", "retryBudget": 3, "conflictMemory": true, "rag": {"enabled": false}, "cycles": 3}"""
         val file = dir.resolve("r1.json").also { Files.writeString(it, json) }
 
         val config = RunConfig.read(file)
@@ -213,7 +218,46 @@ class ExperimentRunnerTest {
         assertThat(config.tests.temperature).isEqualTo(0.7)
         assertThat(config.dmn.temperature).isNull()
         assertThat(config.strategy).isEqualTo(RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT)
+        assertThat(config.conflictMemory).isTrue()
         Files.writeString(file, json.replace("\"seed\"", "\"sead\""))
         assertThatThrownBy { RunConfig.read(file) }.hasMessageContaining("sead")
+    }
+
+    @Test
+    fun `conflict memory is logged - open and closed conflicts, adjudications, open conflicts at the end`() {
+        val withoutConflict = """[{"object": ${app(true, 650)}, "expected": [{"product": "Fixed30"}]}]"""
+        val insist = """[{"object": ${app(false, 720)}, "expected": [{"product": "Fixed30"}]}]"""
+        val log = runner(ScriptedTracks(listOf(firstNoDefault, firstNoDefault), listOf(suite, withoutConflict, insist)))
+            .run(config(cycles = 1, conflictMemory = true, retryBudget = 2), dir)
+
+        val events = events(log)
+        assertThat(events[0]["config"].obj()).containsEntry("conflictMemory", true)
+        val second = events.filter { it["event"] == "attempt" }[1]
+        assertThat(second).containsEntry("accepted", false).containsEntry("suiteAccepted", true)
+        assertThat(second["openConflicts"] as List<*>).hasSize(1)
+        assertThat(second["closedConflicts"] as List<*>).isEmpty()
+        val adjudication = (second["adjudications"] as List<*>).single().obj()
+        assertThat(adjudication).containsEntry("agreesWithDmn", false).containsKeys("previousExpected", "newExpected")
+        assertThat(adjudication["track"].obj()).containsEntry("servedModel", "served-tests").containsEntry("inputTokens", 300).containsEntry("promptId", "tests-adjudicate/v1")
+        val finished = events.single { it["event"] == "cycle_finished" }
+        assertThat(finished["outcome"]).isEqualTo("REJECTED_BUDGET")
+        val atEnd = (finished["openConflictsAtEnd"] as List<*>).single().obj()
+        assertThat(atEnd).containsEntry("expected", listOf(mapOf("product" to "Fixed30"))).containsEntry("actual", listOf(mapOf("product" to "ARM7/1")))
+        assertThat(finished["tokens"].obj()["tests"].obj()).containsEntry("calls", 3)
+    }
+
+    @Test
+    fun `a log written before conflictMemory existed can still be resumed`() {
+        val log = runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(config(cycles = 1), dir)
+        val legacy = Files.readAllLines(log).map { line ->
+            val event: MutableMap<String, Any?> = mapper.readValue(line)
+            (event["config"] as? MutableMap<*, *>)?.remove("conflictMemory")
+            mapper.writeValueAsString(event)
+        }
+        Files.write(log, legacy)
+
+        runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(config(cycles = 2), dir)
+
+        assertThat(events(log).filter { it["event"] == "cycle_finished" }.map { it["cycle"] }).containsExactly(1, 2)
     }
 }

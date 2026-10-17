@@ -20,6 +20,9 @@ class GenerationTracks(private val factory: LlmClientFactory, private val contex
 
     override fun create(dmn: TrackConfig, tests: TrackConfig): Tracks = Tracks(
         dmn = DmnGenerator(factory.create(dmn.model), PromptTemplate.load("dmn", dmn.promptVersion), contextProvider, dmn.settings),
-        tests = TestSuiteGenerator(factory.create(tests.model), PromptTemplate.load("tests", tests.promptVersion), contextProvider, tests.settings),
+        tests = TestSuiteGenerator(
+            factory.create(tests.model), PromptTemplate.load("tests", tests.promptVersion), contextProvider, tests.settings,
+            PromptTemplate.load("tests-adjudicate", "v1"),
+        ),
     )
 }

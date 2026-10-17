@@ -28,5 +28,6 @@ class GenerationTracksTest {
 
         assertThat(pair.dmn.prompt.id).isEqualTo("dmn/v1")
         assertThat(pair.tests.prompt.id).isEqualTo("tests/v1")
+        assertThat(pair.tests.adjudicationPrompt!!.id).isEqualTo("tests-adjudicate/v1")
     }
 }

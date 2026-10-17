@@ -7,6 +7,7 @@ import com.grimels.keristra.core.generation.Tracks
 import com.grimels.keristra.core.generation.TracksProvider
 import com.grimels.keristra.core.llm.LlmResponse
 import com.grimels.keristra.core.orchestration.Attempt
+import com.grimels.keristra.core.orchestration.Conflict
 import com.grimels.keristra.core.orchestration.CycleOutcome
 import com.grimels.keristra.core.orchestration.CycleResult
 import com.grimels.keristra.core.orchestration.Dispatcher
@@ -61,7 +62,7 @@ class ExperimentRunner(
         val tracks = tracksProvider.create(config.dmn.toTrackConfig(), config.tests.toTrackConfig())
         val validator = if (config.validator == ValidatorMode.LENIENT) lenient else strict
         val schemaPaths = if (config.validator == ValidatorMode.STRICT) domains.schemaPaths(ruleSet.domain) else null
-        val dispatcher = Dispatcher(tracks, validator, DispatcherConfig(config.strategy, config.retryBudget, config.stableAttempts))
+        val dispatcher = Dispatcher(tracks, validator, DispatcherConfig(config.strategy, config.retryBudget, config.stableAttempts, config.conflictMemory))
         val session = Session(config, UUID.randomUUID().toString(), ruleSet, tracks)
 
         JsonlLog.Writer(logFile, mapper).use { out ->
@@ -82,7 +83,11 @@ class ExperimentRunner(
     private class Session(val config: RunConfig, val id: String, val ruleSet: RuleSet, val tracks: Tracks)
 
     private fun checkResumable(config: RunConfig, previous: List<Map<String, Any?>>, logFile: Path) {
-        val earlier = previous.firstOrNull { it["event"] == "run_started" }?.get("config") as? Map<*, *> ?: return
+        val logged = previous.firstOrNull { it["event"] == "run_started" }?.get("config") as? Map<*, *> ?: return
+        // Read the logged config back through RunConfig, so fields added later compare at their defaults.
+        val earlier: Map<*, *> = runCatching {
+            mapper.readValue<Map<String, Any?>>(mapper.writeValueAsString(mapper.convertValue(logged, RunConfig::class.java)))
+        }.getOrDefault(logged)
         val current: Map<String, Any?> = mapper.readValue(mapper.writeValueAsString(config))
         val differing = (earlier.keys + current.keys).map { it.toString() }.toSortedSet()
             .filter { it != "cycles" && earlier[it] != current[it] }
@@ -127,7 +132,8 @@ class ExperimentRunner(
             ),
             "semanticHash" to attempt.semanticHash,
             "testSuiteSize" to attempt.tests?.cases?.size,
-            "accepted" to attempt.report?.accepted,
+            "accepted" to attempt.accepted,
+            "suiteAccepted" to attempt.report?.accepted,
             "tableError" to attempt.report?.tableError,
             "tableErrorMessage" to attempt.report?.tableErrorMessage,
             "counts" to attempt.report?.counts,
@@ -137,8 +143,36 @@ class ExperimentRunner(
             "dmnRaw" to attempt.dmn?.response?.text?.takeIf { it != attempt.dmn.xml },
             "testSuite" to attempt.tests?.cases,
             "testsRaw" to attempt.failedTestsResponse?.text,
+            "openConflicts" to attempt.openConflicts.map(::conflictInfo),
+            "closedConflicts" to attempt.closedConflicts.map {
+                mapOf("reason" to it.reason, "newExpected" to it.newExpected) + conflictInfo(it.conflict)
+            },
+            "adjudications" to attempt.adjudications.map {
+                mapOf(
+                    "conflictKey" to it.conflictKey,
+                    "previousExpected" to it.previousExpected,
+                    "newExpected" to it.newExpected,
+                    "agreesWithDmn" to it.agreesWithDmn,
+                    "error" to it.error,
+                    "raw" to it.response?.text,
+                    "track" to it.response?.let { response ->
+                        trackInfo(session.config.tests, response, it.promptId.orEmpty(), it.promptHash.orEmpty(), attempt.seedOffset)
+                    },
+                )
+            },
         )
     }
+
+    private fun conflictInfo(conflict: Conflict) = mapOf(
+        "key" to conflict.key,
+        "object" to conflict.case["object"],
+        "expected" to conflict.case["expected"],
+        "actual" to conflict.actual,
+        "outcome" to conflict.outcome,
+        "semanticHash" to conflict.semanticHash,
+        "firstSeenAttempt" to conflict.firstSeenAttempt,
+        "readjudicated" to conflict.readjudicated,
+    )
 
     private fun trackInfo(spec: TrackSpec, response: LlmResponse, promptId: String, promptHash: String, seedOffset: Long) = mapOf(
         "model" to spec.model,
@@ -161,7 +195,7 @@ class ExperimentRunner(
             listOfNotNull(
                 (if (attempt.testsRegenerated) attempt.tests?.response ?: attempt.failedTestsResponse else null)?.let { session.config.tests to it },
                 attempt.dmn?.let { session.config.dmn to it.response },
-            )
+            ) + attempt.adjudications.mapNotNull { it.response?.let { response -> session.config.tests to response } }
         }
         val costs = calls.map { (spec, response) -> pricing.costUsd(spec.model, response.inputTokens, response.outputTokens) }
 
@@ -172,6 +206,7 @@ class ExperimentRunner(
             "message" to result.message,
             "finalSemanticHash" to result.attempts.lastOrNull { it.semanticHash != null }?.semanticHash,
             "conflictingCases" to result.conflictingCases,
+            "openConflictsAtEnd" to result.openConflicts.map(::conflictInfo),
             "groundTruth" to mapOf(
                 "evaluated" to (report != null),
                 "validator" to ValidatorMode.STRICT,

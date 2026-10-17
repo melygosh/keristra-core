@@ -37,6 +37,8 @@ data class RunConfig(
     val strategy: RepairStrategy = RepairStrategy.PAIRED_REGEN,
     val retryBudget: Int = 3,
     val stableAttempts: Int = 2,
+    /** REVISION_PLAN step 10; off keeps the earlier behaviour (both arms are needed for the article). */
+    val conflictMemory: Boolean = false,
     val rag: RagSpec = RagSpec(),
     val cycles: Int,
 ) {

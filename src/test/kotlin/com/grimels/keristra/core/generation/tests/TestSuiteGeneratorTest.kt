@@ -14,7 +14,9 @@ class TestSuiteGeneratorTest {
         {"name": "t2", "object": {"application": {"creditScore": 600}}, "expected": []}]"""
 
     private fun generator(reply: String, settings: GenerationSettings = GenerationSettings()) =
-        FakeLlmClient(reply).let { it to TestSuiteGenerator(it, PromptTemplate.load("tests", "v1"), fixedSchema, settings) }
+        FakeLlmClient(reply).let {
+            it to TestSuiteGenerator(it, PromptTemplate.load("tests", "v1"), fixedSchema, settings, PromptTemplate.load("tests-adjudicate", "v1"))
+        }
 
     @Test
     fun `sends the rendered tests prompt with the track settings`() {
@@ -78,5 +80,34 @@ class TestSuiteGeneratorTest {
         val (_, generator) = generator("[1, 2, 3]")
 
         assertThatThrownBy { generator.generate("rules", "mortgage") }.isInstanceOf(TestSuiteParseException::class.java)
+    }
+
+    @Test
+    fun `adjudicate sends one input with the rules and schema, never a table, and returns its expected output`() {
+        val (client, generator) = generator("""[{"object": {"application": {"creditScore": 720}}, "expected": [{"product": "ARM7/1"}]}]""",
+            GenerationSettings(temperature = 0.2, seed = 10))
+
+        val verdict = generator.adjudicate("RULES-TEXT", "mortgage", mapOf("application" to mapOf("creditScore" to 720.0)), seedOffset = 5)
+
+        val request = client.requests.single()
+        assertThat(request.user).contains("RULES-TEXT").contains("\"creditScore\":720").doesNotContain("<definitions")
+        assertThat(request.seed).isEqualTo(15)
+        assertThat(verdict.expected).isEqualTo(listOf(mapOf("product" to "ARM7/1")))
+        assertThat(verdict.promptId).isEqualTo("tests-adjudicate/v1")
+        assertThat(verdict.response.text).contains("ARM7/1")
+    }
+
+    @Test
+    fun `adjudicate maps no-rule-applies to an empty expectation`() {
+        val (_, generator) = generator("""[{"object": {}, "expected": []}]""")
+
+        assertThat(generator.adjudicate("rules", "mortgage", emptyMap()).expected).isEqualTo(emptyList<Any>())
+    }
+
+    @Test
+    fun `an unparseable verdict raises TestSuiteParseException`() {
+        val (_, generator) = generator("I think it is ARM7/1")
+
+        assertThatThrownBy { generator.adjudicate("rules", "mortgage", emptyMap()) }.isInstanceOf(TestSuiteParseException::class.java)
     }
 }

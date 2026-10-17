@@ -14,6 +14,9 @@ import com.grimels.keristra.core.llm.LlmResponse
 /** Test cases in the shape the validators read: `{"object": {...}, "expected": [...]}` (plus optional name/description). */
 data class TestSuite(val cases: List<Map<String, Any?>>, val promptId: String, val promptHash: String, val response: LlmResponse)
 
+/** The test track's verdict on a single input: [expected] in the validator format (`[]` = no rule applies). */
+data class Adjudicated(val expected: Any?, val promptId: String, val promptHash: String, val response: LlmResponse)
+
 /** The model answered, but not with a JSON array of objects; [response] keeps the raw answer for the run log. */
 class TestSuiteParseException(message: String, val promptId: String, val response: LlmResponse, cause: Throwable? = null) :
     RuntimeException(message, cause)
@@ -24,7 +27,23 @@ class TestSuiteGenerator(
     internal val prompt: PromptTemplate,
     private val contextProvider: DomainContextProvider,
     private val settings: GenerationSettings = GenerationSettings(),
+    internal val adjudicationPrompt: PromptTemplate? = null,
 ) {
+
+    /**
+     * Re-adjudication (REVISION_PLAN step 10): the oracle judges one input on its own, with the rules and the schema
+     * but never the DMN. Requires [adjudicationPrompt].
+     */
+    fun adjudicate(rules: String, domain: String, input: Map<String, Any?>, seedOffset: Long = 0): Adjudicated {
+        val template = checkNotNull(adjudicationPrompt) { "No adjudication prompt configured for the test track" }
+        val rendered = template.render(mapOf("rules" to rules, "schema" to contextProvider.schema(domain), "object" to GSON.toJson(input)))
+        val response = client.complete(
+            LlmRequest(rendered.system, rendered.user, settings.temperature, settings.seed?.plus(seedOffset), settings.maxTokens),
+        )
+        val verdict = parseCases(response).firstOrNull()
+            ?: throw TestSuiteParseException("Adjudication returned no case", template.id, response)
+        return Adjudicated(verdict["expected"], template.id, template.hash, response)
+    }
 
     /** [seedOffset] is added to the configured seed, so retries and cycles do not replay one seeded sample. */
     fun generate(rules: String, domain: String, seedOffset: Long = 0): TestSuite {

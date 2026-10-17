@@ -254,6 +254,15 @@ The current V3 does not catch it either: `stableDisagreement` requires a shared 
   - DMN fixed → conflict closed by (a);
   - retraction → conflict closed by (b).
 
+**Status (Claude Code, 2026-10-17): done.** `DispatcherConfig.conflictMemory` / run config `"conflictMemory": true` (default `false` = the arm without memory). Details decided in implementation:
+- Memory applies to PAIRED_REGEN and V3; under STATIC_ORACLE the flag has no effect (the fixed oracle already keeps every expectation).
+- A conflict is identified by the canonical JSON of its input plus its expectation (key order ignored), so the same disagreement from several oracles is one conflict.
+- Re-adjudication (b) is asked only when an attempt would otherwise be accepted (its fresh suite passes) and at most once per conflict per cycle, to bound calls to slow local models. Prompt: `prompts/tests-adjudicate/v1.txt`, sent by the test track with the rules, schema and the single input, never the DMN.
+- (b) closes the conflict only if the new expectation **agrees with the current DMN**, not merely differs from the old one; a changed verdict that still disagrees keeps it open.
+- An infrastructure error during re-adjudication ends the cycle with `ERROR`; an unparseable verdict is logged and the conflict stays open.
+- JSONL: `attempt.accepted` is now the memory-aware verdict, `attempt.suiteAccepted` the fresh suite alone; `openConflicts`, `closedConflicts` (with `reason` DMN_FIXED / ORACLE_RETRACTION), `adjudications` (with the call's tokens, latency and cost); `cycle_finished.openConflictsAtEnd`; adjudication calls count towards the test track's tokens and cost. Logs written before the flag existed still resume (missing fields compare at their defaults).
+- Unit tests reproduce F17 in both arms: without memory the unchanged table is accepted once the oracle drops the case; with memory it is not.
+
 ### Step 11 — the mutation test fixture after the ground-truth change
 `mortgage/ambiguous/ground-truth.json` now has 45 cases (8 original plus conflicts, boundaries, nulls and near-misses; see `category`), and `reference.dmn` is a human reference with rule order knockouts → Fixed30 → ARM7/1. The Sonnet draft moved to `reference.draft-sonnet.dmn`.
 

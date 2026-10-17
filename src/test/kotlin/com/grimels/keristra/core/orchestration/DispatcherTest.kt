@@ -57,7 +57,10 @@ class DispatcherTest {
         val testsClient = ScriptedLlmClient(*testReplies.toTypedArray())
         val tracks = Tracks(
             dmn = DmnGenerator(dmnClient, PromptTemplate.load("dmn", "v1"), fixedSchema),
-            tests = TestSuiteGenerator(testsClient, PromptTemplate.load("tests", "v1"), fixedSchema, GenerationSettings(seed = testSeed)),
+            tests = TestSuiteGenerator(
+                testsClient, PromptTemplate.load("tests", "v1"), fixedSchema, GenerationSettings(seed = testSeed),
+                PromptTemplate.load("tests-adjudicate", "v1"),
+            ),
         )
         val result = Dispatcher(tracks, StrictValidator(testEngine), config).runCycle(rules = "rules", domain = "mortgage", cycle = cycle)
         return Run(dmnClient, testsClient, result)
@@ -226,5 +229,120 @@ class DispatcherTest {
         assertThat(run.result.outcome).isEqualTo(ERROR)
         assertThat(run.result.message).contains("connection refused")
         assertThat(run.result.attempts).hasSize(1)
+    }
+
+    // --- conflict memory (REVISION_PLAN step 10, finding F17) ---
+
+    /** Passes [badDmn]: the second oracle simply leaves out the conflicting input (false, 720). */
+    private val suiteWithoutConflict = """[{"object": ${app(true, 650)}, "expected": [{"product": "Fixed30"}]}]"""
+    private fun verdict(product: String) = """[{"object": ${app(false, 720)}, "expected": [{"product": "$product"}]}]"""
+
+    private fun memory(strategy: RepairStrategy, retryBudget: Int = 2) = DispatcherConfig(strategy, retryBudget, conflictMemory = true)
+
+    @Test
+    fun `F17 - without conflict memory an oracle that drops the conflicting case lets the unchanged DMN through`() {
+        val run = run(DispatcherConfig(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict))
+
+        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+        assertThat(run.result.attempts.map { it.semanticHash }.distinct()).hasSize(1)
+    }
+
+    @Test
+    fun `with conflict memory the dropped conflict keeps the cycle open`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict, verdict("Fixed30")))
+
+        assertThat(run.result.outcome).isEqualTo(REJECTED_BUDGET)
+        val second = run.result.attempts[1]
+        assertThat(second.report!!.accepted).describedAs("the fresh suite alone passes").isTrue()
+        assertThat(second.accepted).isFalse()
+        val conflict = run.result.openConflicts.single()
+        assertThat(conflict.case["expected"]).isEqualTo(listOf(mapOf("product" to "Fixed30")))
+        assertThat(conflict.actual).containsExactly(mapOf("product" to "ARM7/1"))
+        assertThat(conflict.firstSeenAttempt).isEqualTo(1)
+        val adjudication = second.adjudications.single()
+        assertThat(adjudication.newExpected).isEqualTo(listOf(mapOf("product" to "Fixed30")))
+        assertThat(adjudication.agreesWithDmn).isFalse()
+    }
+
+    @Test
+    fun `a changed DMN that passes the conflict closes it - reason DMN_FIXED`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, goodDmn), listOf(suite, suiteWithoutConflict))
+
+        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+        assertThat(run.result.attempts[1].closedConflicts.single().reason).isEqualTo(ConflictCloseReason.DMN_FIXED)
+        assertThat(run.result.openConflicts).isEmpty()
+        assertThat(run.testsClient.requests).hasSize(2)
+    }
+
+    @Test
+    fun `an oracle retraction that agrees with the DMN closes the conflict - reason ORACLE_RETRACTION`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict, verdict("ARM7/1")))
+
+        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+        val closed = run.result.attempts[1].closedConflicts.single()
+        assertThat(closed.reason).isEqualTo(ConflictCloseReason.ORACLE_RETRACTION)
+        assertThat(closed.newExpected).isEqualTo(listOf(mapOf("product" to "ARM7/1")))
+        assertThat(run.testsClient.requests[2].user).contains("\"creditScore\":720").doesNotContain("<definitions")
+    }
+
+    @Test
+    fun `a changed verdict that still disagrees with the DMN does not close the conflict`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict, verdict("ManualReview")))
+
+        assertThat(run.result.outcome).isEqualTo(REJECTED_BUDGET)
+        assertThat(run.result.attempts[1].adjudications.single().agreesWithDmn).isFalse()
+        assertThat(run.result.openConflicts).hasSize(1)
+    }
+
+    @Test
+    fun `each conflict is re-adjudicated at most once per cycle`() {
+        val run = run(
+            memory(PAIRED_REGEN, retryBudget = 3),
+            listOf(badDmn, badDmn, badDmn),
+            listOf(suite, suiteWithoutConflict, verdict("Fixed30"), suiteWithoutConflict),
+        )
+
+        assertThat(run.result.outcome).isEqualTo(REJECTED_BUDGET)
+        assertThat(run.result.attempts.map { it.adjudications.size }).containsExactly(0, 1, 0)
+        assertThat(run.testsClient.requests).hasSize(4)
+    }
+
+    @Test
+    fun `the same failing case in later attempts is one conflict`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suite))
+
+        assertThat(run.result.attempts.map { it.openConflicts.size }).containsExactly(1, 1)
+        assertThat(run.result.openConflicts.single().firstSeenAttempt).isEqualTo(1)
+    }
+
+    @Test
+    fun `V3 with memory returns AMBIGUOUS when the logic is stable and a conflict stays open`() {
+        val run = run(
+            memory(ESCALATE_ON_STABLE_DISAGREEMENT, retryBudget = 3),
+            listOf(badDmn, badDmnRelabelled),
+            listOf(suite, suiteWithoutConflict, verdict("Fixed30")),
+        )
+
+        assertThat(run.result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run.result.attempts).hasSize(2)
+        assertThat(run.result.openConflicts).hasSize(1)
+    }
+
+    @Test
+    fun `STATIC_ORACLE ignores conflict memory - its oracle never changes`() {
+        val run = run(memory(STATIC_ORACLE), listOf(badDmn, goodDmn), listOf(suite))
+
+        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+        assertThat(run.result.attempts.flatMap { it.openConflicts + it.adjudications }).isEmpty()
+    }
+
+    @Test
+    fun `an unparseable verdict leaves the conflict open and is recorded`() {
+        val run = run(memory(PAIRED_REGEN), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict, "no idea"))
+
+        assertThat(run.result.outcome).isEqualTo(REJECTED_BUDGET)
+        val adjudication = run.result.attempts[1].adjudications.single()
+        assertThat(adjudication.error).isNotBlank()
+        assertThat(adjudication.response!!.text).isEqualTo("no idea")
     }
 }
