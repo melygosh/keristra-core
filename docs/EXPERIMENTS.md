@@ -72,8 +72,10 @@ For every cycle outcome other than `ERROR`, the final DMN is evaluated on the fu
 |---|---|---|
 | E1-H45 | human ground truth (45) | 1 |
 | E1-H8 | original 8 cases | 1 |
-| E1-S | `anthropic:claude-sonnet-5-5`, `tests/v2` | 10 |
-| E1-L | chosen local model (C0) | 10 (reuse the C0 suites of the winner) |
+| E1-S2 | `anthropic:claude-sonnet-5-5`, `tests/v2` | 10 (the C0 suites) |
+| E1-L2 | gemma4:26b, `tests/v2` | 10 (the C0 suites) |
+| E1-L3 | gemma4:26b, `tests/v3` | 10 |
+| E1-S3 | Sonnet 5.5, `tests/v3` | 10 |
 
 Run on `mortgage/ambiguous` reference (`uk`). The EN paper adds the six ФОП references.
 
@@ -108,7 +110,7 @@ This is a suite-only experiment, with no DMN generation:
 
 | ID | Hypothesis | Test |
 |---|---|---|
-| H1 | MS(E1-L) and MS(E1-S) are below MS(E1-H45) and above MS(E1-H8) | Descriptive with bootstrap 95% CI of the median; no significance claim |
+| H1 | MS of the generated suites (E1-S2, E1-L2, E1-S3, E1-L3) is below MS(E1-H45) and above MS(E1-H8); v3 ≥ v2 per model (see section 9) | Descriptive with bootstrap 95% CI of the median; no significance claim |
 | H2 | On the ambiguous text, FAR(B0) > FAR(B1) | One-sided Fisher exact test, α = 0.05 |
 | H3 | AMBIGUOUS rate in V1 is higher on the ambiguous text than on the disambiguated one | One-sided Fisher exact test, α = 0.05 |
 | H4 | On the disambiguated text, FAR is low in every arm (control) | Wilson 95% CI reported; no test |
@@ -147,3 +149,6 @@ C0, E1 and E4 all use this mode.
 |---|---|---|
 | 2026-10-17 | Protocol v1 | — |
 | 2026-10-17 | **C0 runs on `mortgage/disambiguated`** (`uk`, `tests/v2`) instead of `mortgage/ambiguous`. The selection metric in rule 2 is the median **consistent** mutation score without equivalents (`scoreConsistentWithoutEquivalent`: a mutant counts as killed only by cases that pass on the reference). The oracle's disagreement with the reference is reported separately (`referenceDisagreement`, `suitesRejectingReference`). The C0 runs on the ambiguous text (`experiments/c0-*-ambiguous.json`) are optional and descriptive only: how often each model reads rule priority in text order. | Smoke, before any E3 run: a gemma4:26b suite on the ambiguous text rejected the human reference on 3/10 cases. Two of them read rule priority in text order, which is the intended ambiguity, and one was an oracle error. A suite that rejects the reference kills every mutant by definition, so the protocol MS saturates at 1.0 and the C0 rule could not tell the candidates apart. On the disambiguated text a disagreement is an oracle error, not another valid reading. The ambiguous text itself stays unchanged, because it is the E3 condition. |
+| 2026-10-17 | **C0 result and decision.** Mortgage/disambiguated, `uk`, `tests/v2`; median consistent MS without equivalents (51 mutants): Sonnet 5.5 0.98 (0/10 suites reject the reference, 0 failed calls, 23 s), gemma4:26b 0.96 (0/8, 2/10 failed calls = 20 %, 219 s), gpt-oss-20b 0.77 (4/9 suites reject the reference on the *disambiguated* text, 1/10 failed). **Test-track model for the cross-model arms: `local:gemma4:26b`** (rule 2; it passes rule 1 at exactly 20 %). gpt-oss-20b is excluded: an oracle that contradicts the explicit rule text in 4/9 suites is not a usable comparison point. | Protocol section 3. |
+| 2026-10-17 | **C0 finding that changes the method before E3.** The surviving non-equivalent mutants are almost only two rule swaps that change priority where conditions overlap (`RULE_SWAP rule-3/rule-4`: Fixed30 before the LTV knockout; `rule-5/rule-6`: ARM before Fixed30). No gemma or gpt-oss suite kills `rule-3/rule-4`, and the union of all 8 gemma suites still scores 0.96: the gap is systematic for the model, not sampling noise. Sonnet: the union of 2 suites reaches 1.00 in 24/45 pairs. | Analysis of `runs/c0-*.jsonl` (Cowork). |
+| 2026-10-17 | **New prompt `tests/v3`** = v2 + generic coverage requirements derived from hit-policy semantics, not from the mutants: (1) every pair of rules whose conditions can co-occur, (2) each threshold exactly at and just beyond, (3) near misses for multi-condition rules, (4) a no-rule case. `tests-adjudicate/v3` = v2. **Split:** mortgage is the development set; ФОП is held out. **Adoption rule (fixed now):** E3 uses `tests/v3` with gemma4:26b iff (a) on mortgage/disambiguated the median consistent MS of v3 ≥ v2, and (b) on the held-out ФОП references (`fop-eligibility/2026`, `fop-obligations/2026`) the median consistent MS of v3 ≥ v2 − 0.02 and the share of suites rejecting the reference is not higher than with v2. Otherwise E3 uses `tests/v2`. In both cases, v2 vs v3 is reported as an E1 result (arms E1-L2, E1-L3). | Prevents tuning the prompt on the evaluation data; makes the coverage requirement a measured part of the method. |
