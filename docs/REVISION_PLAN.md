@@ -345,3 +345,15 @@ Why it was off: Voyage AI access was blocked (IP), so `loadDocuments` was droppe
 ### tests/v2 — every output in every expectation (Claude Code, 2026-10-17)
 Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompts/tests-adjudicate/v2.txt` are v1 plus one requirement in the system message: every expected object names every output variable of the rules, and `[]` stands for "no rule applies". The user message is unchanged, so v1→v2 is a single, clean factor; v1 stays the V0 prompt. The adjudication prompt now follows the test track's prompt version (`tests.prompt: "v2"` → `tests-adjudicate/v2`).
 
+
+### Step 15 — suite-only runner mode (for C0, E1, E4 in `docs/EXPERIMENTS.md`)
+- **Config.** A run config without `dmn` (or with `"mode": "SUITES"`) generates `cycles` test suites for the rule-set version, with seeds as usual.
+- **Logging.** Each suite becomes a `suite` event: the `tracks.tests` fields, the raw output, the parsed suite and the parse/schema errors.
+- **Evaluation.** The config takes `evaluate`, a list of DMN sources, each of them one of:
+  - `{"reference": "<ruleSet>/<version>"}`;
+  - `{"mutantsOf": "<ruleSet>/<version>", "operators": [...]}`;
+  - `{"file": "..."}`.
+
+  For every suite × DMN pair, write an `evaluation` event: the DMN id (mutant id with operator and region), the per-outcome counts and whether the DMN was killed (= the suite rejects it).
+- **Summary.** A `run_finished` summary per DMN source: the kill rate across suites, and for mutants the mutation score per suite, both with and without the equivalent-mutant list given in the config (`equivalentMutants`).
+- **Done when:** a unit test with `FakeLlmClient` produces the kill matrix for 2 suites × the mortgage mutants, and the 45-case human ground truth, loaded as a fixed "suite", reproduces 51/54.
