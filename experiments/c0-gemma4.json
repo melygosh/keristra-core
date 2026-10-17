@@ -1,13 +1,13 @@
 {
   "runId": "c0-gemma4",
   "ruleSet": "mortgage",
-  "version": "ambiguous",
+  "version": "disambiguated",
   "language": "uk",
   "mode": "SUITES",
   "tests": {"model": "local:gemma4:26b", "prompt": "v2", "temperature": 0.7, "seed": 42},
   "validator": "STRICT",
   "cycles": 10,
   "evaluate": [
-    {"mutantsOf": "mortgage/ambiguous", "equivalentMutants": ["RULE_SWAP:rule-1/rule-2", "RULE_SWAP:rule-2/rule-3", "RULE_SWAP:rule-4/rule-5"]}
+    {"mutantsOf": "mortgage/disambiguated", "equivalentMutants": ["RULE_SWAP:rule-1/rule-2", "RULE_SWAP:rule-2/rule-3", "RULE_SWAP:rule-4/rule-5"]}
   ]
 }

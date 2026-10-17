@@ -121,6 +121,7 @@ internal class SuiteRun(
                         }
                         mapOf(
                             "referenceRejected" to referenceFailing.isNotEmpty(),
+                            "referenceFailingCases" to referenceFailing.sorted(),
                             "killedConsistent" to (report.tableError != null || failing.any { it !in referenceFailing }),
                         )
                     }.orEmpty()
@@ -249,6 +250,7 @@ internal class SuiteRun(
         val evaluations = events.filter { it["event"] == "evaluation" }
             .associateBy { "${it["suite"]} ${it["dmnId"]}" }.values.toList()
         val suiteOrder = suites.filter { it["status"] == "OK" }.map { it["suite"] as String }
+        val suiteSizes = suites.filter { it["status"] == "OK" }.associate { it["suite"] as String to (it["size"] as Number).toInt() }
 
         return mapOf(
             "finishedAt" to Instant.now().toString(),
@@ -268,11 +270,13 @@ internal class SuiteRun(
                 ),
                 "costUsd" to if (costs.any { it == null }) null else costs.sumOf { it!!.toDouble() },
             ),
-            "evaluate" to sources.map { source -> sourceSummary(source, evaluations.filter { it["source"] == source.name }, suiteOrder) },
+            "evaluate" to sources.map { source -> sourceSummary(source, evaluations.filter { it["source"] == source.name }, suiteOrder, suiteSizes) },
         )
     }
 
-    private fun sourceSummary(source: Source, evaluations: List<Map<String, Any?>>, suiteOrder: List<String>): Map<String, Any?> {
+    private fun sourceSummary(
+        source: Source, evaluations: List<Map<String, Any?>>, suiteOrder: List<String>, suiteSizes: Map<String, Int>,
+    ): Map<String, Any?> {
         val bySuite = evaluations.groupBy { it["suite"] as String }
         val suiteIds = suiteOrder.filter { it in bySuite }
         if (source.kind != "mutants") {
@@ -290,9 +294,13 @@ internal class SuiteRun(
             val rows = bySuite.getValue(id)
             val killed = rows.filter { it["killed"] == true }
             val killedConsistent = rows.filter { it["killedConsistent"] == true }
+            val referenceFailing = (rows.firstOrNull()?.get("referenceFailingCases") as? List<*>).orEmpty().size
             mapOf(
                 "suite" to id,
                 "referenceRejected" to (rows.firstOrNull()?.get("referenceRejected") == true),
+                // Oracle disagreement with the human reference: share of the suite's cases the reference fails.
+                "referenceFailing" to referenceFailing,
+                "referenceDisagreement" to ratio(referenceFailing, suiteSizes[id] ?: 0),
                 "killed" to killed.size,
                 "killedConsistent" to killedConsistent.size,
                 "score" to ratio(killed.size, total),
@@ -311,6 +319,8 @@ internal class SuiteRun(
             "medianScoreWithoutEquivalent" to medianOf("scoreWithoutEquivalent"),
             "medianScoreConsistent" to medianOf("scoreConsistent"),
             "medianScoreConsistentWithoutEquivalent" to medianOf("scoreConsistentWithoutEquivalent"),
+            "medianReferenceDisagreement" to medianOf("referenceDisagreement"),
+            "suitesRejectingReference" to ratio(perSuite.count { it["referenceRejected"] == true }, perSuite.size),
             "perOperator" to byOperator.toSortedMap().mapValues { (_, rows) ->
                 mapOf(
                     "mutants" to rows.map { it["dmnId"] }.distinct().size,

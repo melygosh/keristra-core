@@ -160,6 +160,12 @@ class SuiteModeTest {
         val perSuite = ((events.last()["evaluate"] as List<*>)[1].obj()["perSuite"] as List<*>).single().obj()
         assertThat(perSuite).containsEntry("referenceRejected", true).containsEntry("killed", 54)
         assertThat(perSuite["killedConsistent"] as Int).isLessThan(54)
+        // The oracle's disagreement with the human reference, reported on its own (EXPERIMENTS.md section 9).
+        assertThat(perSuite).containsEntry("referenceFailing", 1)
+        assertThat(perSuite["referenceDisagreement"] as Double).isCloseTo(1.0 / 45, Offset.offset(1e-9))
+        val mutants = (events.last()["evaluate"] as List<*>)[1].obj()
+        assertThat(mutants["medianReferenceDisagreement"] as Double).isCloseTo(1.0 / 45, Offset.offset(1e-9))
+        assertThat(mutants).containsEntry("suitesRejectingReference", 1.0)
     }
 
     @Test
