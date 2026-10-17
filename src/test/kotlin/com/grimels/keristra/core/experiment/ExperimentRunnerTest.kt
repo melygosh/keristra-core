@@ -69,6 +69,8 @@ class ExperimentRunnerTest {
 
     /** Each created track pair answers from its own script. */
     private class ScriptedTracks(val dmnReplies: List<Any>, val testReplies: List<Any>) : TracksProvider {
+        override fun tests(tests: com.grimels.keristra.core.generation.TrackConfig) = create(tests, tests).tests
+
         val dmnClients = mutableListOf<ScriptedLlmClient>()
         val testsClients = mutableListOf<ScriptedLlmClient>()
 
@@ -261,13 +263,13 @@ class ExperimentRunnerTest {
 
         val config = RunConfig.read(file)
 
-        assertThat(config.tests.temperature).isEqualTo(0.7)
-        assertThat(config.dmn.temperature).isNull()
+        assertThat(config.tests!!.temperature).isEqualTo(0.7)
+        assertThat(config.dmn!!.temperature).isNull()
         assertThat(config.strategy).isEqualTo(RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT)
         assertThat(config.conflictMemory).isTrue()
-        assertThat(config.dmn.rag.enabled).isTrue()
-        assertThat(config.dmn.toTrackConfig().rag!!.embeddingModel).isEqualTo("local:bge-m3")
-        assertThat(config.tests.toTrackConfig().rag).isNull()
+        assertThat(config.dmn!!.rag.enabled).isTrue()
+        assertThat(config.dmn!!.toTrackConfig().rag!!.embeddingModel).isEqualTo("local:bge-m3")
+        assertThat(config.tests!!.toTrackConfig().rag).isNull()
         Files.writeString(file, json.replace("\"seed\"", "\"sead\""))
         assertThatThrownBy { RunConfig.read(file) }.hasMessageContaining("sead")
     }

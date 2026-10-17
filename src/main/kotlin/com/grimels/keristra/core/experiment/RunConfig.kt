@@ -1,10 +1,12 @@
 package com.grimels.keristra.core.experiment
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.grimels.keristra.core.generation.GenerationSettings
 import com.grimels.keristra.core.generation.RagSettings
 import com.grimels.keristra.core.generation.TrackConfig
+import com.grimels.keristra.core.mutation.MutationOperator
 import com.grimels.keristra.core.orchestration.RepairStrategy
 import com.grimels.keristra.core.validation.ValidatorMode
 import java.nio.file.Files
@@ -60,8 +62,12 @@ data class RunConfig(
     val ruleSet: String,
     val version: String,
     val language: String,
-    val dmn: TrackSpec,
-    val tests: TrackSpec,
+    /** Absent in suite-only runs. */
+    val dmn: TrackSpec? = null,
+    /** Absent in suite-only runs that evaluate fixed suites only. */
+    val tests: TrackSpec? = null,
+    /** Default: SUITES when there is no `dmn`, CYCLES otherwise. */
+    val mode: RunMode? = null,
     val validator: ValidatorMode = ValidatorMode.STRICT,
     val strategy: RepairStrategy = RepairStrategy.PAIRED_REGEN,
     val retryBudget: Int = 3,
@@ -69,16 +75,55 @@ data class RunConfig(
     /** REVISION_PLAN step 10; off keeps the earlier behaviour (both arms are needed for the article). */
     val conflictMemory: Boolean = false,
     val rag: RagSpec = RagSpec(),
+    /** Number of cycles (CYCLES) or of generated suites (SUITES). */
     val cycles: Int,
+    val fixedSuites: List<FixedSuiteSpec> = emptyList(),
+    val evaluate: List<EvaluateSource> = emptyList(),
 ) {
+    @get:JsonIgnore
+    val effectiveMode: RunMode get() = mode ?: if (dmn == null) RunMode.SUITES else RunMode.CYCLES
+
     init {
         require(runId.matches(Regex("[A-Za-z0-9._-]+"))) { "runId must be a plain file name, got '$runId'" }
-        require(cycles >= 1) { "cycles must be at least 1" }
         require(!rag.enabled) { "Top-level rag is replaced by dmn.rag (REVISION_PLAN step 14)" }
-        require(!tests.rag.enabled) { "tests.rag must stay off: RAG is only for the DMN track (REVISION_PLAN step 14)" }
+        require(tests?.rag?.enabled != true) { "tests.rag must stay off: RAG is only for the DMN track (REVISION_PLAN step 14)" }
+        when (effectiveMode) {
+            RunMode.CYCLES -> {
+                require(dmn != null && tests != null) { "Cycle runs need both a dmn and a tests track; leave out dmn for a suite-only run" }
+                require(cycles >= 1) { "cycles must be at least 1" }
+            }
+            RunMode.SUITES -> {
+                require(cycles >= 0) { "cycles must not be negative" }
+                require(cycles == 0 || tests != null) { "Generating $cycles suites needs a tests track" }
+                require(cycles > 0 || fixedSuites.isNotEmpty()) { "A suite-only run needs generated (cycles > 0) or fixed suites" }
+            }
+        }
     }
 
     companion object {
         fun read(file: Path): RunConfig = jacksonObjectMapper().readValue(Files.readString(file))
+    }
+}
+
+enum class RunMode { CYCLES, SUITES }
+
+/** A human ground truth used as one fixed test suite (E1-H45, E1-H8): `<ruleSet>/<version>`, optionally one category. */
+data class FixedSuiteSpec(val groundTruth: String, val category: String? = null, val name: String? = null)
+
+/**
+ * A DMN source to evaluate every suite against (REVISION_PLAN step 15): exactly one of a rule-set reference
+ * (`<ruleSet>/<version>`), the mutants of a reference (optionally limited to `operators`), or a DMN file on disk.
+ * `equivalentMutants` lists mutant ids excluded from the second mutation score.
+ */
+data class EvaluateSource(
+    val reference: String? = null,
+    val mutantsOf: String? = null,
+    val file: String? = null,
+    val operators: List<MutationOperator>? = null,
+    val equivalentMutants: List<String> = emptyList(),
+) {
+    init {
+        require(listOfNotNull(reference, mutantsOf, file).size == 1) { "An evaluate source needs exactly one of reference, mutantsOf, file" }
+        require(mutantsOf != null || (operators == null && equivalentMutants.isEmpty())) { "operators and equivalentMutants apply to mutantsOf only" }
     }
 }

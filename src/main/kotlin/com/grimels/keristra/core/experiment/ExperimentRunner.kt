@@ -47,6 +47,7 @@ class ExperimentRunner(
     private val mapper = jacksonObjectMapper()
 
     fun run(config: RunConfig, outputDir: Path): Path {
+        if (config.effectiveMode == RunMode.SUITES) return runSuites(config, outputDir)
         Files.createDirectories(outputDir)
         val logFile = outputDir.resolve("${config.runId}.jsonl")
 
@@ -58,11 +59,13 @@ class ExperimentRunner(
             .filterValues { it["outcome"] != CycleOutcome.ERROR.name }.keys
 
         val ruleSet = ruleSets.load(config.ruleSet, config.version, config.language)
-        val tracks = tracksProvider.create(config.dmn.toTrackConfig(), config.tests.toTrackConfig())
+        val dmnSpec = requireNotNull(config.dmn)
+        val testsSpec = requireNotNull(config.tests)
+        val tracks = tracksProvider.create(dmnSpec.toTrackConfig(), testsSpec.toTrackConfig())
         val validator = if (config.validator == ValidatorMode.LENIENT) lenient else strict
         val schemaPaths = if (config.validator == ValidatorMode.STRICT) domains.schemaPaths(ruleSet.domain) else null
         val dispatcher = Dispatcher(tracks, validator, DispatcherConfig(config.strategy, config.retryBudget, config.stableAttempts, config.conflictMemory))
-        val session = Session(config, UUID.randomUUID().toString(), ruleSet, tracks)
+        val session = Session(config, UUID.randomUUID().toString(), ruleSet, tracks, dmnSpec, testsSpec)
 
         JsonlLog.Writer(logFile, mapper).use { out ->
             out.append(runStarted(session, schemaPaths != null, previous.isNotEmpty(), (1..config.cycles).filter { it in finished }))
@@ -79,7 +82,19 @@ class ExperimentRunner(
         return logFile
     }
 
-    private class Session(val config: RunConfig, val id: String, val ruleSet: RuleSet, val tracks: Tracks)
+    private fun runSuites(config: RunConfig, outputDir: Path): Path {
+        Files.createDirectories(outputDir)
+        val logFile = outputDir.resolve("${config.runId}.jsonl")
+        val previous = JsonlLog.read(logFile, mapper)
+        checkResumable(config, previous, logFile)
+        val validator = if (config.validator == ValidatorMode.LENIENT) lenient else strict
+        val testsGenerator = config.tests?.let { tracksProvider.tests(it.toTrackConfig()) }
+        return SuiteRun(ruleSets, domains, validator, testsGenerator, gitInfo, mapper, ::trackInfo).run(config, logFile, previous)
+    }
+
+    private class Session(
+        val config: RunConfig, val id: String, val ruleSet: RuleSet, val tracks: Tracks, val dmn: TrackSpec, val tests: TrackSpec,
+    )
 
     private fun checkResumable(config: RunConfig, previous: List<Map<String, Any?>>, logFile: Path) {
         val logged = previous.firstOrNull { it["event"] == "run_started" }?.get("config") as? Map<*, *> ?: return
@@ -104,7 +119,7 @@ class ExperimentRunner(
         "skippedCycles" to skipped,
         "config" to session.config,
         "gitCommit" to gitInfo.commit(),
-        "models" to mapOf("dmn" to session.config.dmn.model, "tests" to session.config.tests.model),
+        "models" to mapOf("dmn" to session.dmn.model, "tests" to session.tests.model),
         "prompts" to mapOf(
             "dmn" to mapOf("id" to session.tracks.dmn.prompt.id, "hash" to session.tracks.dmn.prompt.hash),
             "tests" to mapOf("id" to session.tracks.tests.prompt.id, "hash" to session.tracks.tests.prompt.hash),
@@ -127,9 +142,9 @@ class ExperimentRunner(
             "seedOffset" to attempt.seedOffset,
             "testsRegenerated" to attempt.testsRegenerated,
             "tracks" to mapOf(
-                "tests" to testsResponse?.let { trackInfo(session.config.tests, it, tests.id, tests.hash, attempt.seedOffset) },
+                "tests" to testsResponse?.let { trackInfo(session.tests, it, tests.id, tests.hash, attempt.seedOffset) },
                 "dmn" to attempt.dmn?.let {
-                    trackInfo(session.config.dmn, it.response, it.promptId, it.promptHash, attempt.seedOffset) + mapOf(
+                    trackInfo(session.dmn, it.response, it.promptId, it.promptHash, attempt.seedOffset) + mapOf(
                         "rag" to it.retrieved?.let { segments ->
                             mapOf("count" to segments.size, "segments" to segments.map { s -> mapOf("id" to s.id, "score" to s.score) })
                         },
@@ -162,7 +177,7 @@ class ExperimentRunner(
                     "error" to it.error,
                     "raw" to it.response?.text,
                     "track" to it.response?.let { response ->
-                        trackInfo(session.config.tests, response, it.promptId.orEmpty(), it.promptHash.orEmpty(), attempt.seedOffset)
+                        trackInfo(session.tests, response, it.promptId.orEmpty(), it.promptHash.orEmpty(), attempt.seedOffset)
                     },
                 )
             },
@@ -180,7 +195,7 @@ class ExperimentRunner(
         "readjudicated" to conflict.readjudicated,
     )
 
-    private fun trackInfo(spec: TrackSpec, response: LlmResponse, promptId: String, promptHash: String, seedOffset: Long) = mapOf(
+    internal fun trackInfo(spec: TrackSpec, response: LlmResponse, promptId: String, promptHash: String, seedOffset: Long) = mapOf(
         "model" to spec.model,
         "servedModel" to response.modelId,
         "promptId" to promptId,
@@ -199,9 +214,9 @@ class ExperimentRunner(
         val report = result.finalDmn?.let { strict.validate(it.xml, groundTruth) }
         val calls = result.attempts.flatMap { attempt ->
             listOfNotNull(
-                (if (attempt.testsRegenerated) attempt.tests?.response ?: attempt.failedTestsResponse else null)?.let { session.config.tests to it },
-                attempt.dmn?.let { session.config.dmn to it.response },
-            ) + attempt.adjudications.mapNotNull { it.response?.let { response -> session.config.tests to response } }
+                (if (attempt.testsRegenerated) attempt.tests?.response ?: attempt.failedTestsResponse else null)?.let { session.tests to it },
+                attempt.dmn?.let { session.dmn to it.response },
+            ) + attempt.adjudications.mapNotNull { it.response?.let { response -> session.tests to response } }
         }
         val costs = calls.map { (spec, response) -> pricing.costUsd(spec.model, response.inputTokens, response.outputTokens) }
 
@@ -233,8 +248,8 @@ class ExperimentRunner(
                 },
             ),
             "tokens" to mapOf(
-                "dmn" to tokenTotals(calls.filter { it.first === session.config.dmn }.map { it.second }),
-                "tests" to tokenTotals(calls.filter { it.first === session.config.tests }.map { it.second }),
+                "dmn" to tokenTotals(calls.filter { it.first === session.dmn }.map { it.second }),
+                "tests" to tokenTotals(calls.filter { it.first === session.tests }.map { it.second }),
             ),
             "costUsd" to if (costs.any { it == null }) null else costs.sumOf { it!! },
             "durationMs" to durationMs,

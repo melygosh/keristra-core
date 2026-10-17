@@ -15,8 +15,11 @@ data class TrackConfig(
 
 data class Tracks(val dmn: DmnGenerator, val tests: TestSuiteGenerator)
 
-fun interface TracksProvider {
+interface TracksProvider {
     fun create(dmn: TrackConfig, tests: TrackConfig): Tracks
+
+    /** The test track alone, for suite-only runs (REVISION_PLAN step 15): no DMN client is built. */
+    fun tests(tests: TrackConfig): TestSuiteGenerator
 }
 
 /** Wires the two independent tracks; each gets its own LlmClient instance, even when both name the same model. */
@@ -35,10 +38,15 @@ class GenerationTracks(
                 factory.create(dmn.model), PromptTemplate.load("dmn", dmn.promptVersion), contextProvider, dmn.settings,
                 dmn.rag?.let(retrievers::create),
             ),
-            tests = TestSuiteGenerator(
-                factory.create(tests.model), PromptTemplate.load("tests", tests.promptVersion), contextProvider, tests.settings,
-                PromptTemplate.load("tests-adjudicate", tests.promptVersion),
-            ),
+            tests = tests(tests),
+        )
+    }
+
+    override fun tests(tests: TrackConfig): TestSuiteGenerator {
+        require(tests.rag == null) { "RAG is only supported on the DMN track (REVISION_PLAN step 14)" }
+        return TestSuiteGenerator(
+            factory.create(tests.model), PromptTemplate.load("tests", tests.promptVersion), contextProvider, tests.settings,
+            PromptTemplate.load("tests-adjudicate", tests.promptVersion),
         )
     }
 }
