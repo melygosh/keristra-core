@@ -2,7 +2,9 @@ package com.grimels.keristra.core.generation.dmn
 
 import com.grimels.keristra.core.generation.FakeLlmClient
 import com.grimels.keristra.core.generation.GenerationSettings
+import com.grimels.keristra.core.generation.ContextRetriever
 import com.grimels.keristra.core.generation.PromptTemplate
+import com.grimels.keristra.core.generation.RetrievedSegment
 import com.grimels.keristra.core.generation.fixedSchema
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -81,5 +83,44 @@ and application.b</text></decision></definitions>"""
         val (_, generator) = generator("I cannot do that.")
 
         assertThat(generator.generate("rules", "mortgage").xml).isEqualTo("I cannot do that.")
+    }
+
+    // --- RAG on the DMN track (REVISION_PLAN step 14) ---
+
+    private class FixedRetriever(private val segments: List<RetrievedSegment>) : ContextRetriever {
+        val queries = mutableListOf<String>()
+        override val description = mapOf("kind" to "fixed")
+        override fun retrieve(query: String) = segments.also { queries += query }
+    }
+
+    private fun ragGenerator(retriever: ContextRetriever?) =
+        FakeLlmClient(xml).let { it to DmnGenerator(it, PromptTemplate.load("dmn", "v1"), fixedSchema, GenerationSettings(), retriever) }
+
+    @Test
+    fun `with a retriever the rules are the query and segments are appended as LangChain4J injected them in V0`() {
+        val retriever = FixedRetriever(listOf(RetrievedSegment("DMN.txt#3", 0.91, "SEG-A"), RetrievedSegment("DMNSpec.xsd#0", 0.87, "SEG-B")))
+        val (plain, plainGenerator) = ragGenerator(null)
+        val (client, generator) = ragGenerator(retriever)
+
+        plainGenerator.generate("RULES-TEXT", "mortgage")
+        val result = generator.generate("RULES-TEXT", "mortgage")
+
+        assertThat(retriever.queries).containsExactly("RULES-TEXT")
+        assertThat(client.requests.single().user)
+            .isEqualTo(plain.requests.single().user + "\n\nAnswer using the following information:\nSEG-A\n\nSEG-B")
+        assertThat(result.retrieved!!.map { it.id }).containsExactly("DMN.txt#3", "DMNSpec.xsd#0")
+    }
+
+    @Test
+    fun `an empty retrieval adds nothing to the prompt but is recorded as empty, not as RAG off`() {
+        val (plain, plainGenerator) = ragGenerator(null)
+        val (client, generator) = ragGenerator(FixedRetriever(emptyList()))
+
+        val off = plainGenerator.generate("rules", "mortgage")
+        val empty = generator.generate("rules", "mortgage")
+
+        assertThat(client.requests.single().user).isEqualTo(plain.requests.single().user)
+        assertThat(off.retrieved).isNull()
+        assertThat(empty.retrieved).isNotNull().isEmpty()
     }
 }

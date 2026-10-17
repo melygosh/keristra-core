@@ -75,4 +75,25 @@ class PromptTemplateTest {
         assertThat(prompt.user).contains("R").contains("S").contains("{\"a\":1}")
         assertThat(prompt.system).contains("do not see the table")
     }
+
+    @Test
+    fun `tests v2 is v1 plus the requirement to name every output`() {
+        val values = mapOf("rules" to rules, "schema" to schema)
+        val v1 = PromptTemplate.load("tests", "v1").render(values)
+        val v2 = PromptTemplate.load("tests", "v2").render(values)
+
+        assertThat(v2.user).isEqualTo(v1.user)
+        assertThat(v2.system).startsWith(v1.system).contains("EVERY output variable")
+        assertThat(v2.system.removePrefix(v1.system)).contains("[]")
+    }
+
+    @Test
+    fun `adjudication v2 also requires every output`() {
+        val values = mapOf("rules" to "R", "schema" to "S", "object" to "{}")
+        val v1 = PromptTemplate.load("tests-adjudicate", "v1").render(values)
+        val v2 = PromptTemplate.load("tests-adjudicate", "v2").render(values)
+
+        assertThat(v2.user).isEqualTo(v1.user)
+        assertThat(v2.system).startsWith(v1.system).contains("EVERY output variable")
+    }
 }

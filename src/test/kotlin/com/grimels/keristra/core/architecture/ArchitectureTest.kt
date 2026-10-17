@@ -39,4 +39,12 @@ class ArchitectureTest {
             .should().dependOnClassesThat().resideInAnyPackage("..llm..", "..generation..", "..ai..", "dev.langchain4j..")
             .check(classes)
     }
+
+    @Test
+    fun `only the DMN track retrieves - the test track has no RAG`() {
+        noClasses().that().resideInAPackage("..generation.tests..")
+            .should().dependOnClassesThat().haveSimpleName("ContextRetriever")
+            .orShould().dependOnClassesThat().resideInAPackage("..rag..")
+            .check(classes)
+    }
 }

@@ -3,7 +3,9 @@ package com.grimels.keristra.core.experiment
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.grimels.keristra.core.context.DomainRegistry
+import com.grimels.keristra.core.generation.ContextRetriever
 import com.grimels.keristra.core.generation.PromptTemplate
+import com.grimels.keristra.core.generation.RetrievedSegment
 import com.grimels.keristra.core.generation.ScriptedLlmClient
 import com.grimels.keristra.core.generation.Tracks
 import com.grimels.keristra.core.generation.TracksProvider
@@ -76,8 +78,14 @@ class ExperimentRunnerTest {
             dmnClients += dmnClient
             testsClients += testsClient
             val registry = DomainRegistry()
+            val retriever = dmn.rag?.let {
+                object : ContextRetriever {
+                    override val description = mapOf("embeddingModel" to it.embeddingModel, "corpusHash" to "abc", "k" to it.k)
+                    override fun retrieve(query: String) = listOf(RetrievedSegment("DMN.txt#7", 0.83, "FEEL syntax"))
+                }
+            }
             return Tracks(
-                DmnGenerator(dmnClient, PromptTemplate.load("dmn", dmn.promptVersion), registry, dmn.settings),
+                DmnGenerator(dmnClient, PromptTemplate.load("dmn", dmn.promptVersion), registry, dmn.settings, retriever),
                 TestSuiteGenerator(
                     testsClient, PromptTemplate.load("tests", tests.promptVersion), registry, tests.settings,
                     PromptTemplate.load("tests-adjudicate", "v1"),
@@ -199,16 +207,54 @@ class ExperimentRunnerTest {
     }
 
     @Test
-    fun `RAG is rejected until it is implemented`() {
-        assertThatThrownBy { runner(ScriptedTracks(emptyList(), emptyList())).run(config().copy(rag = RagSpec(enabled = true)), dir) }
+    fun `top-level rag is rejected in favour of dmn rag`() {
+        assertThatThrownBy { config().copy(rag = RagSpec(enabled = true)) }
             .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("RAG")
+            .hasMessageContaining("dmn.rag")
+    }
+
+    @Test
+    fun `RAG on the test track is rejected in the run config`() {
+        assertThatThrownBy { config().copy(tests = TrackSpec(model = "local:x", rag = TrackRagSpec(enabled = true, embeddingModel = "local:e"))) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("tests.rag")
+    }
+
+    @Test
+    fun `dmn rag needs an embedding model`() {
+        assertThatThrownBy { TrackSpec(model = "anthropic:x", rag = TrackRagSpec(enabled = true)) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("embeddingModel")
+    }
+
+    @Test
+    fun `with dmn rag the run logs the retriever and every attempt logs the segments it got`() {
+        val ragConfig = config(cycles = 1).copy(
+            dmn = TrackSpec(model = "anthropic:priced-model", rag = TrackRagSpec(enabled = true, embeddingModel = "local:bge-m3", k = 4, minScore = 0.6)),
+        )
+
+        val events = events(runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(ragConfig, dir))
+
+        val rag = events[0]["rag"].obj()
+        assertThat(rag["dmn"].obj()).containsEntry("embeddingModel", "local:bge-m3").containsEntry("corpusHash", "abc").containsEntry("k", 4)
+        assertThat(rag["tests"]).isNull()
+        val dmnTrack = events.single { it["event"] == "attempt" }["tracks"].obj()["dmn"].obj()
+        assertThat(dmnTrack["rag"].obj()).containsEntry("count", 1)
+        assertThat((dmnTrack["rag"].obj()["segments"] as List<*>).single().obj()).containsEntry("id", "DMN.txt#7").containsEntry("score", 0.83)
+    }
+
+    @Test
+    fun `without rag the attempt says so explicitly`() {
+        val events = events(runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(config(cycles = 1), dir))
+
+        assertThat(events[0]["rag"].obj()).containsEntry("dmn", null).containsEntry("tests", null)
+        assertThat(events.single { it["event"] == "attempt" }["tracks"].obj()["dmn"].obj()).containsEntry("rag", null)
     }
 
     @Test
     fun `run config reads the documented JSON and rejects unknown fields`() {
         val json = """{"runId": "r1", "ruleSet": "mortgage", "version": "ambiguous", "language": "en",
-            "dmn": {"model": "anthropic:claude-sonnet-5-5", "maxTokens": 16000},
+            "dmn": {"model": "anthropic:claude-sonnet-5-5", "maxTokens": 16000, "rag": {"enabled": true, "embeddingModel": "local:bge-m3", "k": 6, "minScore": 0.7}},
             "tests": {"model": "local:gemma4:26b", "temperature": 0.7, "seed": 42},
             "validator": "STRICT", "strategy": "ESCALATE_ON_STABLE_DISAGREEMENT", "retryBudget": 3, "conflictMemory": true, "rag": {"enabled": false}, "cycles": 3}"""
         val file = dir.resolve("r1.json").also { Files.writeString(it, json) }
@@ -219,6 +265,9 @@ class ExperimentRunnerTest {
         assertThat(config.dmn.temperature).isNull()
         assertThat(config.strategy).isEqualTo(RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT)
         assertThat(config.conflictMemory).isTrue()
+        assertThat(config.dmn.rag.enabled).isTrue()
+        assertThat(config.dmn.toTrackConfig().rag!!.embeddingModel).isEqualTo("local:bge-m3")
+        assertThat(config.tests.toTrackConfig().rag).isNull()
         Files.writeString(file, json.replace("\"seed\"", "\"sead\""))
         assertThatThrownBy { RunConfig.read(file) }.hasMessageContaining("sead")
     }

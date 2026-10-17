@@ -316,3 +316,22 @@ Generators: `tools/rulesets/gen_fop.py` (texts, ground truth, reference DMNs; pa
 - Side effect to keep in mind for in-loop runs: an LLM oracle that names only some outputs of a multi-output table (e.g. only `eligible`, not `reason`) now fails with EXTRA_OUTPUT. The prompts may need to ask for every output explicitly.
 - `check_fop.py` still compares expected keys only, so its matrix for obligations 2025/2026→2024 shows the old 2 and 5; `FopRuleSetsTest` is the authoritative check.
 
+
+### Step 14 — RAG back as an explicit factor (decided with Vlad, 2026-10-17)
+Why it was off: Voyage AI access was blocked (IP), so `loadDocuments` was dropped and nothing replaced it — an infrastructure accident, not a design decision. The new experiments are self-contained: RAG is a logged factor of the new runs, and the article does not reuse numbers from the 2025-10 run as RAG results.
+- **Corpus.** Keep the V0 corpus, frozen and hashed: `DMNCustom.txt`, `DMNCustom2.txt`, `DMN.txt`, `DMNSpec.xsd`, and `data-set/tuning.jsonl` if it is used. Checked from Cowork: it holds DMN/FEEL syntax patterns and examples from the `users` domain; there are no mortgage or ФОП terms, so no leakage of the evaluated rule sets. Log the corpus hash in `run_started`.
+- **Embeddings run locally, without Voyage.** Use an OpenAI-compatible embeddings endpoint on the same Ollama/LM Studio host. The rule texts are also Ukrainian, so pick a multilingual model (e.g. `bge-m3` or multilingual-e5 — check what the local server offers). The current `AllMiniLmL6V2` is English-only.
+- **Threshold.** `minScore 0.8` with MiniLM likely retrieves nothing. Calibrate it on the rule texts, and log the retrieved segment ids and scores per call in the `attempt` event. Otherwise "RAG on" cannot be told apart from "RAG on but empty".
+- **RAG on the DMN track only.** The corpus is about DMN/FEEL syntax, which the test track does not need. Shared retrieval would also feed both tracks the same context and correlate their errors, which works against the independence claim. Make this explicit in the run config: `dmn.rag` and `tests.rag`, with `tests.rag` off by default.
+- **Scope.** One extra arm, not a full crossing: the best mortgage E3 configuration with `dmn.rag` off vs on. A full RAG factor belongs in the EN paper, if anywhere.
+
+**Status (Claude Code, 2026-10-17): implemented, not yet run on real embeddings.**
+- Config: `"dmn": {..., "rag": {"enabled": true, "embeddingModel": "local:bge-m3", "k": 6, "minScore": 0.0, "corpus": [...], "segmentSize": 1024, "segmentOverlap": 128}}`. `corpus` defaults to the V0 files (`DMNCustom.txt`, `DMNCustom2.txt`, `DMN.txt`, `DMNSpec.xsd`, `data-set/tuning.jsonl`). `tests.rag.enabled` and the old top-level `rag.enabled` are rejected. The embeddings come from an OpenAI-compatible `/embeddings` endpoint through the same `keristra.llm.providers.*` (Anthropic has none).
+- Query = the rules text; the segments are appended to the DMN user message the way LangChain4J's `DefaultContentInjector` did in V0 (`"\n\nAnswer using the following information:\n"` + segments). The corpus is embedded once per run. The prompt id stays `dmn/v1`; RAG is visible in the log, not in the prompt id.
+- Logged: `run_started.rag.dmn` (embedding model, corpus files, corpus hash over the files, segment count, segmentation, k, minScore, score definition) and `attempt.tracks.dmn.rag` (count plus segment ids and scores; `null` = RAG off, `count: 0` = on but empty).
+- Scores are LangChain4J relevance scores, `(cosine + 1) / 2`, so `minScore` is on that scale, not raw cosine. The default `minScore` is 0.0 (always top-k) until it is calibrated.
+- **Open:** no embedding model is installed on the local Ollama yet (only `gemma4:26b`, `qwen3-vl:8b`). Calibrating `minScore` on the mortgage and ФОП rule texts needs one, e.g. `ollama pull bge-m3`.
+
+### tests/v2 — every output in every expectation (Claude Code, 2026-10-17)
+Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompts/tests-adjudicate/v2.txt` are v1 plus one requirement in the system message: every expected object names every output variable of the rules, and `[]` stands for "no rule applies". The user message is unchanged, so v1→v2 is a single, clean factor; v1 stays the V0 prompt. The adjudication prompt now follows the test track's prompt version (`tests.prompt: "v2"` → `tests-adjudicate/v2`).
+

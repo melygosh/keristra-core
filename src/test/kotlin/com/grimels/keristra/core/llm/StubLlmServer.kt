@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpServer
 import java.net.InetSocketAddress
 
 /** Local HTTP server that records requests and answers every POST with a canned JSON body. */
-internal class StubLlmServer(private val responseJson: String) : AutoCloseable {
+internal class StubLlmServer(private val responseJson: String, private val respond: ((JsonObject) -> String)? = null) : AutoCloseable {
 
     data class Recorded(val path: String, val headers: Map<String, String>, val body: JsonObject)
 
@@ -20,7 +20,7 @@ internal class StubLlmServer(private val responseJson: String) : AutoCloseable {
                 headers = exchange.requestHeaders.mapKeys { it.key.lowercase() }.mapValues { it.value.first() },
                 body = JsonParser.parseString(body).asJsonObject,
             )
-            val bytes = responseJson.toByteArray()
+            val bytes = (respond?.invoke(requests.last().body) ?: responseJson).toByteArray()
             exchange.responseHeaders.add("Content-Type", "application/json")
             exchange.sendResponseHeaders(200, bytes.size.toLong())
             exchange.responseBody.use { it.write(bytes) }

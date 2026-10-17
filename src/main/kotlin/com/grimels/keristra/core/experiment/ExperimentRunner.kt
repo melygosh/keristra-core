@@ -47,7 +47,6 @@ class ExperimentRunner(
     private val mapper = jacksonObjectMapper()
 
     fun run(config: RunConfig, outputDir: Path): Path {
-        require(!config.rag.enabled) { "RAG is not implemented yet (REVISION_PLAN, open questions); set rag.enabled to false" }
         Files.createDirectories(outputDir)
         val logFile = outputDir.resolve("${config.runId}.jsonl")
 
@@ -115,6 +114,7 @@ class ExperimentRunner(
             "domain" to session.ruleSet.domain, "groundTruthSize" to session.ruleSet.groundTruth.size,
         ),
         "schemaCheck" to schemaCheck,
+        "rag" to mapOf("dmn" to session.tracks.dmn.retriever?.description, "tests" to null),
         "runtime" to mapOf("java" to System.getProperty("java.version")),
     )
 
@@ -128,7 +128,13 @@ class ExperimentRunner(
             "testsRegenerated" to attempt.testsRegenerated,
             "tracks" to mapOf(
                 "tests" to testsResponse?.let { trackInfo(session.config.tests, it, tests.id, tests.hash, attempt.seedOffset) },
-                "dmn" to attempt.dmn?.let { trackInfo(session.config.dmn, it.response, it.promptId, it.promptHash, attempt.seedOffset) },
+                "dmn" to attempt.dmn?.let {
+                    trackInfo(session.config.dmn, it.response, it.promptId, it.promptHash, attempt.seedOffset) + mapOf(
+                        "rag" to it.retrieved?.let { segments ->
+                            mapOf("count" to segments.size, "segments" to segments.map { s -> mapOf("id" to s.id, "score" to s.score) })
+                        },
+                    )
+                },
             ),
             "semanticHash" to attempt.semanticHash,
             "testSuiteSize" to attempt.tests?.cases?.size,
