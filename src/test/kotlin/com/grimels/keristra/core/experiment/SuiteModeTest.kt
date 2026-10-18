@@ -126,13 +126,58 @@ class SuiteModeTest {
     }
 
     @Test
-    fun `an unparseable suite is logged with its raw output and counts as a failed call`() {
-        val events = events(runner(ScriptedSuites("no json here", json(groundTruth))).run(config(), dir))
+    fun `an unparseable suite is logged with its raw output but not counted - generation goes on to cycles valid suites`() {
+        val tracks = ScriptedSuites("no json here", json(groundTruth), json(groundTruth))
 
-        val failed = events.first { it["event"] == "suite" }
-        assertThat(failed).containsEntry("status", "PARSE_ERROR").containsEntry("raw", "no json here").containsKey("error")
+        val events = events(runner(tracks).run(config(cycles = 2), dir))
+
+        val suites = events.filter { it["event"] == "suite" }
+        assertThat(suites.map { it["suite"] to it["status"] }).containsExactly("gen-1" to "PARSE_ERROR", "gen-2" to "OK", "gen-3" to "OK")
+        assertThat(suites[0]).containsEntry("raw", "no json here").containsKey("error")
         assertThat(events.filter { it["event"] == "evaluation" && it["suite"] == "gen-1" }).isEmpty()
-        assertThat(events.last()["suites"].obj()).containsEntry("generated", 2).containsEntry("parseErrors", 1).containsEntry("failedShare", 0.5)
+        assertThat(tracks.client.requests.map { it.seed }).containsExactly(1043L, 2043L, 3043L)
+        val summary = events.last()
+        assertThat(summary["suites"].obj())
+            .containsEntry("target", 2).containsEntry("attempts", 3).containsEntry("ok", 2).containsEntry("parseErrors", 1)
+            .containsEntry("budgetExhausted", false)
+        assertThat(summary["suites"].obj()["parseFailureShare"] as Double).isCloseTo(1.0 / 3, Offset.offset(1e-9))
+        val perSuite = ((summary["evaluate"] as List<*>)[1].obj()["perSuite"] as List<*>).map { it.obj()["suite"] }
+        assertThat(perSuite).containsExactly("gen-2", "gen-3")
+    }
+
+    @Test
+    fun `generation stops after 2 x cycles attempts`() {
+        val tracks = ScriptedSuites("bad 1", "bad 2", "bad 3", "bad 4")
+
+        val events = events(runner(tracks).run(config(cycles = 2), dir))
+
+        assertThat(tracks.client.requests).hasSize(4)
+        assertThat(events.filter { it["event"] == "suite" }.map { it["status"] }).containsOnly("PARSE_ERROR").hasSize(4)
+        assertThat(events.last()["suites"].obj())
+            .containsEntry("target", 2).containsEntry("attempts", 4).containsEntry("ok", 0)
+            .containsEntry("parseFailureShare", 1.0).containsEntry("budgetExhausted", true)
+    }
+
+    @Test
+    fun `an infrastructure error uses up an attempt in this run and is logged as ERROR`() {
+        val tracks = ScriptedSuites(RuntimeException("connection refused"), json(groundTruth))
+
+        val events = events(runner(tracks).run(config(cycles = 1), dir))
+
+        assertThat(events.filter { it["event"] == "suite" }.map { it["suite"] to it["status"] }).containsExactly("gen-1" to "ERROR", "gen-2" to "OK")
+        assertThat(events.last()["suites"].obj()).containsEntry("errors", 1).containsEntry("ok", 1).containsEntry("parseFailureShare", 0.0)
+    }
+
+    @Test
+    fun `a rerun keeps parse failures as spent attempts and only adds the missing valid suites`() {
+        runner(ScriptedSuites("bad", json(groundTruth))).run(config(cycles = 1), dir)
+        val resumed = ScriptedSuites(json(groundTruth))
+
+        val events = events(runner(resumed).run(config(cycles = 2), dir))
+
+        assertThat(resumed.client.requests.map { it.seed }).containsExactly(3043L)
+        assertThat(events.filter { it["event"] == "suite" }.map { it["suite"] }).containsExactly("gen-1", "gen-2", "gen-3")
+        assertThat(events.last()["suites"].obj()).containsEntry("ok", 2).containsEntry("attempts", 3)
     }
 
     @Test

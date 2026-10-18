@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory
 
 /**
  * Suite-only runs (REVISION_PLAN step 15; C0, E1, E4 in docs/EXPERIMENTS.md): no DMN track. The test track generates
- * `cycles` suites (`gen-<i>`), fixed human suites can be added (`fixed-<name>`), and every suite is evaluated against
+ * suites (`gen-<i>`) until `cycles` of them parse, at most 2 x `cycles` attempts; an unparseable suite is logged as
+ * `PARSE_ERROR` and not counted. Fixed human suites can be added (`fixed-<name>`), and every valid suite is evaluated against
  * every DMN of the `evaluate` sources. Events: `run_started`, then per suite a `suite` event followed by its
  * `evaluation` events, then `run_finished` with the summaries over every suite in the file.
  *
@@ -68,7 +69,9 @@ internal class SuiteRun(
         }
 
         val fixed = config.fixedSuites.mapIndexed { i, spec -> "fixed-${spec.name ?: (i + 1)}" to spec }
-        val generated = (1..config.cycles).map { "gen-$it" to it }
+        // Unparseable suites are logged but not counted (EXPERIMENTS.md section 9, 2026-10-18): attempts go on until
+        // `cycles` valid suites exist, at most 2 x cycles of them.
+        val generated = (1..2 * config.cycles).map { "gen-$it" to it }
         val skipped = (fixed.map { it.first } + generated.map { it.first }).filter(::done)
 
         fun base(event: String) = linkedMapOf<String, Any?>("event" to event, "runId" to config.runId, "sessionId" to sessionId)
@@ -143,14 +146,20 @@ internal class SuiteRun(
                 evaluateSuite(id, cases)
             }
 
+            var valid = 0
             for ((id, index) in generated) {
-                if (id in skipped) continue
+                if (valid >= config.cycles) break
                 val earlier = latestSuites[id]
-                if (earlier?.get("status") == "OK") {
-                    // Generated before a crash, evaluations incomplete: evaluate the logged suite, no new call.
-                    @Suppress("UNCHECKED_CAST")
-                    evaluateSuite(id, earlier["cases"] as List<Map<String, Any?>>)
-                    continue
+                when (earlier?.get("status")) {
+                    "OK" -> {
+                        // Generated in an earlier session; if a crash cut its evaluations short, evaluate the logged
+                        // suite again, without a new call.
+                        @Suppress("UNCHECKED_CAST")
+                        if (id !in skipped) evaluateSuite(id, earlier["cases"] as List<Map<String, Any?>>)
+                        valid++
+                        continue
+                    }
+                    "PARSE_ERROR" -> continue // a spent attempt; an ERROR attempt is retried on resume
                 }
                 val generator = checkNotNull(testsGenerator)
                 val spec = checkNotNull(config.tests)
@@ -177,11 +186,11 @@ internal class SuiteRun(
                     mapOf("status" to "ERROR", "error" to "${e.javaClass.simpleName}: ${e.message}") to null
                 }
                 out.append(event + outcome.first)
-                outcome.second?.let { evaluateSuite(id, it) }
+                outcome.second?.let { evaluateSuite(id, it); valid++ }
                 logger.info("[${config.runId}] suite $id: ${outcome.first["status"]}")
             }
 
-            out.append(base("run_finished") + summary(JsonlLog.read(logFile, mapper), sources))
+            out.append(base("run_finished") + summary(JsonlLog.read(logFile, mapper), sources, config.cycles))
         }
         return logFile
     }
@@ -240,12 +249,14 @@ internal class SuiteRun(
         else -> emptyList()
     }
 
-    private fun summary(events: List<Map<String, Any?>>, sources: List<Source>): Map<String, Any?> {
+    private fun summary(events: List<Map<String, Any?>>, sources: List<Source>, target: Int): Map<String, Any?> {
         val suites = events.filter { it["event"] == "suite" }.associateBy { it["suite"] as String }.values.toList()
         val generated = suites.filter { it["source"] == "generated" }
         fun tests(suite: Map<String, Any?>) = ((suite["tracks"] as? Map<*, *>)?.get("tests") as? Map<*, *>)
         val costs = generated.mapNotNull { tests(it) }.map { it["costUsd"] as Number? }
         val failed = generated.count { it["status"] != "OK" }
+        val ok = generated.count { it["status"] == "OK" }
+        val parseErrors = generated.count { it["status"] == "PARSE_ERROR" }
 
         val evaluations = events.filter { it["event"] == "evaluation" }
             .associateBy { "${it["suite"]} ${it["dmnId"]}" }.values.toList()
@@ -256,10 +267,15 @@ internal class SuiteRun(
             "finishedAt" to Instant.now().toString(),
             "suites" to mapOf(
                 "fixed" to suites.count { it["source"] == "fixed" },
+                "target" to target,
+                "attempts" to generated.size,
                 "generated" to generated.size,
-                "ok" to generated.count { it["status"] == "OK" },
-                "parseErrors" to generated.count { it["status"] == "PARSE_ERROR" },
+                "ok" to ok,
+                "parseErrors" to parseErrors,
                 "errors" to generated.count { it["status"] == "ERROR" },
+                // Parse-error rate of the model: unparseable / (valid + unparseable); infrastructure errors excluded.
+                "parseFailureShare" to if (ok + parseErrors == 0) null else parseErrors.toDouble() / (ok + parseErrors),
+                "budgetExhausted" to (ok < target),
                 "failedShare" to if (generated.isEmpty()) null else failed.toDouble() / generated.size,
                 "medianLatencyMs" to median(generated.mapNotNull { (tests(it)?.get("latencyMs") as? Number)?.toDouble() }),
                 "medianSize" to median(generated.filter { it["status"] == "OK" }.map { (it["size"] as Number).toDouble() }),
