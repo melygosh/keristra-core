@@ -1,6 +1,8 @@
 package com.grimels.keristra.core.experiment
 
 import com.grimels.keristra.core.context.DomainRegistry
+import com.grimels.keristra.core.mutation.DmnMutator
+import com.grimels.keristra.core.mutation.MutationAnalysis
 import com.grimels.keristra.core.validation.CaseOutcome
 import com.grimels.keristra.core.validation.StrictValidator
 import com.grimels.keristra.core.validation.testEngine
@@ -9,7 +11,8 @@ import org.junit.jupiter.api.Test
 
 /**
  * The FOP rule sets delivered from Cowork (REVISION_PLAN step 13), confirmed on Camunda: every reference passes its
- * own ground truth, and the cross-version failures (E4 sanity baseline) are pinned.
+ * own ground truth (43 / 14 cases since 2026-10-18), the cross-version failures (E4 sanity baseline) are pinned, and
+ * on the human ground truth only the accepted equivalent mutants survive.
  */
 class FopRuleSetsTest {
 
@@ -27,7 +30,7 @@ class FopRuleSetsTest {
     @Test
     fun `every reference passes its own ground truth, schema check included`() {
         val schemaPaths = DomainRegistry().schemaPaths("fop")
-        for ((set, size) in listOf("fop-eligibility" to 38, "fop-obligations" to 12)) {
+        for ((set, size) in listOf("fop-eligibility" to 43, "fop-obligations" to 14)) {
             for (version in versions) {
                 val ruleSet = repository.load(set, version, "uk")
                 val report = strict.validate(reference(set, version), ruleSet.groundTruth, schemaPaths)
@@ -79,5 +82,27 @@ class FopRuleSetsTest {
         assertThat(levyAgainst2024.filter { it.outcome == CaseOutcome.EXTRA_OUTPUT }.flatMap { it.extraOutputs.map { e -> e.key } }.toSet())
             .containsExactly("militaryLevy")
         assertThat(failures("fop-obligations", "2026", "2024").count { it.outcome == CaseOutcome.EXTRA_OUTPUT }).isEqualTo(6)
+    }
+
+    @Test
+    fun `on the human ground truth only the accepted equivalent mutants survive, in every version`() {
+        val equivalent = mapOf(
+            "fop-eligibility" to listOf("RULE_SWAP:rule-5/rule-6", "RULE_SWAP:rule-9/rule-10"),
+            "fop-obligations" to listOf("RULE_SWAP:rule-1/rule-2", "RULE_SWAP:rule-2/rule-3"),
+        )
+        // The former ground-truth gaps (docs/fop-equivalent-candidates.md), closed by the cases added on 2026-10-18.
+        val formerGaps = mapOf(
+            "fop-eligibility" to listOf("RULE_SWAP:rule-1/rule-2", "RULE_SWAP:rule-3/rule-4", "CONDITION_DROP:rule-10/1"),
+            "fop-obligations" to listOf("CONDITION_DROP:rule-3/1"),
+        )
+        for ((set, ids) in equivalent) for (version in versions) {
+            val groundTruth = repository.load(set, version, "uk").groundTruth
+            val mutants = DmnMutator.mutants(reference(set, version))
+
+            val survivors = mutants.filterNot { MutationAnalysis.isKilled(it, groundTruth, strict) }.map { it.id }
+
+            assertThat(survivors).describedAs("$set/$version").containsExactlyInAnyOrderElementsOf(ids)
+            assertThat(mutants.map { it.id }).describedAs("$set/$version").containsAll(formerGaps.getValue(set))
+        }
     }
 }

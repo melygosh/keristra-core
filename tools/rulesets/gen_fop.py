@@ -100,6 +100,12 @@ E += [
  ('g3:ok', '3 група, 50 працівників, послуги юрособам на загальній системі', B(requestedGroup=3, activityType='services', employeesCount=50, businessClients=True, servicesToGeneralSystemClients=True)),
  ('g3:ok', '3 група, платник ПДВ, виробництво', B(requestedGroup=3, activityType='production', vatPayer=True, employeesCount=5)),
  ('null', 'Групу не вказано', B(requestedGroup=None)),
+ # added 2026-10-18: ground-truth gaps found by the equivalent-mutant check (docs/fop-equivalent-candidates.md)
+ ('g1:priority', '1 група, 1 працівник і послуги — першим іде порушення щодо працівників', B(employeesCount=1, activityType='services')),
+ ('g1:priority', '1 група, покупці-юрособи і перевищення доходу — першими йдуть покупці', B(businessClients=True, annualIncome=2_000_000)),
+ ('g1:priority', '1 група, продаж товарів і перевищення доходу — першим іде вид діяльності', B(activityType='goods_trade', annualIncome=2_000_000)),
+ ('null', 'Групу не вказано, дохід вище ліміту 3 групи', B(requestedGroup=None, annualIncome=20_000_000)),
+ ('null', 'Групу не вказано, 15 працівників, послуги юрособам на загальній системі', B(requestedGroup=None, employeesCount=15, activityType='services', businessClients=True, servicesToGeneralSystemClients=True)),
 ]
 
 def oblig_expected(a, p):
@@ -126,6 +132,9 @@ O = [
  ('g3', '3 група без ПДВ, нульовий дохід', B(requestedGroup=3, activityType='services', monthlyIncome=0)),
  ('g3', '3 група без ПДВ, дохід 841 000 грн (великий місяць)', B(requestedGroup=3, activityType='production', monthlyIncome=841000)),
  ('null', 'Групу не вказано', B(requestedGroup=None)),
+ # added 2026-10-18: ground-truth gaps found by the equivalent-mutant check
+ ('null', 'Групу не вказано, платник ПДВ, нульовий дохід', B(requestedGroup=None, vatPayer=True, monthlyIncome=0)),
+ ('null', 'Групу не вказано, платник ПДВ, дохід 100 000 грн', B(requestedGroup=None, vatPayer=True, monthlyIncome=100000)),
 ]
 
 def build(cases, expfn, outputs, p):

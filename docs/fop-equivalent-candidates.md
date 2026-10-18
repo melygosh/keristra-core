@@ -1,6 +1,6 @@
 # ФОП 2026 — candidates for equivalent mutants
 
-Status: candidates for review (Claude Code, 2026-10-17). Not yet in any config. Once confirmed, list the equivalent ones in `docs/EXPERIMENTS.md` section 9 and add them as `equivalentMutants` to the `holdout-gemma-*-fop-*` configs.
+Status (2026-10-18): **accepted** (`docs/EXPERIMENTS.md` section 9) and added as `equivalentMutants` to the `holdout-gemma-*-fop-*` configs. The ground-truth gaps below are closed: eligibility now has 43 cases and obligations 14. On Camunda the four former non-equivalent survivors are killed in every version, and only the four equivalent swaps survive (`FopRuleSetsTest`). The tables below describe the state before that extension.
 
 ## Method (protocol 4.1)
 1. All `DmnMutator` mutants of `rulesets/<set>/2026/reference.dmn` (7 operators).

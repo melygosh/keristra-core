@@ -905,5 +905,115 @@
       }
     },
     "expected": null
+  },
+  {
+    "id": 39,
+    "category": "g1:priority",
+    "description": "1 група, 1 працівник і послуги — першим іде порушення щодо працівників",
+    "object": {
+      "fop": {
+        "id": 39,
+        "requestedGroup": 1,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 1,
+        "activityType": "services",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "EMPLOYEES"
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "category": "g1:priority",
+    "description": "1 група, покупці-юрособи і перевищення доходу — першими йдуть покупці",
+    "object": {
+      "fop": {
+        "id": 40,
+        "requestedGroup": 1,
+        "annualIncome": 2000000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "CLIENTS"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "category": "g1:priority",
+    "description": "1 група, продаж товарів і перевищення доходу — першим іде вид діяльності",
+    "object": {
+      "fop": {
+        "id": 41,
+        "requestedGroup": 1,
+        "annualIncome": 2000000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "goods_trade",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": [
+      {
+        "eligible": false,
+        "reason": "ACTIVITY"
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "category": "null",
+    "description": "Групу не вказано, дохід вище ліміту 3 групи",
+    "object": {
+      "fop": {
+        "id": 42,
+        "requestedGroup": null,
+        "annualIncome": 20000000,
+        "monthlyIncome": 40000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": false
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": 43,
+    "category": "null",
+    "description": "Групу не вказано, 15 працівників, послуги юрособам на загальній системі",
+    "object": {
+      "fop": {
+        "id": 43,
+        "requestedGroup": null,
+        "annualIncome": 500000,
+        "monthlyIncome": 40000,
+        "employeesCount": 15,
+        "activityType": "services",
+        "businessClients": true,
+        "servicesToGeneralSystemClients": true,
+        "vatPayer": false
+      }
+    },
+    "expected": null
   }
 ]

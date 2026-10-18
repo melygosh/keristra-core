@@ -281,5 +281,43 @@
       }
     },
     "expected": null
+  },
+  {
+    "id": 13,
+    "category": "null",
+    "description": "Групу не вказано, платник ПДВ, нульовий дохід",
+    "object": {
+      "fop": {
+        "id": 13,
+        "requestedGroup": null,
+        "annualIncome": 500000,
+        "monthlyIncome": 0,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": 14,
+    "category": "null",
+    "description": "Групу не вказано, платник ПДВ, дохід 100 000 грн",
+    "object": {
+      "fop": {
+        "id": 14,
+        "requestedGroup": null,
+        "annualIncome": 500000,
+        "monthlyIncome": 100000,
+        "employeesCount": 0,
+        "activityType": "market_retail",
+        "businessClients": false,
+        "servicesToGeneralSystemClients": false,
+        "vatPayer": true
+      }
+    },
+    "expected": null
   }
 ]

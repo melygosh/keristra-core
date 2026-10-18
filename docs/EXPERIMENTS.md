@@ -2,6 +2,28 @@
 
 Status: v1, written 2026-10-17 in Cowork, **before** any experimental run. Changes after the first E3 run must be logged in section 9 with date and reason. Nothing in sections 2–6 may be changed after looking at E3 results.
 
+## 0. Papers built on these experiments (decided 2026-10-18)
+
+Each paper answers its own question on its own slice of the data. Later papers cite earlier ones. Numbers from an earlier paper appear only as context, never as new results.
+
+| # | Paper | Question | Experiments |
+|---|---|---|---|
+| P1 | UA, фахове видання (Б) — improvement of the paired-generation method: conflict memory and detection of ambiguous business rules | When the conditions of rules overlap and their priority is implicit, convergence of the closed loop can be reached by oracle adaptation instead of a logic fix. Does conflict memory close this path, and does V3 turn the disagreement into an ambiguity signal for the analyst? | E3 core (B0/B1/V1 × ambiguous/disambiguated). E1 appears only as one paragraph of motivation (H8 vs H45). |
+| P2 | EN, Scopus/WoS journal — how independent are the two tracks | Detection power of the test track and its limits: systematic blind spots at rule interactions, same vs different model on the tracks, interaction-aware oracle prompting (v2 vs v3), union of suites. | E1 (full), E2, C0 findings |
+| P3 | EN, applied journal or conference — regulatory change | Do suites generated from version N+1 catch a stale table of version N, for parametric and structural changes? | E4 (ФОП 2024–2026) |
+
+**Framing rules for P1** (consistent with the earlier papers):
+- **Two metrics, kept apart.**
+  - *Validity* — agreement with the system's own oracle. This is what the earlier papers measured, and those results stand.
+  - *Correctness* — agreement with an independent human ground truth. It is new in P1.
+
+  P1 adds the second dimension; it does not say the first was wrong.
+- **Prior results fit the explicit-priority case.** The disambiguated text represents rules with explicit priority, the kind the earlier work used. The ambiguous text (implicit priority) is the new region.
+- **Conflict memory and V3 are the next version of the Dispatcher.** They extend the earlier Petri-net model with conflict states (open/closed, AMBIGUOUS). V3 operationalises the dissertation's claim of detecting logical inconsistencies in textual rules.
+- **Sources of evidence.** Motivation comes from the new runs only: arm B0 is Strategy B on the strict validator. The 2025-10 log is not analysed in P1.
+- **Citing earlier papers.** They are cited for the method (Strategy B, Dispatcher, Petri nets) and for their convergence and cost results. They are not cited as evidence that accepted tables are error-free.
+- **If B0 shows a high FAR on the disambiguated text too**, P1 reports it as a limitation of the validity metric that conflict memory addresses. The framing is decided after E3, from the data — not by changing sections 2–6.
+
 ## 1. Claim under test
 
 The main contribution is **two independent generations from the same source text** — the DMN logic and a test suite — **and their mutual verification**. The experiments test three things:
@@ -152,3 +174,7 @@ C0, E1 and E4 all use this mode.
 | 2026-10-17 | **C0 result and decision.** Mortgage/disambiguated, `uk`, `tests/v2`; median consistent MS without equivalents (51 mutants): Sonnet 5.5 0.98 (0/10 suites reject the reference, 0 failed calls, 23 s), gemma4:26b 0.96 (0/8, 2/10 failed calls = 20 %, 219 s), gpt-oss-20b 0.77 (4/9 suites reject the reference on the *disambiguated* text, 1/10 failed). **Test-track model for the cross-model arms: `local:gemma4:26b`** (rule 2; it passes rule 1 at exactly 20 %). gpt-oss-20b is excluded: an oracle that contradicts the explicit rule text in 4/9 suites is not a usable comparison point. | Protocol section 3. |
 | 2026-10-17 | **C0 finding that changes the method before E3.** The surviving non-equivalent mutants are almost only two rule swaps that change priority where conditions overlap (`RULE_SWAP rule-3/rule-4`: Fixed30 before the LTV knockout; `rule-5/rule-6`: ARM before Fixed30). No gemma or gpt-oss suite kills `rule-3/rule-4`, and the union of all 8 gemma suites still scores 0.96: the gap is systematic for the model, not sampling noise. Sonnet: the union of 2 suites reaches 1.00 in 24/45 pairs. | Analysis of `runs/c0-*.jsonl` (Cowork). |
 | 2026-10-17 | **New prompt `tests/v3`** = v2 + generic coverage requirements derived from hit-policy semantics, not from the mutants: (1) every pair of rules whose conditions can co-occur, (2) each threshold exactly at and just beyond, (3) near misses for multi-condition rules, (4) a no-rule case. `tests-adjudicate/v3` = v2. **Split:** mortgage is the development set; ФОП is held out. **Adoption rule (fixed now):** E3 uses `tests/v3` with gemma4:26b iff (a) on mortgage/disambiguated the median consistent MS of v3 ≥ v2, and (b) on the held-out ФОП references (`fop-eligibility/2026`, `fop-obligations/2026`) the median consistent MS of v3 ≥ v2 − 0.02 and the share of suites rejecting the reference is not higher than with v2. Otherwise E3 uses `tests/v2`. In both cases, v2 vs v3 is reported as an E1 result (arms E1-L2, E1-L3). | Prevents tuning the prompt on the evaluation data; makes the coverage requirement a measured part of the method. |
+| 2026-10-18 | **ФОП equivalent mutants accepted** (`docs/fop-equivalent-candidates.md`). `fop-eligibility/*`: `RULE_SWAP:rule-5/rule-6`, `RULE_SWAP:rule-9/rule-10`. `fop-obligations/*`: `RULE_SWAP:rule-1/rule-2`, `RULE_SWAP:rule-2/rule-3`. These are adjacent rules with disjoint `requestedGroup` conditions, so they are equivalent analytically as well as on the Camunda grid. | Protocol 4.1 |
+| 2026-10-18 | **ФОП ground truth extended, before any holdout or E4 run.** Eligibility goes from 38 to 43 cases (ids 39–43): group 1 with several violations at once, and no group selected combined with income above the group-3 limit or with forbidden clients. Obligations go from 12 to 14 cases (ids 13–14): no group selected for a VAT payer. The cases are added in `tools/rulesets/gen_fop.py`, so they exist in all three versions. The four non-equivalent survivors are now killed in every version (FEEL-subset check). | Without them the human ground truth (the E1 ceiling) had blind spots. The v2/v3 decision is measured on mutants of the reference table, not on the ground truth, so the extension does not touch the holdout. |
+| 2026-10-18 | **Unparseable suites are infrastructure failures.** In suite-only mode, a suite with a JSON parse error is logged and not counted. Generation continues until `cycles` valid suites exist, capped at 2 × `cycles` attempts. The parse-error rate is reported per model. Responses are not repaired automatically, because that would change the oracle's content. | gemma4:26b: 2/10 parse errors in C0, 1/1 in the v3 smoke. Rule as for `ERROR` cycles (section 4.2). |
+| 2026-10-18 | **Paper split P1/P2/P3 and the P1 framing rules** (section 0). | Avoid scope creep and overlapping publications |

@@ -8,6 +8,6 @@
   "validator": "STRICT",
   "cycles": 10,
   "evaluate": [
-    {"mutantsOf": "fop-obligations/2026"}
+    {"mutantsOf": "fop-obligations/2026", "equivalentMutants": ["RULE_SWAP:rule-1/rule-2", "RULE_SWAP:rule-2/rule-3"]}
   ]
 }
