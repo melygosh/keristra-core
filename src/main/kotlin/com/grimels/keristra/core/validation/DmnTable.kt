@@ -23,16 +23,23 @@ internal class DmnTable private constructor(
         return engine.evaluateDecision(decision, variables)
     }
 
-    /** Dotted variable paths referenced by input expressions, string literals ignored. */
+    /**
+     * Dotted variable paths referenced by input expressions, string literals ignored. Paths rooted in a variable bound
+     * by a FEEL iteration (`for d in …`, `some d in …`, `every d in …`) are not schema paths and are skipped; the
+     * collection iterated over is still reported.
+     */
     fun referencedPaths(): Set<String> =
         inputExpressions.flatMap { expression ->
-            PATH.findAll(expression.replace(STRING_LITERAL, "")).map { it.value }.toList()
+            val code = expression.replace(STRING_LITERAL, "")
+            val bound = BOUND_VARIABLE.findAll(code).map { it.groupValues[1] }.toSet()
+            PATH.findAll(code).map { it.value }.filter { it.substringBefore('.') !in bound }.toList()
         }.toSet()
 
     companion object {
         const val DECISION_ID = "decision"
         private val STRING_LITERAL = Regex("\"(?:[^\"\\\\]|\\\\.)*\"")
         private val PATH = Regex("[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)+")
+        private val BOUND_VARIABLE = Regex("\\b(?:for|some|every)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s+in\\b")
 
         /** Same parse path as V0 (`Dmn.readModelFromStream` + `parseDecision("decision")`); throws on any failure. */
         fun parse(engine: DmnEngine, dmnXml: String): DmnTable {

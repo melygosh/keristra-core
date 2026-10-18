@@ -224,4 +224,37 @@ class StrictValidatorTest {
         assertThat(report.cases.single().outcome).isEqualTo(PASS)
         assertThat(report.accepted).isTrue()
     }
+
+    // --- SCHEMA_ERROR and FEEL iteration variables (E3 smoke, 2026-10-18) ---
+
+    private fun withInput(expression: String) = dmn(
+        "FIRST",
+        listOf(In(expression, "double")),
+        Out("product"),
+        listOf(listOf("&gt;= 0") to "\"Fixed30\""),
+    )
+
+    private val debtSchema = setOf("application", "application.debts", "application.debts.monthlyPayment", "application.debts.include")
+
+    @Test
+    fun `variables bound by for, some and every are not schema paths`() {
+        val expressions = listOf(
+            "sum(for d in application.debts return if d.include then d.monthlyPayment else 0)",
+            "if some d in application.debts satisfies d.include then 1 else 0",
+            "if every d in application.debts satisfies d.monthlyPayment &gt; 0 then 1 else 0",
+        )
+        for (expression in expressions) {
+            val report = validator.validate(withInput(expression), emptyList(), debtSchema)
+
+            assertThat(report.tableError).describedAs(expression).isNull()
+        }
+    }
+
+    @Test
+    fun `the collection a loop iterates over is still checked against the schema`() {
+        val report = validator.validate(withInput("sum(for d in application.loans return d.amount)"), emptyList(), debtSchema)
+
+        assertThat(report.tableError).isEqualTo(TableError.SCHEMA_ERROR)
+        assertThat(report.tableErrorMessage).contains("application.loans").doesNotContain("d.amount")
+    }
 }
