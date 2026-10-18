@@ -76,12 +76,44 @@ class DispatcherTest {
         assertThat(cycle3.testsClient.requests.map { it.seed }).containsExactly(3101L)
     }
 
-    @Test
-    fun `an oracle that does not parse keeps its raw response`() {
-        val run = run(DispatcherConfig(STATIC_ORACLE), dmnReplies = listOf(goodDmn), testReplies = listOf("not json", suite))
+    // --- unparseable oracle output (EXPERIMENTS.md section 9: an infrastructure failure, not an attempt) ---
 
-        assertThat(run.result.attempts[0].failedTestsResponse!!.text).isEqualTo("not json")
-        assertThat(run.result.attempts[1].failedTestsResponse).isNull()
+    @Test
+    fun `an oracle that does not parse is retried within the same attempt with a new seed, keeping its raw output`() {
+        for (strategy in listOf(STATIC_ORACLE, PAIRED_REGEN)) {
+            val run = run(DispatcherConfig(strategy), dmnReplies = listOf(goodDmn), testReplies = listOf("not json", suite), testSeed = 100)
+
+            assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+            assertThat(run.result.attempts).hasSize(1)
+            val failure = run.result.attempts.single().testParseFailures.single()
+            assertThat(failure.response.text).isEqualTo("not json")
+            assertThat(failure.error).contains("No JSON array")
+            assertThat(run.testsClient.requests.map { it.seed }).containsExactly(101L, 201L)
+            assertThat(run.dmnClient.requests).hasSize(1)
+        }
+    }
+
+    @Test
+    fun `no parseable suite within 2 x budget test-track calls ends the cycle with ERROR`() {
+        val run = run(DispatcherConfig(PAIRED_REGEN, retryBudget = 2), dmnReplies = emptyList(), testReplies = listOf("a", "b", "c", "d"))
+
+        assertThat(run.result.outcome).isEqualTo(ERROR)
+        assertThat(run.result.message).contains("No parseable test suite")
+        assertThat(run.result.attempts.single().testParseFailures).hasSize(4)
+        assertThat(run.dmnClient.requests).isEmpty()
+    }
+
+    @Test
+    fun `parse failures across attempts count towards the same cap`() {
+        val run = run(
+            DispatcherConfig(PAIRED_REGEN, retryBudget = 2),
+            dmnReplies = listOf(badDmn),
+            testReplies = listOf("bad", suite, "bad", "bad"),
+        )
+
+        assertThat(run.result.outcome).isEqualTo(ERROR)
+        assertThat(run.result.attempts.map { it.testParseFailures.size }).containsExactly(1, 2)
+        assertThat(run.testsClient.requests).hasSize(4)
     }
 
     @Test
@@ -122,17 +154,6 @@ class DispatcherTest {
         assertThat(run.result.attempts).hasSize(3)
         assertThat(run.testsClient.requests).hasSize(1)
         assertThat(run.result.finalDmn!!.xml).isEqualTo(badDmn)
-    }
-
-    @Test
-    fun `A regenerates the oracle until one parses, without generating a DMN for the failed attempt`() {
-        val run = run(DispatcherConfig(STATIC_ORACLE), dmnReplies = listOf(goodDmn), testReplies = listOf("not json", suite))
-
-        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
-        assertThat(run.result.attempts.map { it.testsRegenerated }).containsExactly(true, true)
-        assertThat(run.result.attempts[0].error).contains("No JSON array")
-        assertThat(run.result.attempts[0].dmn).isNull()
-        assertThat(run.dmnClient.requests).hasSize(1)
     }
 
     // --- B: PAIRED_REGEN ---

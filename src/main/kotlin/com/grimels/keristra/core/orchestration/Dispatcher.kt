@@ -57,13 +57,16 @@ data class Attempt(
     val error: String? = null,
     /** Added to each track's configured seed for this attempt: `cycle * 1000 + attempt`. */
     val seedOffset: Long = 0,
-    /** Raw answer of a test track whose output did not parse, kept so the analysis needs no new calls. */
-    val failedTestsResponse: LlmResponse? = null,
+    /** Test-track answers of this attempt that did not parse (retried with a new seed), kept for the analysis. */
+    val testParseFailures: List<TestParseFailure> = emptyList(),
     val accepted: Boolean = false,
     val openConflicts: List<Conflict> = emptyList(),
     val closedConflicts: List<ClosedConflict> = emptyList(),
     val adjudications: List<Adjudication> = emptyList(),
 )
+
+/** One unparseable test-track answer; [seedOffset] is the offset that call used. */
+data class TestParseFailure(val seedOffset: Long, val error: String?, val response: LlmResponse)
 
 data class CycleResult(
     val outcome: CycleOutcome,
@@ -90,8 +93,10 @@ data class CycleResult(
  * With [DispatcherConfig.conflictMemory] (B and V3 only), a cycle keeps every disagreement it has seen until it is
  * resolved, so an oracle that simply stops asking about a conflicting input cannot get the table accepted (F17); V3
  * then escalates when the logic is stable and conflicts remain open. See [ConflictMemory].
- * A test suite that does not parse fails the attempt (no DMN is generated, as in V0); any other exception from a
- * track (transport, auth, model not found) ends the cycle with ERROR.
+ * A test suite that does not parse is an infrastructure failure, not an attempt (EXPERIMENTS.md section 9): the test
+ * track is called again within the same attempt, with seed offset `+ 100` per retry. At most 2 x retryBudget test-track
+ * calls per cycle; beyond that, and on any other exception from a track (transport, auth, model not found), the
+ * cycle ends with ERROR, which a resumed run repeats.
  */
 class Dispatcher(private val tracks: Tracks, private val validator: Validator, private val config: DispatcherConfig) {
 
@@ -107,31 +112,38 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
         val attempts = mutableListOf<Attempt>()
         var oracle: TestSuite? = null
         val conflicts = ConflictMemory()
+        var testCalls = 0
+        val maxTestCalls = 2 * config.retryBudget
 
         for (number in 1..config.retryBudget) {
             val seedOffset = cycle * 1000L + number
             val regenerateTests = oracle == null || config.strategy != RepairStrategy.STATIC_ORACLE
-            val tests = if (!regenerateTests) {
-                oracle!!
-            } else {
+            val parseFailures = mutableListOf<TestParseFailure>()
+            var generated: TestSuite? = if (regenerateTests) null else oracle
+            while (generated == null) {
+                if (testCalls >= maxTestCalls) {
+                    val message = "No parseable test suite within $maxTestCalls test-track calls"
+                    attempts += Attempt(number, true, null, null, null, null, message, seedOffset, parseFailures, openConflicts = conflicts.open())
+                    return CycleResult(CycleOutcome.ERROR, attempts, message = message, openConflicts = conflicts.open())
+                }
+                testCalls++
+                val offset = seedOffset + 100L * parseFailures.size
                 try {
-                    tracks.tests.generate(rules, domain, seedOffset)
+                    generated = tracks.tests.generate(rules, domain, offset)
                 } catch (e: TestSuiteParseException) {
-                    attempts += Attempt(
-                        number, true, null, null, null, null, e.message, seedOffset, failedTestsResponse = e.response, openConflicts = conflicts.open(),
-                    )
-                    continue
+                    parseFailures += TestParseFailure(offset, e.message, e.response)
                 } catch (e: Exception) {
-                    attempts += Attempt(number, true, null, null, null, null, describe(e), seedOffset, openConflicts = conflicts.open())
+                    attempts += Attempt(number, true, null, null, null, null, describe(e), seedOffset, parseFailures, openConflicts = conflicts.open())
                     return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e), openConflicts = conflicts.open())
                 }
             }
+            val tests: TestSuite = generated
             oracle = tests
 
             val dmn = try {
                 tracks.dmn.generate(rules, domain, seedOffset)
             } catch (e: Exception) {
-                attempts += Attempt(number, regenerateTests, tests, null, null, null, describe(e), seedOffset, openConflicts = conflicts.open())
+                attempts += Attempt(number, regenerateTests, tests, null, null, null, describe(e), seedOffset, parseFailures, openConflicts = conflicts.open())
                 return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e), openConflicts = conflicts.open())
             }
 
@@ -139,7 +151,9 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
             val hash = SemanticHash.of(dmn.xml)
 
             if (!memoryActive) {
-                attempts += Attempt(number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, accepted = report.accepted)
+                attempts += Attempt(
+                    number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, testParseFailures = parseFailures, accepted = report.accepted,
+                )
                 if (report.accepted) return CycleResult(CycleOutcome.ACCEPTED, attempts)
                 if (config.strategy == RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT) {
                     stableDisagreement(attempts)?.let { return CycleResult(CycleOutcome.AMBIGUOUS, attempts, conflictingCases = it) }
@@ -150,12 +164,12 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
             val step = try {
                 conflicts.update(number, dmn.xml, hash, report, tests, rules, domain, seedOffset)
             } catch (e: Exception) {
-                attempts += Attempt(number, regenerateTests, tests, dmn, report, hash, describe(e), seedOffset, openConflicts = conflicts.open())
+                attempts += Attempt(number, regenerateTests, tests, dmn, report, hash, describe(e), seedOffset, parseFailures, openConflicts = conflicts.open())
                 return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e), openConflicts = conflicts.open())
             }
             val accepted = report.accepted && conflicts.open().isEmpty()
             attempts += Attempt(
-                number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, accepted = accepted,
+                number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, testParseFailures = parseFailures, accepted = accepted,
                 openConflicts = conflicts.open(), closedConflicts = step.closed, adjudications = step.adjudications,
             )
             if (accepted) return CycleResult(CycleOutcome.ACCEPTED, attempts)

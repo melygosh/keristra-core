@@ -66,6 +66,11 @@ class TestSuiteGenerator(
             throw TestSuiteParseException("Invalid JSON array: ${e.message}", prompt.id, response, e)
         }
         if (elements.any { it !is Map<*, *> }) throw TestSuiteParseException("Array elements must be JSON objects", prompt.id, response)
+        // A case needs an input and an expectation (`expected: null` = no rule applies); bare input objects are not tests.
+        val incomplete = elements.count { case -> case as Map<*, *>; "object" !in case || "expected" !in case }
+        if (incomplete > 0) {
+            throw TestSuiteParseException("$incomplete of ${elements.size} cases lack \"object\" or \"expected\"", prompt.id, response)
+        }
         @Suppress("UNCHECKED_CAST")
         return elements as List<Map<String, Any?>>
     }

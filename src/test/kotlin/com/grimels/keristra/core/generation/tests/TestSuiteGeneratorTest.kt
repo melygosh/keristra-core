@@ -110,4 +110,25 @@ class TestSuiteGeneratorTest {
 
         assertThatThrownBy { generator.adjudicate("rules", "mortgage", emptyMap()) }.isInstanceOf(TestSuiteParseException::class.java)
     }
+
+    @Test
+    fun `a suite whose cases lack object or expected is rejected like unparseable output`() {
+        // gpt-oss in C0 returned bare input objects without expectations (EXPERIMENTS.md section 9).
+        val (_, bare) = generator("""[{"application": {"creditScore": 720}}, {"application": {"creditScore": 600}}]""")
+        val (_, partial) = generator("""[{"object": {"application": {}}, "expected": []}, {"object": {"application": {}}}]""")
+
+        for (generator in listOf(bare, partial)) {
+            assertThatThrownBy { generator.generate("rules", "mortgage") }
+                .isInstanceOf(TestSuiteParseException::class.java)
+                .hasMessageContaining("object")
+                .hasMessageContaining("expected")
+        }
+    }
+
+    @Test
+    fun `an explicit null expectation is allowed - it means no rule applies`() {
+        val (_, generator) = generator("""[{"object": {"application": {"creditScore": 500}}, "expected": null}]""")
+
+        assertThat(generator.generate("rules", "mortgage").cases.single()).containsEntry("expected", null)
+    }
 }

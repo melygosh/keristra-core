@@ -134,7 +134,7 @@ class ExperimentRunner(
     )
 
     private fun attemptEvent(session: Session, cycle: Int, attempt: Attempt): Map<String, Any?> {
-        val testsResponse = if (attempt.testsRegenerated) attempt.tests?.response ?: attempt.failedTestsResponse else null
+        val testsResponse = if (attempt.testsRegenerated) attempt.tests?.response else null
         val tests = session.tracks.tests.prompt
         return base(session, "attempt") + mapOf(
             "cycle" to cycle,
@@ -142,7 +142,10 @@ class ExperimentRunner(
             "seedOffset" to attempt.seedOffset,
             "testsRegenerated" to attempt.testsRegenerated,
             "tracks" to mapOf(
-                "tests" to testsResponse?.let { trackInfo(session.tests, it, tests.id, tests.hash, attempt.seedOffset) },
+                // After unparseable answers the suite came from a retry, seed offset + 100 per failure (Dispatcher).
+                "tests" to testsResponse?.let {
+                    trackInfo(session.tests, it, tests.id, tests.hash, attempt.seedOffset + 100L * attempt.testParseFailures.size)
+                },
                 "dmn" to attempt.dmn?.let {
                     trackInfo(session.dmn, it.response, it.promptId, it.promptHash, attempt.seedOffset) + mapOf(
                         "rag" to it.retrieved?.let { segments ->
@@ -163,7 +166,14 @@ class ExperimentRunner(
             "dmnXml" to attempt.dmn?.xml,
             "dmnRaw" to attempt.dmn?.response?.text?.takeIf { it != attempt.dmn.xml },
             "testSuite" to attempt.tests?.cases,
-            "testsRaw" to attempt.failedTestsResponse?.text,
+            "testParseFailures" to attempt.testParseFailures.map {
+                mapOf(
+                    "seedOffset" to it.seedOffset,
+                    "error" to it.error,
+                    "raw" to it.response.text,
+                    "track" to trackInfo(session.tests, it.response, tests.id, tests.hash, it.seedOffset),
+                )
+            },
             "openConflicts" to attempt.openConflicts.map(::conflictInfo),
             "closedConflicts" to attempt.closedConflicts.map {
                 mapOf("reason" to it.reason, "newExpected" to it.newExpected) + conflictInfo(it.conflict)
@@ -214,9 +224,10 @@ class ExperimentRunner(
         val report = result.finalDmn?.let { strict.validate(it.xml, groundTruth) }
         val calls = result.attempts.flatMap { attempt ->
             listOfNotNull(
-                (if (attempt.testsRegenerated) attempt.tests?.response ?: attempt.failedTestsResponse else null)?.let { session.tests to it },
+                (if (attempt.testsRegenerated) attempt.tests?.response else null)?.let { session.tests to it },
                 attempt.dmn?.let { session.dmn to it.response },
-            ) + attempt.adjudications.mapNotNull { it.response?.let { response -> session.tests to response } }
+            ) + attempt.adjudications.mapNotNull { it.response?.let { response -> session.tests to response } } +
+                attempt.testParseFailures.map { session.tests to it.response }
         }
         val costs = calls.map { (spec, response) -> pricing.costUsd(spec.model, response.inputTokens, response.outputTokens) }
 

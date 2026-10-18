@@ -311,4 +311,18 @@ class ExperimentRunnerTest {
 
         assertThat(events(log).filter { it["event"] == "cycle_finished" }.map { it["cycle"] }).containsExactly(1, 2)
     }
+
+    @Test
+    fun `an unparseable oracle answer is logged in its attempt, with its own seed and cost, and does not use up the attempt`() {
+        val events = events(runner(ScriptedTracks(listOf(goodDmn), listOf("not json", suite))).run(config(cycles = 1), dir))
+
+        val attempt = events.single { it["event"] == "attempt" }
+        val failure = (attempt["testParseFailures"] as List<*>).single().obj()
+        assertThat(failure).containsEntry("raw", "not json").containsEntry("seedOffset", 1001)
+        assertThat(failure["track"].obj()).containsEntry("seed", 42 + 1001).containsEntry("inputTokens", 300)
+        assertThat(attempt["tracks"].obj()["tests"].obj()).containsEntry("seed", 42 + 1101)
+        val finished = events.single { it["event"] == "cycle_finished" }
+        assertThat(finished).containsEntry("outcome", "ACCEPTED").containsEntry("attempts", 1)
+        assertThat(finished["tokens"].obj()["tests"].obj()).containsEntry("calls", 2)
+    }
 }
