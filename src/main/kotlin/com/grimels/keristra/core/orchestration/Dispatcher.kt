@@ -96,7 +96,7 @@ data class CycleResult(
  * A test suite that does not parse is an infrastructure failure, not an attempt (EXPERIMENTS.md section 9): the test
  * track is called again within the same attempt, with seed offset `+ 100` per retry. At most 2 x retryBudget test-track
  * calls per cycle; beyond that, and on any other exception from a track (transport, auth, model not found), the
- * cycle ends with ERROR, which a resumed run repeats.
+ * cycle ends with ERROR, which the runner replaces with a new cycle.
  */
 class Dispatcher(private val tracks: Tracks, private val validator: Validator, private val config: DispatcherConfig) {
 

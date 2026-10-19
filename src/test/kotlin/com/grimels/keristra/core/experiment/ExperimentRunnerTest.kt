@@ -185,17 +185,55 @@ class ExperimentRunnerTest {
         assertThat(events.last()).containsEntry("event", "run_finished").containsEntry("cycles", 3)
     }
 
+    // --- ERROR cycles are infrastructure failures (EXPERIMENTS.md 4.2): replaced until `cycles` valid cycles exist ---
+
     @Test
-    fun `a rerun retries cycles that ended in ERROR - infrastructure failures are not results`() {
+    fun `an ERROR cycle is replaced by a new cycle number until cycles valid cycles exist`() {
+        val tracks = ScriptedTracks(listOf(RuntimeException("Connection reset"), goodDmn, goodDmn), listOf(suite, suite, suite))
+
+        val log = runner(tracks).run(config(cycles = 2), dir)
+
+        val events = events(log)
+        val finished = events.filter { it["event"] == "cycle_finished" }
+        assertThat(finished.map { it["cycle"] }).containsExactly(1, 2, 3)
+        assertThat(finished.map { it["outcome"] }).containsExactly("ERROR", "ACCEPTED", "ACCEPTED")
+        val summary = events.last()
+        assertThat(summary).containsEntry("target", 2).containsEntry("validCycles", 2).containsEntry("errorCycles", 1)
+            .containsEntry("budgetExhausted", false)
+        assertThat(summary["outcomes"]).isEqualTo(mapOf("ERROR" to 1, "ACCEPTED" to 2))
+        assertThat(summary["groundTruth"].obj()).containsEntry("evaluated", 2).containsEntry("acceptedCorrect", 2)
+        assertThat(summary["attempts"].obj()).containsEntry("total", 2)
+        // The failed cycle's calls are still paid for.
+        assertThat(summary["tokens"].obj()["dmn"].obj()).containsEntry("input", 2000)
+        assertThat(summary["tokens"].obj()["tests"].obj()).containsEntry("input", 900)
+    }
+
+    @Test
+    fun `a session stops after cycles ERROR cycles and reports the budget as exhausted`() {
+        val down = RuntimeException("UnresolvedModelServerException")
+        val tracks = ScriptedTracks(listOf(down, down), listOf(suite, suite))
+
+        val log = runner(tracks).run(config(cycles = 2), dir)
+
+        val events = events(log)
+        assertThat(events.filter { it["event"] == "cycle_finished" }.map { it["outcome"] }).containsExactly("ERROR", "ERROR")
+        assertThat(events.last()).containsEntry("validCycles", 0).containsEntry("errorCycles", 2).containsEntry("budgetExhausted", true)
+    }
+
+    @Test
+    fun `a rerun keeps earlier ERROR cycles and continues with the next cycle number`() {
         runner(ScriptedTracks(listOf(RuntimeException("UnresolvedModelServerException")), listOf(suite))).run(config(cycles = 1), dir)
         val retry = ScriptedTracks(listOf(goodDmn), listOf(suite))
 
         val log = runner(retry).run(config(cycles = 1), dir)
 
         val events = events(log)
-        assertThat(events.filter { it["event"] == "run_started" }[1]).containsEntry("skippedCycles", emptyList<Int>())
-        assertThat(events.filter { it["event"] == "cycle_finished" }.map { it["outcome"] }).containsExactly("ERROR", "ACCEPTED")
-        assertThat(events.last()["outcomes"]).isEqualTo(mapOf("ACCEPTED" to 1))
+        assertThat(events.filter { it["event"] == "run_started" }[1]).containsEntry("skippedCycles", listOf(1))
+        val finished = events.filter { it["event"] == "cycle_finished" }
+        assertThat(finished.map { it["cycle"] }).containsExactly(1, 2)
+        assertThat(finished.map { it["outcome"] }).containsExactly("ERROR", "ACCEPTED")
+        assertThat(events.last()).containsEntry("validCycles", 1).containsEntry("errorCycles", 1).containsEntry("budgetExhausted", false)
+        assertThat(events.last()["outcomes"]).isEqualTo(mapOf("ERROR" to 1, "ACCEPTED" to 1))
     }
 
     @Test

@@ -25,9 +25,12 @@ import org.springframework.stereotype.Component
 /**
  * Runs an experiment config cycle by cycle and logs it to `<outputDir>/<runId>.jsonl` (REVISION_PLAN 4.6 and 5):
  * `run_started`, then per cycle its `attempt` events and `cycle_finished`, then `run_finished` with aggregates over
- * every finished cycle in the file. Rerunning the same runId resumes: finished cycles are skipped (cycles that ended
- * in ERROR run again), and the config must match apart from `cycles`. Every event carries the `sessionId` of the process that wrote it; attempts of a
- * cycle that never finished (crash) stay in the file and are superseded when the cycle is rerun.
+ * every finished cycle in the file. A cycle that ends in ERROR is an infrastructure failure, not a result
+ * (EXPERIMENTS.md 4.2): it stays in the log and the run continues with the next cycle number (new seeds) until
+ * `cycles` valid cycles exist; a session stops after `cycles` ERROR cycles, so it runs at most 2 x `cycles` cycles.
+ * Rerunning the same runId resumes: logged cycles are skipped and numbering continues; the config must match apart
+ * from `cycles`. Every event carries the `sessionId` of the process that wrote it; attempts of a cycle that never
+ * finished (crash) stay in the file and are superseded when the cycle is rerun.
  *
  * Whatever validator runs the loop, the final DMN of every cycle is checked against the rule set's human ground
  * truth with the strict validator, so false accepts and false rejects can be counted.
@@ -53,10 +56,8 @@ class ExperimentRunner(
 
         val previous = JsonlLog.read(logFile, mapper)
         checkResumable(config, previous, logFile)
-        // ERROR is an infrastructure failure (network, timeout, auth), not a result: such cycles run again on resume.
-        val finished = previous.filter { it["event"] == "cycle_finished" }
-            .associateBy { (it["cycle"] as Number).toInt() }
-            .filterValues { it["outcome"] != CycleOutcome.ERROR.name }.keys
+        val logged = previous.filter { it["event"] == "cycle_finished" }.associateBy { (it["cycle"] as Number).toInt() }
+        var valid = logged.values.count { it["outcome"] != CycleOutcome.ERROR.name }
 
         val ruleSet = ruleSets.load(config.ruleSet, config.version, config.language)
         val dmnSpec = requireNotNull(config.dmn)
@@ -68,16 +69,21 @@ class ExperimentRunner(
         val session = Session(config, UUID.randomUUID().toString(), ruleSet, tracks, dmnSpec, testsSpec)
 
         JsonlLog.Writer(logFile, mapper).use { out ->
-            out.append(runStarted(session, schemaPaths != null, previous.isNotEmpty(), (1..config.cycles).filter { it in finished }))
-            for (cycle in 1..config.cycles) {
-                if (cycle in finished) continue
+            out.append(runStarted(session, schemaPaths != null, previous.isNotEmpty(), logged.keys.sorted()))
+            var errors = 0
+            var cycle = 0
+            while (valid < config.cycles && errors < config.cycles) {
+                cycle++
+                if (cycle in logged) continue
                 val started = System.nanoTime()
                 val result = dispatcher.runCycle(ruleSet.rules, ruleSet.domain, schemaPaths, cycle)
                 result.attempts.forEach { out.append(attemptEvent(session, cycle, it)) }
                 out.append(cycleFinished(session, cycle, result, (System.nanoTime() - started) / 1_000_000))
-                logger.info("[${config.runId}] cycle $cycle/${config.cycles}: ${result.outcome} after ${result.attempts.size} attempt(s)")
+                if (result.outcome == CycleOutcome.ERROR) errors++ else valid++
+                logger.info("[${config.runId}] cycle $cycle: ${result.outcome} after ${result.attempts.size} attempt(s); valid $valid/${config.cycles}, errors $errors")
             }
-            out.append(runFinished(session, JsonlLog.read(logFile, mapper)))
+            if (valid < config.cycles) logger.warn("[${config.runId}] stopped after $errors ERROR cycles with $valid/${config.cycles} valid; rerun to continue")
+            out.append(runFinished(session, JsonlLog.read(logFile, mapper), config.cycles))
         }
         return logFile
     }
@@ -270,9 +276,13 @@ class ExperimentRunner(
     private fun tokenTotals(responses: List<LlmResponse>) =
         mapOf("input" to responses.sumOf { it.inputTokens ?: 0 }, "output" to responses.sumOf { it.outputTokens ?: 0 }, "calls" to responses.size)
 
-    /** Aggregates over the latest `cycle_finished` of every cycle in the file, from all sessions. */
-    private fun runFinished(session: Session, events: List<Map<String, Any?>>): Map<String, Any?> {
-        val cycles = events.filter { it["event"] == "cycle_finished" }.associateBy { (it["cycle"] as Number).toInt() }.values
+    /**
+     * Aggregates over the latest `cycle_finished` of every cycle in the file, from all sessions. Outcome-based metrics
+     * use valid cycles only (ERROR excluded from denominators, EXPERIMENTS.md 4.2); tokens and cost include every cycle.
+     */
+    private fun runFinished(session: Session, events: List<Map<String, Any?>>, target: Int): Map<String, Any?> {
+        val all = events.filter { it["event"] == "cycle_finished" }.associateBy { (it["cycle"] as Number).toInt() }.values
+        val cycles = all.filter { it["outcome"] != CycleOutcome.ERROR.name }
         fun gt(cycle: Map<String, Any?>) = cycle["groundTruth"] as Map<*, *>
         fun accepted(cycle: Map<String, Any?>) = cycle["outcome"] == CycleOutcome.ACCEPTED.name
         fun evaluated(cycle: Map<String, Any?>) = gt(cycle)["evaluated"] == true
@@ -280,11 +290,15 @@ class ExperimentRunner(
         fun tokens(cycle: Map<String, Any?>, track: String, kind: String) =
             ((cycle["tokens"] as Map<*, *>)[track] as Map<*, *>)[kind] as Number
 
-        val costs = cycles.map { it["costUsd"] as Number? }
+        val costs = all.map { it["costUsd"] as Number? }
         return base(session, "run_finished") + mapOf(
             "finishedAt" to Instant.now().toString(),
-            "cycles" to cycles.size,
-            "outcomes" to cycles.groupingBy { it["outcome"] as String }.eachCount(),
+            "cycles" to all.size,
+            "target" to target,
+            "validCycles" to cycles.size,
+            "errorCycles" to all.size - cycles.size,
+            "budgetExhausted" to (cycles.size < target),
+            "outcomes" to all.groupingBy { it["outcome"] as String }.eachCount(),
             "attempts" to mapOf(
                 "total" to cycles.sumOf { (it["attempts"] as Number).toInt() },
                 "meanPerCycle" to cycles.map { (it["attempts"] as Number).toDouble() }.average(),
@@ -298,7 +312,7 @@ class ExperimentRunner(
                 "rejectedWrong" to cycles.count { !accepted(it) && evaluated(it) && !correct(it) },
             ),
             "tokens" to listOf("dmn", "tests").associateWith { track ->
-                mapOf("input" to cycles.sumOf { tokens(it, track, "input").toLong() }, "output" to cycles.sumOf { tokens(it, track, "output").toLong() })
+                mapOf("input" to all.sumOf { tokens(it, track, "input").toLong() }, "output" to all.sumOf { tokens(it, track, "output").toLong() })
             },
             "costUsd" to if (costs.any { it == null }) null else costs.sumOf { it!!.toDouble() },
         )
