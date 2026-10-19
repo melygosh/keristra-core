@@ -14,8 +14,24 @@ import com.grimels.keristra.core.llm.LlmResponse
 /** Test cases in the shape the validators read: `{"object": {...}, "expected": [...]}` (plus optional name/description). */
 data class TestSuite(val cases: List<Map<String, Any?>>, val promptId: String, val promptHash: String, val response: LlmResponse)
 
-/** The test track's verdict on a single input: [expected] in the validator format (`[]` = no rule applies). */
-data class Adjudicated(val expected: Any?, val promptId: String, val promptHash: String, val response: LlmResponse)
+/**
+ * The test track's verdict on a single input: [expected] in the validator format (`[]` = no rule applies).
+ * [ambiguous] / [ambiguityNote]: the oracle says the verdict depends on an interpretation the rules do not state.
+ */
+data class Adjudicated(
+    val expected: Any?, val promptId: String, val promptHash: String, val response: LlmResponse,
+    val ambiguous: Boolean = false, val ambiguityNote: String? = null,
+)
+
+/**
+ * The oracle marked this case as depending on an interpretation the rules do not state (`tests/v2a`, REVISION_PLAN
+ * step 16): `"ambiguous": true` (or `"true"`). The case is still validated as usual.
+ */
+fun Map<String, Any?>.flaggedAmbiguous(): Boolean =
+    this["ambiguous"].let { it == true || (it as? String)?.equals("true", ignoreCase = true) == true }
+
+/** The oracle's note on a flagged case, if any. */
+fun Map<String, Any?>.ambiguityNote(): String? = this["ambiguityNote"]?.toString()
 
 /** The model answered, but not with a JSON array of objects; [response] keeps the raw answer for the run log. */
 class TestSuiteParseException(message: String, val promptId: String, val response: LlmResponse, cause: Throwable? = null) :
@@ -42,7 +58,7 @@ class TestSuiteGenerator(
         )
         val verdict = parseCases(response).firstOrNull()
             ?: throw TestSuiteParseException("Adjudication returned no case", template.id, response)
-        return Adjudicated(verdict["expected"], template.id, template.hash, response)
+        return Adjudicated(verdict["expected"], template.id, template.hash, response, verdict.flaggedAmbiguous(), verdict.ambiguityNote())
     }
 
     /** [seedOffset] is added to the configured seed, so retries and cycles do not replay one seeded sample. */

@@ -60,8 +60,10 @@ class ExperimentRunnerTest {
         strategy: RepairStrategy = RepairStrategy.PAIRED_REGEN,
         conflictMemory: Boolean = false,
         retryBudget: Int = 3,
+        version: String = "v1",
+        escalateOnAmbiguityFlags: Boolean = false,
     ) = RunConfig(
-        runId = runId, ruleSet = "toy", version = "v1", language = "en",
+        runId = runId, ruleSet = "toy", version = version, language = "en", escalateOnAmbiguityFlags = escalateOnAmbiguityFlags,
         dmn = TrackSpec(model = "anthropic:priced-model"),
         tests = TrackSpec(model = "local:free-model", temperature = 0.7, seed = 42),
         validator = validator, strategy = strategy, cycles = cycles, conflictMemory = conflictMemory, retryBudget = retryBudget,
@@ -362,5 +364,69 @@ class ExperimentRunnerTest {
         val finished = events.single { it["event"] == "cycle_finished" }
         assertThat(finished).containsEntry("outcome", "ACCEPTED").containsEntry("attempts", 1)
         assertThat(finished["tokens"].obj()["tests"].obj()).containsEntry("calls", 2)
+    }
+
+    // --- ambiguity flags and the literal ground truth (arm A1, REVISION_PLAN step 16) ---
+
+    private val note = "rules 1 and 2 both apply"
+    private val flaggedSuite = """[{"object": ${app(true, 650)}, "expected": [{"product": "Fixed30"}]},
+                                   {"object": ${app(false, 720)}, "expected": [{"product": "Fixed30"}], "ambiguous": true, "ambiguityNote": "$note"}]"""
+
+    @Test
+    fun `A1 logs flagged cases per attempt, and the cycle its flags and the source of the escalation`() {
+        val a1 = config(cycles = 1, strategy = RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT, conflictMemory = true, escalateOnAmbiguityFlags = true)
+
+        val log = runner(ScriptedTracks(listOf(goodDmn), listOf(flaggedSuite))).run(a1, dir)
+
+        val events = events(log)
+        assertThat(events.first()["config"].obj()).containsEntry("escalateOnAmbiguityFlags", true)
+        val expectedFlag = mapOf(
+            "source" to "SUITE", "index" to 1,
+            "input" to mapOf("application" to mapOf("fixedPreference" to false, "creditScore" to 720.0)),
+            "expected" to listOf(mapOf("product" to "Fixed30")), "note" to note,
+        )
+        assertThat(events.single { it["event"] == "attempt" }["flaggedCases"]).isEqualTo(listOf(expectedFlag))
+        val finished = events.single { it["event"] == "cycle_finished" }
+        assertThat(finished).containsEntry("outcome", "AMBIGUOUS").containsEntry("ambiguitySource", "FLAGS")
+        assertThat(finished["ambiguityFlags"].obj()).containsEntry("count", 1).containsEntry("total", 1)
+            .containsEntry("cases", listOf(expectedFlag))
+        assertThat(events.last()["outcomes"]).isEqualTo(mapOf("AMBIGUOUS" to 1))
+    }
+
+    @Test
+    fun `an accepted cycle without flags has no ambiguity source`() {
+        val log = runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(config(cycles = 1, escalateOnAmbiguityFlags = true), dir)
+
+        val finished = events(log).single { it["event"] == "cycle_finished" }
+        assertThat(finished).containsEntry("outcome", "ACCEPTED").containsEntry("ambiguitySource", null)
+        assertThat(finished["ambiguityFlags"].obj()).containsEntry("count", 0).containsEntry("total", 0)
+    }
+
+    @Test
+    fun `with a literal ground truth the final DMN is also evaluated against it, as groundTruthAlt`() {
+        val literalSuite = """[{"object": ${app(true, 650)}, "expected": [{"product": "Fixed30"}]}]"""
+        val tracks = ScriptedTracks(listOf(goodDmn, firstNoDefault), listOf(suite, literalSuite))
+
+        val log = runner(tracks).run(config(cycles = 2, version = "literal"), dir)
+
+        val events = events(log)
+        assertThat(events.first()["ruleSet"].obj()).containsEntry("groundTruthAltSize", 3)
+        val finished = events.filter { it["event"] == "cycle_finished" }
+        assertThat(finished.map { it["groundTruth"].obj()["accepted"] }).containsExactly(true, false)
+        assertThat(finished.map { it["groundTruthAlt"].obj()["accepted"] }).containsExactly(false, true)
+        assertThat(finished[0]["groundTruthAlt"].obj()).containsEntry("file", "ground-truth.literal.json")
+        assertThat(finished[0]["groundTruthAlt"].obj()["counts"]).isEqualTo(mapOf("PASS" to 1, "MISMATCH" to 1, "UNEXPECTED_RESULT" to 1))
+        assertThat(events.last()["groundTruth"].obj())
+            .containsEntry("acceptedCorrect", 1).containsEntry("acceptedWrong", 1)
+            .containsEntry("acceptedCorrectAlt", 1).containsEntry("acceptedWrongAlt", 1)
+    }
+
+    @Test
+    fun `without a literal ground truth groundTruthAlt is null`() {
+        val log = runner(ScriptedTracks(listOf(goodDmn), listOf(suite))).run(config(cycles = 1), dir)
+
+        val events = events(log)
+        assertThat(events.single { it["event"] == "cycle_finished" }).containsEntry("groundTruthAlt", null)
+        assertThat(events.last()["groundTruth"].obj()).containsEntry("acceptedCorrectAlt", null).containsEntry("acceptedWrongAlt", null)
     }
 }

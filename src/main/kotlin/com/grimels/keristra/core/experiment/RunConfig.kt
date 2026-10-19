@@ -74,6 +74,8 @@ data class RunConfig(
     val stableAttempts: Int = 2,
     /** REVISION_PLAN step 10; off keeps the earlier behaviour (both arms are needed for the article). */
     val conflictMemory: Boolean = false,
+    /** Arm A1 (REVISION_PLAN step 16): an otherwise accepted attempt with cases the oracle flagged ends AMBIGUOUS. */
+    val escalateOnAmbiguityFlags: Boolean = false,
     val rag: RagSpec = RagSpec(),
     /** Number of cycles (CYCLES) or of generated suites (SUITES). */
     val cycles: Int,

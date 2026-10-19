@@ -366,4 +366,101 @@ class DispatcherTest {
         assertThat(adjudication.error).isNotBlank()
         assertThat(adjudication.response!!.text).isEqualTo("no idea")
     }
+
+    // --- ambiguity flags (arm A1, REVISION_PLAN step 16) ---
+
+    private val note = "rule 1 (Fixed30) and rule 2 (ARM7/1) both apply; the rules do not state which takes precedence"
+    /** [suite] with its second case flagged; the flagged expectation agrees with [goodDmn] and disagrees with [badDmn]. */
+    private val flaggedSuite = """[{"object": ${app(true, 650)}, "expected": [{"product": "Fixed30"}]},
+                                   {"object": ${app(false, 720)}, "expected": [{"product": "Fixed30"}], "ambiguous": true, "ambiguityNote": "$note"}]"""
+
+    private fun a1(retryBudget: Int = 2, flags: Boolean = true) =
+        DispatcherConfig(ESCALATE_ON_STABLE_DISAGREEMENT, retryBudget, conflictMemory = true, escalateOnAmbiguityFlags = flags)
+
+    @Test
+    fun `A1 - a flagged case that agrees with the DMN turns the accepted attempt into AMBIGUOUS from FLAGS`() {
+        val run = run(a1(), listOf(goodDmn), listOf(flaggedSuite))
+
+        assertThat(run.result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run.result.ambiguitySource).isEqualTo(AmbiguitySource.FLAGS)
+        assertThat(run.result.attempts).hasSize(1)
+        assertThat(run.result.attempts.single().report!!.accepted).describedAs("flagged cases are validated as usual").isTrue()
+        val flagged = run.result.attempts.single().flaggedCases.single()
+        assertThat(flagged.source).isEqualTo(FlagSource.SUITE)
+        assertThat(flagged.index).isEqualTo(1)
+        assertThat(flagged.input).isEqualTo(mapOf("application" to mapOf("fixedPreference" to false, "creditScore" to 720.0)))
+        assertThat(flagged.expected).isEqualTo(listOf(mapOf("product" to "Fixed30")))
+        assertThat(flagged.note).isEqualTo(note)
+        assertThat(run.result.flaggedCases).containsExactly(flagged)
+    }
+
+    @Test
+    fun `A1 - an unflagged suite is ACCEPTED`() {
+        val run = run(a1(), listOf(goodDmn), listOf(suite))
+
+        assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+        assertThat(run.result.ambiguitySource).isNull()
+        assertThat(run.result.attempts.single().flaggedCases).isEmpty()
+    }
+
+    @Test
+    fun `without escalateOnAmbiguityFlags flagged cases are only logged`() {
+        for (config in listOf(a1(flags = false), DispatcherConfig(PAIRED_REGEN))) {
+            val run = run(config, listOf(goodDmn), listOf(flaggedSuite))
+
+            assertThat(run.result.outcome).isEqualTo(ACCEPTED)
+            assertThat(run.result.attempts.single().flaggedCases).hasSize(1)
+        }
+    }
+
+    @Test
+    fun `a flagged case that fails the DMN is a failure like any other`() {
+        val run = run(a1(retryBudget = 1), listOf(badDmn), listOf(flaggedSuite))
+
+        assertThat(run.result.outcome).isEqualTo(REJECTED_BUDGET)
+        assertThat(run.result.attempts.single().report!!.cases[1].outcome).isEqualTo(CaseOutcome.MISMATCH)
+        assertThat(run.result.ambiguitySource).isNull()
+    }
+
+    @Test
+    fun `escalation on flags applies without conflict memory too`() {
+        val run = run(DispatcherConfig(PAIRED_REGEN, escalateOnAmbiguityFlags = true), listOf(goodDmn), listOf(flaggedSuite))
+
+        assertThat(run.result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run.result.ambiguitySource).isEqualTo(AmbiguitySource.FLAGS)
+    }
+
+    @Test
+    fun `a flagged re-adjudication verdict counts as a flag of the attempt`() {
+        val flaggedVerdict = """[{"object": ${app(false, 720)}, "expected": [{"product": "ARM7/1"}], "ambiguous": true, "ambiguityNote": "$note"}]"""
+
+        val run = run(a1(), listOf(badDmn, badDmn), listOf(suite, suiteWithoutConflict, flaggedVerdict))
+
+        assertThat(run.result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run.result.ambiguitySource).isEqualTo(AmbiguitySource.FLAGS)
+        val second = run.result.attempts[1]
+        assertThat(second.adjudications.single().ambiguous).isTrue()
+        assertThat(second.adjudications.single().ambiguityNote).isEqualTo(note)
+        val flagged = second.flaggedCases.single()
+        assertThat(flagged.source).isEqualTo(FlagSource.ADJUDICATION)
+        assertThat(flagged.index).isNull()
+        assertThat(flagged.expected).isEqualTo(listOf(mapOf("product" to "ARM7/1")))
+    }
+
+    @Test
+    fun `stable disagreement reports its source as DISAGREEMENT`() {
+        val run = run(a1(retryBudget = 3), listOf(badDmn, badDmnRelabelled), listOf(suite, suiteWithoutConflict, verdict("Fixed30")))
+
+        assertThat(run.result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run.result.ambiguitySource).isEqualTo(AmbiguitySource.DISAGREEMENT)
+    }
+
+    @Test
+    fun `ambiguous given as the string true counts, false does not`() {
+        val stringFlag = flaggedSuite.replace("\"ambiguous\": true", "\"ambiguous\": \"true\"")
+        val falseFlag = flaggedSuite.replace("\"ambiguous\": true", "\"ambiguous\": false")
+
+        assertThat(run(a1(), listOf(goodDmn), listOf(stringFlag)).result.outcome).isEqualTo(AMBIGUOUS)
+        assertThat(run(a1(), listOf(goodDmn), listOf(falseFlag)).result.outcome).isEqualTo(ACCEPTED)
+    }
 }

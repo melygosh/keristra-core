@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component
 /**
  * One rule-set version on disk (REVISION_PLAN 4.8): `resources/rulesets/<name>/<version>/` with `rules.<lang>.txt`,
  * `meta.json` (must name the `domain`), `ground-truth.json` (validator format; `expected: null` = no rule applies)
- * and optionally `reference.dmn`. [hash] covers exactly the files this load used.
+ * and optionally `reference.dmn` and `ground-truth.literal.json` (a second reading of an ambiguous text, evaluated
+ * as `groundTruthAlt`, REVISION_PLAN step 16). [hash] covers exactly the files this load used.
  */
 data class RuleSet(
     val id: String,
@@ -19,6 +20,7 @@ data class RuleSet(
     val meta: Map<String, Any?>,
     val groundTruth: List<Map<String, Any?>>,
     val hash: String,
+    val groundTruthAlt: List<Map<String, Any?>>? = null,
 )
 
 @Component
@@ -31,6 +33,7 @@ class RuleSetRepository {
             "meta.json" to read("$dir/meta.json", required = true),
             "ground-truth.json" to read("$dir/ground-truth.json", required = true),
             "reference.dmn" to read("$dir/reference.dmn", required = false),
+            ALT_GROUND_TRUTH to read("$dir/$ALT_GROUND_TRUTH", required = false),
         ).filterValues { it != null }.mapValues { it.value!! }
 
         val meta: Map<String, Any?> = GSON.fromJson(files.getValue("meta.json").toString(Charsets.UTF_8), MAP_TYPE)
@@ -49,6 +52,7 @@ class RuleSetRepository {
             meta = meta,
             groundTruth = groundTruth,
             hash = digest.digest().joinToString("") { "%02x".format(it) },
+            groundTruthAlt = files[ALT_GROUND_TRUTH]?.let { GSON.fromJson(it.toString(Charsets.UTF_8), LIST_TYPE) },
         )
     }
 
@@ -56,9 +60,10 @@ class RuleSetRepository {
         RuleSetRepository::class.java.getResourceAsStream("/$path")?.use { it.readBytes() }
             ?: if (required) throw IllegalArgumentException("Rule-set file not found on the classpath: $path") else null
 
-    private companion object {
-        val GSON = Gson()
-        val MAP_TYPE = object : TypeToken<Map<String, Any?>>() {}.type
-        val LIST_TYPE = object : TypeToken<List<Map<String, Any?>>>() {}.type
+    companion object {
+        const val ALT_GROUND_TRUTH = "ground-truth.literal.json"
+        private val GSON = Gson()
+        private val MAP_TYPE = object : TypeToken<Map<String, Any?>>() {}.type
+        private val LIST_TYPE = object : TypeToken<List<Map<String, Any?>>>() {}.type
     }
 }

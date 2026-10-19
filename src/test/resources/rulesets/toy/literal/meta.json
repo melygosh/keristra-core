@@ -1,0 +1,1 @@
+{"domain": "mortgage", "hitPolicy": "FIRST", "outputs": ["product"], "ambiguous": false, "languages": ["en"], "source": "unit-test fixture"}

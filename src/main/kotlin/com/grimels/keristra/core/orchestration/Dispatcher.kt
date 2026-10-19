@@ -4,6 +4,8 @@ import com.grimels.keristra.core.generation.Tracks
 import com.grimels.keristra.core.generation.dmn.GeneratedDmn
 import com.grimels.keristra.core.generation.tests.TestSuite
 import com.grimels.keristra.core.generation.tests.TestSuiteParseException
+import com.grimels.keristra.core.generation.tests.ambiguityNote
+import com.grimels.keristra.core.generation.tests.flaggedAmbiguous
 import com.grimels.keristra.core.llm.LlmResponse
 import com.grimels.keristra.core.validation.CaseOutcome
 import com.grimels.keristra.core.validation.CaseResult
@@ -15,12 +17,25 @@ enum class RepairStrategy { STATIC_ORACLE, PAIRED_REGEN, ESCALATE_ON_STABLE_DISA
 
 enum class CycleOutcome { ACCEPTED, REJECTED_BUDGET, AMBIGUOUS, ERROR }
 
+/** Why a cycle ended AMBIGUOUS: the oracle flagged cases (A1), or the tracks kept disagreeing on stable logic (V3). */
+enum class AmbiguitySource { FLAGS, DISAGREEMENT }
+
 data class DispatcherConfig(
     val strategy: RepairStrategy,
     val retryBudget: Int = 3,
     val stableAttempts: Int = 2,
     val conflictMemory: Boolean = false,
+    /** Arm A1 (REVISION_PLAN step 16): an otherwise accepted attempt with flagged cases ends the cycle AMBIGUOUS. */
+    val escalateOnAmbiguityFlags: Boolean = false,
 )
+
+enum class FlagSource { SUITE, ADJUDICATION }
+
+/**
+ * A case the oracle flagged as ambiguous: from the attempt's suite ([index] = position in it) or from a
+ * re-adjudication verdict ([index] null).
+ */
+data class FlaggedCase(val source: FlagSource, val index: Int?, val input: Any?, val expected: Any?, val note: String?)
 
 data class Conflict(
     val key: String,
@@ -45,6 +60,8 @@ data class Adjudication(
     val promptHash: String?,
     val response: LlmResponse?,
     val error: String? = null,
+    val ambiguous: Boolean = false,
+    val ambiguityNote: String? = null,
 )
 
 data class Attempt(
@@ -63,6 +80,8 @@ data class Attempt(
     val openConflicts: List<Conflict> = emptyList(),
     val closedConflicts: List<ClosedConflict> = emptyList(),
     val adjudications: List<Adjudication> = emptyList(),
+    /** Logged for every strategy; they change the outcome only with [DispatcherConfig.escalateOnAmbiguityFlags]. */
+    val flaggedCases: List<FlaggedCase> = emptyList(),
 )
 
 /** One unparseable test-track answer; [seedOffset] is the offset that call used. */
@@ -74,8 +93,12 @@ data class CycleResult(
     val conflictingCases: List<CaseResult> = emptyList(),
     val message: String? = null,
     val openConflicts: List<Conflict> = emptyList(),
+    val ambiguitySource: AmbiguitySource? = null,
 ) {
     val finalDmn: GeneratedDmn? get() = attempts.lastOrNull { it.dmn != null }?.dmn
+
+    /** Flagged cases of the last attempt; for an AMBIGUOUS cycle from FLAGS, the ones that escalated it. */
+    val flaggedCases: List<FlaggedCase> get() = attempts.lastOrNull()?.flaggedCases.orEmpty()
 }
 
 /**
@@ -93,6 +116,8 @@ data class CycleResult(
  * With [DispatcherConfig.conflictMemory] (B and V3 only), a cycle keeps every disagreement it has seen until it is
  * resolved, so an oracle that simply stops asking about a conflicting input cannot get the table accepted (F17); V3
  * then escalates when the logic is stable and conflicts remain open. See [ConflictMemory].
+ * With [DispatcherConfig.escalateOnAmbiguityFlags] (arm A1, any strategy), an attempt that would be accepted ends the
+ * cycle AMBIGUOUS instead when its suite or a re-adjudication verdict carries a case flagged `"ambiguous": true`.
  * A test suite that does not parse is an infrastructure failure, not an attempt (EXPERIMENTS.md section 9): the test
  * track is called again within the same attempt, with seed offset `+ 100` per retry. At most 2 x retryBudget test-track
  * calls per cycle; beyond that, and on any other exception from a track (transport, auth, model not found), the
@@ -149,14 +174,20 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
 
             val report = validator.validate(dmn.xml, tests.cases, schemaPaths)
             val hash = SemanticHash.of(dmn.xml)
+            val suiteFlags = tests.cases.mapIndexedNotNull { index, case ->
+                if (case.flaggedAmbiguous()) FlaggedCase(FlagSource.SUITE, index, case["object"], case["expected"], case.ambiguityNote()) else null
+            }
 
             if (!memoryActive) {
                 attempts += Attempt(
                     number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, testParseFailures = parseFailures, accepted = report.accepted,
+                    flaggedCases = suiteFlags,
                 )
-                if (report.accepted) return CycleResult(CycleOutcome.ACCEPTED, attempts)
+                if (report.accepted) return accept(attempts, suiteFlags)
                 if (config.strategy == RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT) {
-                    stableDisagreement(attempts)?.let { return CycleResult(CycleOutcome.AMBIGUOUS, attempts, conflictingCases = it) }
+                    stableDisagreement(attempts)?.let {
+                        return CycleResult(CycleOutcome.AMBIGUOUS, attempts, conflictingCases = it, ambiguitySource = AmbiguitySource.DISAGREEMENT)
+                    }
                 }
                 continue
             }
@@ -168,17 +199,26 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
                 return CycleResult(CycleOutcome.ERROR, attempts, message = describe(e), openConflicts = conflicts.open())
             }
             val accepted = report.accepted && conflicts.open().isEmpty()
+            val flags = suiteFlags + step.flagged
             attempts += Attempt(
                 number, regenerateTests, tests, dmn, report, hash, seedOffset = seedOffset, testParseFailures = parseFailures, accepted = accepted,
-                openConflicts = conflicts.open(), closedConflicts = step.closed, adjudications = step.adjudications,
+                openConflicts = conflicts.open(), closedConflicts = step.closed, adjudications = step.adjudications, flaggedCases = flags,
             )
-            if (accepted) return CycleResult(CycleOutcome.ACCEPTED, attempts)
+            if (accepted) return accept(attempts, flags)
             if (config.strategy == RepairStrategy.ESCALATE_ON_STABLE_DISAGREEMENT && stableWithOpenConflicts(attempts)) {
-                return CycleResult(CycleOutcome.AMBIGUOUS, attempts, openConflicts = conflicts.open())
+                return CycleResult(CycleOutcome.AMBIGUOUS, attempts, openConflicts = conflicts.open(), ambiguitySource = AmbiguitySource.DISAGREEMENT)
             }
         }
         return CycleResult(CycleOutcome.REJECTED_BUDGET, attempts, openConflicts = conflicts.open())
     }
+
+    /** An accepted attempt; in A1 its flagged cases escalate the cycle instead. */
+    private fun accept(attempts: List<Attempt>, flags: List<FlaggedCase>) =
+        if (config.escalateOnAmbiguityFlags && flags.isNotEmpty()) {
+            CycleResult(CycleOutcome.AMBIGUOUS, attempts, ambiguitySource = AmbiguitySource.FLAGS)
+        } else {
+            CycleResult(CycleOutcome.ACCEPTED, attempts)
+        }
 
     /** V3 with memory: the logic has not changed for `stableAttempts` attempts and conflicts are still open. */
     private fun stableWithOpenConflicts(attempts: List<Attempt>): Boolean {
@@ -188,7 +228,7 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
             window.last().openConflicts.isNotEmpty()
     }
 
-    private class Step(val closed: List<ClosedConflict>, val adjudications: List<Adjudication>)
+    private class Step(val closed: List<ClosedConflict>, val adjudications: List<Adjudication>, val flagged: List<FlaggedCase>)
 
     /**
      * Open conflicts of one cycle (REVISION_PLAN step 10). Every failing case of any attempt is kept and re-run on each
@@ -207,6 +247,7 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
         ): Step {
             val closed = mutableListOf<ClosedConflict>()
             val adjudications = mutableListOf<Adjudication>()
+            val flagged = mutableListOf<FlaggedCase>()
 
             val previous = open.values.toList()
             if (previous.isNotEmpty()) {
@@ -229,7 +270,11 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
                     val adjudication = try {
                         val verdict = tracks.tests.adjudicate(rules, domain, input, seedOffset)
                         val agrees = validator.validate(dmnXml, listOf(mapOf("object" to input, "expected" to verdict.expected))).accepted
-                        Adjudication(conflict.key, conflict.case["expected"], verdict.expected, agrees, verdict.promptId, verdict.promptHash, verdict.response)
+                        if (verdict.ambiguous) flagged += FlaggedCase(FlagSource.ADJUDICATION, null, input, verdict.expected, verdict.ambiguityNote)
+                        Adjudication(
+                            conflict.key, conflict.case["expected"], verdict.expected, agrees, verdict.promptId, verdict.promptHash, verdict.response,
+                            ambiguous = verdict.ambiguous, ambiguityNote = verdict.ambiguityNote,
+                        )
                     } catch (e: TestSuiteParseException) {
                         Adjudication(conflict.key, conflict.case["expected"], null, false, e.promptId, null, e.response, e.message)
                     }
@@ -248,7 +293,7 @@ class Dispatcher(private val tracks: Tracks, private val validator: Validator, p
                 val key = conflictKey(case)
                 if (key !in open) open[key] = Conflict(key, case, result.outcome, result.actual, hash, number)
             }
-            return Step(closed, adjudications)
+            return Step(closed, adjudications, flagged)
         }
     }
 

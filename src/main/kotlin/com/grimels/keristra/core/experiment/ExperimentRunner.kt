@@ -12,6 +12,7 @@ import com.grimels.keristra.core.orchestration.CycleOutcome
 import com.grimels.keristra.core.orchestration.CycleResult
 import com.grimels.keristra.core.orchestration.Dispatcher
 import com.grimels.keristra.core.orchestration.DispatcherConfig
+import com.grimels.keristra.core.orchestration.FlaggedCase
 import com.grimels.keristra.core.validation.LenientValidator
 import com.grimels.keristra.core.validation.StrictValidator
 import com.grimels.keristra.core.validation.ValidatorMode
@@ -65,7 +66,7 @@ class ExperimentRunner(
         val tracks = tracksProvider.create(dmnSpec.toTrackConfig(), testsSpec.toTrackConfig())
         val validator = if (config.validator == ValidatorMode.LENIENT) lenient else strict
         val schemaPaths = if (config.validator == ValidatorMode.STRICT) domains.schemaPaths(ruleSet.domain) else null
-        val dispatcher = Dispatcher(tracks, validator, DispatcherConfig(config.strategy, config.retryBudget, config.stableAttempts, config.conflictMemory))
+        val dispatcher = Dispatcher(tracks, validator, DispatcherConfig(config.strategy, config.retryBudget, config.stableAttempts, config.conflictMemory, config.escalateOnAmbiguityFlags))
         val session = Session(config, UUID.randomUUID().toString(), ruleSet, tracks, dmnSpec, testsSpec)
 
         JsonlLog.Writer(logFile, mapper).use { out ->
@@ -133,6 +134,7 @@ class ExperimentRunner(
         "ruleSet" to mapOf(
             "id" to session.ruleSet.id, "language" to session.ruleSet.language, "hash" to session.ruleSet.hash,
             "domain" to session.ruleSet.domain, "groundTruthSize" to session.ruleSet.groundTruth.size,
+            "groundTruthAltSize" to session.ruleSet.groundTruthAlt?.size,
         ),
         "schemaCheck" to schemaCheck,
         "rag" to mapOf("dmn" to session.tracks.dmn.retriever?.description, "tests" to null),
@@ -190,6 +192,8 @@ class ExperimentRunner(
                     "previousExpected" to it.previousExpected,
                     "newExpected" to it.newExpected,
                     "agreesWithDmn" to it.agreesWithDmn,
+                    "ambiguous" to it.ambiguous,
+                    "ambiguityNote" to it.ambiguityNote,
                     "error" to it.error,
                     "raw" to it.response?.text,
                     "track" to it.response?.let { response ->
@@ -197,8 +201,12 @@ class ExperimentRunner(
                     },
                 )
             },
+            "flaggedCases" to attempt.flaggedCases.map(::flagInfo),
         )
     }
+
+    private fun flagInfo(flag: FlaggedCase) =
+        mapOf("source" to flag.source, "index" to flag.index, "input" to flag.input, "expected" to flag.expected, "note" to flag.note)
 
     private fun conflictInfo(conflict: Conflict) = mapOf(
         "key" to conflict.key,
@@ -226,8 +234,7 @@ class ExperimentRunner(
     )
 
     private fun cycleFinished(session: Session, cycle: Int, result: CycleResult, durationMs: Long): Map<String, Any?> {
-        val groundTruth = session.ruleSet.groundTruth
-        val report = result.finalDmn?.let { strict.validate(it.xml, groundTruth) }
+        val finalXml = result.finalDmn?.xml
         val calls = result.attempts.flatMap { attempt ->
             listOfNotNull(
                 (if (attempt.testsRegenerated) attempt.tests?.response else null)?.let { session.tests to it },
@@ -245,31 +252,45 @@ class ExperimentRunner(
             "finalSemanticHash" to result.attempts.lastOrNull { it.semanticHash != null }?.semanticHash,
             "conflictingCases" to result.conflictingCases,
             "openConflictsAtEnd" to result.openConflicts.map(::conflictInfo),
-            "groundTruth" to mapOf(
-                "evaluated" to (report != null),
-                "validator" to ValidatorMode.STRICT,
-                "accepted" to report?.accepted,
-                "tableError" to report?.tableError,
-                "counts" to report?.counts,
-                "cases" to report?.cases?.map { case ->
-                    mapOf(
-                        "index" to case.index,
-                        "id" to groundTruth[case.index]["id"],
-                        "description" to groundTruth[case.index]["description"],
-                        "expected" to groundTruth[case.index]["expected"],
-                        "actual" to case.actual,
-                        "outcome" to case.outcome,
-                        "mismatches" to case.mismatches,
-                        "message" to case.message,
-                    )
-                },
+            "ambiguitySource" to result.ambiguitySource,
+            "ambiguityFlags" to mapOf(
+                "count" to result.flaggedCases.size,
+                "total" to result.attempts.sumOf { it.flaggedCases.size },
+                "cases" to result.flaggedCases.map(::flagInfo),
             ),
+            "groundTruth" to groundTruthReport(session.ruleSet.groundTruth, finalXml),
+            "groundTruthAlt" to session.ruleSet.groundTruthAlt?.let {
+                mapOf("file" to RuleSetRepository.ALT_GROUND_TRUTH) + groundTruthReport(it, finalXml)
+            },
             "tokens" to mapOf(
                 "dmn" to tokenTotals(calls.filter { it.first === session.dmn }.map { it.second }),
                 "tests" to tokenTotals(calls.filter { it.first === session.tests }.map { it.second }),
             ),
             "costUsd" to if (costs.any { it == null }) null else costs.sumOf { it!! },
             "durationMs" to durationMs,
+        )
+    }
+
+    private fun groundTruthReport(groundTruth: List<Map<String, Any?>>, dmnXml: String?): Map<String, Any?> {
+        val report = dmnXml?.let { strict.validate(it, groundTruth) }
+        return mapOf(
+            "evaluated" to (report != null),
+            "validator" to ValidatorMode.STRICT,
+            "accepted" to report?.accepted,
+            "tableError" to report?.tableError,
+            "counts" to report?.counts,
+            "cases" to report?.cases?.map { case ->
+                mapOf(
+                    "index" to case.index,
+                    "id" to groundTruth[case.index]["id"],
+                    "description" to groundTruth[case.index]["description"],
+                    "expected" to groundTruth[case.index]["expected"],
+                    "actual" to case.actual,
+                    "outcome" to case.outcome,
+                    "mismatches" to case.mismatches,
+                    "message" to case.message,
+                )
+            },
         )
     }
 
@@ -287,6 +308,8 @@ class ExperimentRunner(
         fun accepted(cycle: Map<String, Any?>) = cycle["outcome"] == CycleOutcome.ACCEPTED.name
         fun evaluated(cycle: Map<String, Any?>) = gt(cycle)["evaluated"] == true
         fun correct(cycle: Map<String, Any?>) = gt(cycle)["accepted"] == true
+        fun correctAlt(cycle: Map<String, Any?>) = (cycle["groundTruthAlt"] as Map<*, *>?)?.get("accepted") == true
+        val alt = cycles.any { it["groundTruthAlt"] != null }
         fun tokens(cycle: Map<String, Any?>, track: String, kind: String) =
             ((cycle["tokens"] as Map<*, *>)[track] as Map<*, *>)[kind] as Number
 
@@ -310,6 +333,8 @@ class ExperimentRunner(
                 "acceptedWrong" to cycles.count { accepted(it) && evaluated(it) && !correct(it) },
                 "rejectedCorrect" to cycles.count { !accepted(it) && correct(it) },
                 "rejectedWrong" to cycles.count { !accepted(it) && evaluated(it) && !correct(it) },
+                "acceptedCorrectAlt" to if (alt) cycles.count { accepted(it) && correctAlt(it) } else null,
+                "acceptedWrongAlt" to if (alt) cycles.count { accepted(it) && evaluated(it) && !correctAlt(it) } else null,
             ),
             "tokens" to listOf("dmn", "tests").associateWith { track ->
                 mapOf("input" to all.sumOf { tokens(it, track, "input").toLong() }, "output" to all.sumOf { tokens(it, track, "output").toLong() })

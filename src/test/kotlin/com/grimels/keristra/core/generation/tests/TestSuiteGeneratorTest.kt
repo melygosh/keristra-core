@@ -131,4 +131,20 @@ class TestSuiteGeneratorTest {
 
         assertThat(generator.generate("rules", "mortgage").cases.single()).containsEntry("expected", null)
     }
+
+    @Test
+    fun `ambiguity fields are kept on the case and on an adjudication verdict`() {
+        val flagged = """[{"object": {"application": {"creditScore": 720}}, "expected": [{"product": "ARM7/1"}],
+            "ambiguous": true, "ambiguityNote": "rules 1 and 2 both apply"}]"""
+
+        val case = generator(flagged).second.generate("rules", "mortgage").cases.single()
+        val verdict = generator(flagged).second.adjudicate("rules", "mortgage", emptyMap())
+        val plain = generator("""[{"object": {}, "expected": []}]""").second.adjudicate("rules", "mortgage", emptyMap())
+
+        assertThat(case).containsEntry("ambiguous", true).containsEntry("ambiguityNote", "rules 1 and 2 both apply")
+        assertThat(verdict.ambiguous).isTrue()
+        assertThat(verdict.ambiguityNote).isEqualTo("rules 1 and 2 both apply")
+        assertThat(plain.ambiguous).isFalse()
+        assertThat(plain.ambiguityNote).isNull()
+    }
 }

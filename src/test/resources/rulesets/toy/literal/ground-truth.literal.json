@@ -1,0 +1,5 @@
+[
+  {"id": 1, "description": "fixed preference", "object": {"application": {"fixedPreference": true, "creditScore": 650}}, "expected": [{"product": "Fixed30"}]},
+  {"id": 2, "description": "good score, no preference (literal reading: ARM7/1)", "object": {"application": {"fixedPreference": false, "creditScore": 720}}, "expected": [{"product": "ARM7/1"}]},
+  {"id": 3, "description": "low score, no preference (literal reading: no rule applies)", "object": {"application": {"fixedPreference": false, "creditScore": 650}}, "expected": []}
+]

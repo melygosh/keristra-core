@@ -1,0 +1,15 @@
+{
+  "runId": "e3-a1-disambiguated",
+  "ruleSet": "mortgage",
+  "version": "disambiguated",
+  "language": "uk",
+  "dmn":   {"model": "anthropic:claude-sonnet-5-5", "prompt": "v1", "maxTokens": 16000},
+  "tests": {"model": "local:gemma4:26b", "prompt": "v2a", "temperature": 0.7, "seed": 42},
+  "validator": "STRICT",
+  "strategy": "ESCALATE_ON_STABLE_DISAGREEMENT",
+  "conflictMemory": true,
+  "escalateOnAmbiguityFlags": true,
+  "retryBudget": 3,
+  "stableAttempts": 2,
+  "cycles": 50
+}
