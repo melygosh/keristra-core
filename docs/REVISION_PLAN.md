@@ -388,3 +388,18 @@ Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompt
   - Disambiguated text: every arm accepted logic that passes the ground truth 45/45.
 - **Validator fix after the smoke.** `SCHEMA_ERROR` was a false positive on FEEL iteration variables: Sonnet computes DTI as `for d in application.debts return … d.monthlyPayment`, and `d.monthlyPayment` was taken for a schema path. B0 on the disambiguated text lost two correct tables to it (both 45/45 on the ground truth). Now the check skips paths rooted in a variable bound by `for` / `some` / `every … in`; the iterated collection is still checked. The two smoke attempts pass with the fix.
 
+### Step 16 — ambiguity flags on the test track (arm A1, `docs/EXPERIMENTS.md` section 9, 2026-10-19)
+- **Prompts.** `prompts/tests/v2a.txt` and `prompts/tests-adjudicate/v2a.txt` already exist (written in Cowork). They are v2 plus the optional case fields `"ambiguous": true` and `"ambiguityNote": "..."`.
+- **Parsing.** `TestSuiteGenerator` and the adjudication parser accept the two optional fields and keep them on the case. A case with `ambiguous: true` is still validated as usual.
+- **Run config.** A new flag `escalateOnAmbiguityFlags` (default `false`). When it is on, a cycle whose otherwise accepted attempt contains at least one flagged case ends `AMBIGUOUS`, and the flagged cases are attached. This applies to every strategy, but it is used with `ESCALATE_ON_STABLE_DISAGREEMENT` + `conflictMemory`.
+- **JSONL.**
+  - `attempt.flaggedCases`: index, input, expected, note.
+  - `cycle_finished.ambiguityFlags`: count, plus whether the escalation came from flags or from stable disagreement (`ambiguitySource: FLAGS | DISAGREEMENT`).
+- **Second ground truth.** If `ground-truth.literal.json` exists next to `ground-truth.json`, evaluate the final DMN against it too and log it as `groundTruthAlt` with the same fields. `run_finished` adds `acceptedCorrectAlt` / `acceptedWrongAlt`.
+- **Configs.**
+  - `experiments/e3-a1-{ambiguous,disambiguated}.json`: as `e3-v1-*`, plus `tests.prompt: "v2a"` and `escalateOnAmbiguityFlags: true`.
+  - Also add `ground-truth.literal` evaluation to all E3 runs; it is harmless for the disambiguated text, which has no literal file.
+- **Done when:**
+  - unit tests with `FakeLlmClient` cover a flagged case that agrees with the DMN (→ `AMBIGUOUS`) and an unflagged suite (→ `ACCEPTED`);
+  - a 2-cycle smoke of each A1 config, shown to Vlad.
+

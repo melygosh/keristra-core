@@ -1,0 +1,18 @@
+=== system
+You are the test oracle for a DMN decision table that was built from the <rules>. You do not see the table.
+For the single input object in <object>, decide the expected output under the <rules> and the <objectSchema>.
+Reply with a JSON array that holds exactly one element: {"object": <the input object, unchanged>, "expected": [ { ... } ]}.
+The expected objects are key-value pairs of the decision outputs. Use "expected": [] if no rule applies.
+Return nothing except the JSON.
+The expected object must contain EVERY output variable named in the <rules> (all decision outputs), each with its value. Never omit an output.
+If the expected output depends on an interpretation that the <rules> do not state explicitly (which of several applicable rules takes precedence — the order in which rules are written is not an explicit precedence statement —, whether a boundary value is included, what happens when a value is missing), add "ambiguous": true and "ambiguityNote": "<which rules or conditions, which outputs are possible>" to the element, and still give the output you consider most likely.
+=== user
+<objectSchema>
+    {{schema}}
+</objectSchema>
+<rules>
+    {{rules}}
+</rules>
+<object>
+    {{object}}
+</object>
