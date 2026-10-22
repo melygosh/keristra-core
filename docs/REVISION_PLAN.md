@@ -403,3 +403,51 @@ Follows from `EXTRA_OUTPUT` (step 13 status). `prompts/tests/v2.txt` and `prompt
   - unit tests with `FakeLlmClient` cover a flagged case that agrees with the DMN (→ `AMBIGUOUS`) and an unflagged suite (→ `ACCEPTED`);
   - a 2-cycle smoke of each A1 config, shown to Vlad.
 
+
+### E3 results (Claude Code, 2026-10-22)
+Full runs from 2026-10-19 to 2026-10-22, all with the jar at `df279b3`, via `scripts/run-e3.sh`. Each arm has n = 50 valid cycles. Per-run summaries are in `runs/e3-progress.log`, and the logs are `runs/e3-*.jsonl`. The numbers below were computed from `run_finished` and `cycle_finished` with an ad hoc script, which is not committed. The final analysis for P1 should be redone with a committed script.
+
+**Per arm.** FAR = accepted ∧ GT-wrong / valid cycles (domain ground truth), with a Wilson 95% CI. False rejection = not accepted ∧ final DMN GT-correct. FAR-literal is measured against `ground-truth.literal.json`, which exists for the ambiguous text only.
+
+| Run | FAR | 95% CI | AMBIGUOUS | False rejection | FAR-literal | Attempts / cycle | ERROR | Retraction / DMN fixed | Cost, USD |
+|---|---|---|---|---|---|---|---|---|---|
+| B0 ambiguous | 49/50 | [0.90, 1.00] | 0 | 0 | 0 | 1.22 | 3 | 0 / 0 | 2.73 |
+| B1 ambiguous | 49/50 | [0.90, 1.00] | 0 | 0 | 0 | 1.24 | 0 | 12 / 0 | 2.79 |
+| A1 ambiguous | **36/50** | [0.58, 0.83] | 14 (13 flags, 1 disagreement) | 0 | 0 | 1.10 | 0 | 3 / 0 | 2.38 |
+| V1 ambiguous | 49/50 | [0.90, 1.00] | 1 (disagreement) | 0 | 0 | 1.16 | 0 | 9 / 0 | 2.54 |
+| B0 disambiguated | 0/50 | [0.00, 0.07] | 0 | 0 | — | 1.00 | 0 | 0 / 0 | 2.55 |
+| B1 disambiguated | 0/50 | [0.00, 0.07] | 0 | 0 | — | 1.06 | 0 | 0 / 0 | 2.74 |
+| A1 disambiguated | 0/50 | [0.00, 0.07] | 2 (flags) | 2 | — | 1.10 | 12 | 2 / 0 | 2.75 |
+| V1 disambiguated | 0/50 | [0.00, 0.07] | 0 | 0 | — | 1.04 | 0 | 0 / 0 | 2.60 |
+
+Total: $21.08, 400 valid cycles, 15 `ERROR` cycles. B0 and B1 on the ambiguous text each have one `REJECTED_BUDGET` cycle, and both of those final tables are GT-wrong.
+
+**Confirmatory tests** (one-sided Fisher exact test, α = 0.05):
+
+| Hypothesis | Comparison | p | Result |
+|---|---|---|---|
+| H2: FAR(B0) > FAR(B1), ambiguous | 49/50 vs 49/50 | 0.75 | not confirmed |
+| H3: V1 AMBIGUOUS rate, ambiguous > disambiguated | 1/50 vs 0/50 | 0.50 | not confirmed |
+| H3a: A1 AMBIGUOUS rate, ambiguous > disambiguated | 14/50 vs 2/50 | 0.0009 | confirmed |
+| H5: FAR(A1) < FAR(B1), ambiguous | 36/50 vs 49/50 | 0.0002 | confirmed |
+
+H4 (control, no test): FAR on the disambiguated text is 0/50 in every arm, with Wilson upper bound 0.07.
+
+**What the numbers show.**
+- **Ambiguous text: no arm produced a GT-correct table** in 200 cycles. Every accepted table fails the domain ground truth (the 8 knockout-conflict cases) and passes the literal one: FAR-literal is 0 in every arm. Sonnet produced 10–23 semantically distinct tables per arm, and all of them follow the literal reading.
+- **Conflict memory (B1) and stable-disagreement escalation (V1) change almost nothing.** gemma4:26b with `tests/v2` reads the text the same way as Sonnet, so most cycles are accepted on the first attempt with no disagreement. When a disagreement was kept and re-adjudicated, the oracle changed its verdict to the DMN's every time: `ORACLE_RETRACTION` 12 (B1) and 9 (V1), `DMN_FIXED` 0. This is F17 at the level of a single input: the oracle yields even when asked about one input alone without seeing the table (X1).
+- **A1 is the only arm that catches wrong tables.** Flags stopped 13 tables and stable disagreement 1, 39 flagged cases in total. All 14 escalated tables were GT-wrong, so there was no false rejection on the ambiguous text. The flags concentrate on the knockout-vs-product overlaps, as in the v2b smoke.
+- **Disambiguated text: the control holds.** 200/200 accepted tables are GT-correct. A1's only cost is 2 false rejections (4%).
+
+**The 639.5 finding (A1 disambiguated, cycles 46 and 55).** Both false rejections come from the same flagged input: `creditScore` = 639.5 → `ManualReview`. The disambiguated text says "нижчий за 640 (639 і менше)". 639.5 satisfies the first wording but not the bracketed one, and the schema allows non-integer scores. So gemma found a real boundary gap, and the flag is not noise. This is a defect in our own control text, not in the run. The protocol is unchanged for these runs. For later texts or reruns: drop "(639 і менше)" or state that credit scores are integers. The ground truth has no case between 639 and 640.
+
+**ERROR cycles** (infrastructure, excluded from denominators and replaced by new cycle numbers, section 4.2):
+- **B0 ambiguous, 3:** `UnresolvedModelServerException` on the Sonnet call while the phone hotspot had no connection, 2026-10-19 ~21:30–21:45.
+- **A1 disambiguated, 12:** `ConnectException` on the Sonnet call during a night-time network outage, 2026-10-22 03:05–06:01, while the Mac switched networks. gemma generated each suite; only the DMN call failed.
+- Lid-close sleeps (2026-10-19, -20, -21) paused runs without `ERROR` cycles. LangChain4J retried the one timed-out request. `durationMs` excludes sleep time on macOS.
+- Every run was resumed at least once after a manual stop or a sleep (`run_started` with `resumed: true`). No cycle was lost or counted twice.
+
+**Open for P1.**
+- A committed analysis script that reproduces this table and the tests from `runs/e3-*.jsonl`.
+- Arm R (the better of B1/V1 with `dmn.rag`): B1 and V1 tie at 49/50, so the protocol's "better of" has to be decided.
+- L1 (`en`) moved to P2 (section 9, 2026-10-19) and was not run.
