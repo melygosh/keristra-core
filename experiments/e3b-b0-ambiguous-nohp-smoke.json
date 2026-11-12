@@ -1,0 +1,23 @@
+{
+  "runId": "e3b-b0-ambiguous-nohp-smoke",
+  "ruleSet": "mortgage",
+  "version": "ambiguous-nohp",
+  "language": "uk",
+  "dmn": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "prompt": "v1",
+    "maxTokens": 16000
+  },
+  "tests": {
+    "model": "local:gemma4:26b",
+    "prompt": "v2",
+    "temperature": 0.7,
+    "seed": 42
+  },
+  "validator": "STRICT",
+  "strategy": "PAIRED_REGEN",
+  "conflictMemory": false,
+  "retryBudget": 3,
+  "stableAttempts": 2,
+  "cycles": 2
+}

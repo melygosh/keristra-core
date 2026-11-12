@@ -1,0 +1,16 @@
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-12T19:18:20.284+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 72825 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-12T19:18:20.294+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-12T19:18:26.429+02:00  INFO 72825 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-12T19:18:26.910+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 6.982 seconds (process running for 7.29)
+2026-11-12T19:28:00.546+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3b-b0-ambiguous-nohp-smoke] cycle 1: ACCEPTED after 1 attempt(s); valid 1/2, errors 0
+2026-11-12T19:32:18.048+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3b-b0-ambiguous-nohp-smoke] cycle 2: ACCEPTED after 1 attempt(s); valid 2/2, errors 0
+2026-11-12T19:32:18.086+02:00  INFO 72825 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/smoke/e3b/e3b-b0-ambiguous-nohp-smoke.jsonl
