@@ -1,0 +1,4 @@
+2026-10-19 18:44:40 E3: 8 runs, jar build/libs/keristra-core-0.0.1-SNAPSHOT.jar (df279b3)
+2026-10-19 18:44:40 e3-b0-ambiguous: starting
+2026-10-19 22:53:57 e3-b0-ambiguous: 2026-10-19T19:53:57.051215Z	e3-b0-ambiguous	validCycles=50/50	errorCycles=3	outcomes={"ACCEPTED":49,"ERROR":3,"REJECTED_BUDGET":1}	acceptedWrong=49	costUsd=2.73	session=4h09m
+2026-10-19 22:53:57 e3-b1-ambiguous: starting

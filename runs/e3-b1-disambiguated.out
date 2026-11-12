@@ -1,0 +1,65 @@
+=== 2026-10-21 22:57:15 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-10-21T22:57:15.939+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.1 with PID 71523 (/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra-core)
+2026-10-21T22:57:15.941+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-10-21T22:57:18.976+03:00  INFO 71523 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-10-21T22:57:19.363+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.751 seconds (process running for 4.128)
+2026-10-21T23:00:47.513+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 1: ACCEPTED after 1 attempt(s); valid 1/50, errors 0
+2026-10-21T23:07:03.883+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 2: ACCEPTED after 1 attempt(s); valid 2/50, errors 0
+2026-10-21T23:12:32.237+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 3: ACCEPTED after 1 attempt(s); valid 3/50, errors 0
+2026-10-21T23:16:48.588+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 4: ACCEPTED after 1 attempt(s); valid 4/50, errors 0
+2026-10-21T23:20:43.340+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 5: ACCEPTED after 1 attempt(s); valid 5/50, errors 0
+2026-10-21T23:24:33.377+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 6: ACCEPTED after 1 attempt(s); valid 6/50, errors 0
+2026-10-21T23:28:57.432+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 7: ACCEPTED after 1 attempt(s); valid 7/50, errors 0
+2026-10-21T23:35:59.487+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 8: ACCEPTED after 1 attempt(s); valid 8/50, errors 0
+2026-10-21T23:39:02.440+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 9: ACCEPTED after 1 attempt(s); valid 9/50, errors 0
+2026-10-21T23:45:11.058+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 10: ACCEPTED after 1 attempt(s); valid 10/50, errors 0
+2026-10-21T23:48:11.092+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 11: ACCEPTED after 1 attempt(s); valid 11/50, errors 0
+2026-10-21T23:55:20.245+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 12: ACCEPTED after 1 attempt(s); valid 12/50, errors 0
+2026-10-21T23:57:46.765+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 13: ACCEPTED after 1 attempt(s); valid 13/50, errors 0
+2026-10-22T00:00:57.011+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 14: ACCEPTED after 1 attempt(s); valid 14/50, errors 0
+2026-10-22T00:05:27.244+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 15: ACCEPTED after 1 attempt(s); valid 15/50, errors 0
+2026-10-22T00:08:09.964+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 16: ACCEPTED after 1 attempt(s); valid 16/50, errors 0
+2026-10-22T00:11:13.619+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 17: ACCEPTED after 1 attempt(s); valid 17/50, errors 0
+2026-10-22T00:19:29.962+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 18: ACCEPTED after 1 attempt(s); valid 18/50, errors 0
+2026-10-22T00:23:32.287+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 19: ACCEPTED after 1 attempt(s); valid 19/50, errors 0
+2026-10-22T00:30:36.267+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 20: ACCEPTED after 1 attempt(s); valid 20/50, errors 0
+2026-10-22T00:36:40.658+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 21: ACCEPTED after 1 attempt(s); valid 21/50, errors 0
+2026-10-22T00:40:18.668+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 22: ACCEPTED after 1 attempt(s); valid 22/50, errors 0
+2026-10-22T00:42:43.355+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 23: ACCEPTED after 1 attempt(s); valid 23/50, errors 0
+2026-10-22T00:47:07.845+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 24: ACCEPTED after 1 attempt(s); valid 24/50, errors 0
+2026-10-22T00:50:42.347+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 25: ACCEPTED after 1 attempt(s); valid 25/50, errors 0
+2026-10-22T00:54:33.312+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 26: ACCEPTED after 1 attempt(s); valid 26/50, errors 0
+2026-10-22T01:01:29.859+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 27: ACCEPTED after 1 attempt(s); valid 27/50, errors 0
+2026-10-22T01:05:19.642+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 28: ACCEPTED after 1 attempt(s); valid 28/50, errors 0
+2026-10-22T01:09:54.577+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 29: ACCEPTED after 1 attempt(s); valid 29/50, errors 0
+2026-10-22T01:16:54.543+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 30: ACCEPTED after 2 attempt(s); valid 30/50, errors 0
+2026-10-22T01:21:25.814+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 31: ACCEPTED after 1 attempt(s); valid 31/50, errors 0
+2026-10-22T01:24:43.165+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 32: ACCEPTED after 1 attempt(s); valid 32/50, errors 0
+2026-10-22T01:28:14.336+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 33: ACCEPTED after 1 attempt(s); valid 33/50, errors 0
+2026-10-22T01:33:11.129+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 34: ACCEPTED after 1 attempt(s); valid 34/50, errors 0
+2026-10-22T01:40:53.525+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 35: ACCEPTED after 2 attempt(s); valid 35/50, errors 0
+2026-10-22T01:44:24.602+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 36: ACCEPTED after 1 attempt(s); valid 36/50, errors 0
+2026-10-22T01:47:59.732+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 37: ACCEPTED after 1 attempt(s); valid 37/50, errors 0
+2026-10-22T01:53:00.587+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 38: ACCEPTED after 1 attempt(s); valid 38/50, errors 0
+2026-10-22T01:57:24.180+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 39: ACCEPTED after 1 attempt(s); valid 39/50, errors 0
+2026-10-22T02:01:16.755+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 40: ACCEPTED after 1 attempt(s); valid 40/50, errors 0
+2026-10-22T02:03:55.891+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 41: ACCEPTED after 1 attempt(s); valid 41/50, errors 0
+2026-10-22T02:07:02.782+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 42: ACCEPTED after 1 attempt(s); valid 42/50, errors 0
+2026-10-22T02:12:04.024+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 43: ACCEPTED after 1 attempt(s); valid 43/50, errors 0
+2026-10-22T02:16:47.316+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 44: ACCEPTED after 1 attempt(s); valid 44/50, errors 0
+2026-10-22T02:20:31.567+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 45: ACCEPTED after 1 attempt(s); valid 45/50, errors 0
+2026-10-22T02:23:34.907+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 46: ACCEPTED after 1 attempt(s); valid 46/50, errors 0
+2026-10-22T02:27:31.137+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 47: ACCEPTED after 1 attempt(s); valid 47/50, errors 0
+2026-10-22T02:38:03.143+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 48: ACCEPTED after 2 attempt(s); valid 48/50, errors 0
+2026-10-22T02:50:24.338+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 49: ACCEPTED after 1 attempt(s); valid 49/50, errors 0
+2026-10-22T02:55:49.670+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-b1-disambiguated] cycle 50: ACCEPTED after 1 attempt(s); valid 50/50, errors 0
+2026-10-22T02:55:49.763+03:00  INFO 71523 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3-b1-disambiguated.jsonl

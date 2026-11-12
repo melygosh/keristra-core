@@ -1,0 +1,183 @@
+=== 2026-10-20 19:39:48 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-10-20T19:39:48.992+03:00  INFO 64014 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.1 with PID 64014 (/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra-core)
+2026-10-20T19:39:48.994+03:00  INFO 64014 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-10-20T19:39:52.102+03:00  INFO 64014 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-10-20T19:39:52.469+03:00  INFO 64014 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.815 seconds (process running for 4.189)
+2026-10-20T19:47:14.695+03:00  INFO 64014 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 1: ACCEPTED after 2 attempt(s); valid 1/50, errors 0
+=== 2026-10-21 11:42:57 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-10-21T11:42:58.112+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.1 with PID 40587 (/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra-core)
+2026-10-21T11:42:58.119+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-10-21T11:43:00.685+03:00  INFO 40587 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-10-21T11:43:01.091+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.302 seconds (process running for 3.693)
+2026-10-21T11:46:57.312+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 2: ACCEPTED after 1 attempt(s); valid 2/50, errors 0
+2026-10-21T11:49:45.173+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 3: ACCEPTED after 1 attempt(s); valid 3/50, errors 0
+2026-10-21T11:52:53.679+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 4: ACCEPTED after 1 attempt(s); valid 4/50, errors 0
+2026-10-21T11:55:41.525+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 5: ACCEPTED after 1 attempt(s); valid 5/50, errors 0
+2026-10-21T11:59:13.802+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 6: ACCEPTED after 1 attempt(s); valid 6/50, errors 0
+2026-10-21T12:02:00.296+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 7: ACCEPTED after 1 attempt(s); valid 7/50, errors 0
+2026-10-21T12:08:14.921+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 8: ACCEPTED after 1 attempt(s); valid 8/50, errors 0
+2026-10-21T12:11:09.804+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 9: ACCEPTED after 1 attempt(s); valid 9/50, errors 0
+2026-10-21T12:14:30.010+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 10: ACCEPTED after 1 attempt(s); valid 10/50, errors 0
+2026-10-21T12:17:46.025+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 11: ACCEPTED after 1 attempt(s); valid 11/50, errors 0
+2026-10-21T12:24:04.677+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 12: ACCEPTED after 1 attempt(s); valid 12/50, errors 0
+2026-10-21T12:30:15.767+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 13: ACCEPTED after 2 attempt(s); valid 13/50, errors 0
+2026-10-21T12:32:43.722+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 14: ACCEPTED after 1 attempt(s); valid 14/50, errors 0
+2026-10-21T12:35:02.769+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 15: ACCEPTED after 1 attempt(s); valid 15/50, errors 0
+2026-10-21T12:39:30.169+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 16: ACCEPTED after 1 attempt(s); valid 16/50, errors 0
+2026-10-21T12:43:41.566+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 17: ACCEPTED after 1 attempt(s); valid 17/50, errors 0
+2026-10-21T12:49:06.748+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 18: AMBIGUOUS after 2 attempt(s); valid 18/50, errors 0
+2026-10-21T12:51:31.290+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 19: ACCEPTED after 1 attempt(s); valid 19/50, errors 0
+2026-10-21T12:55:59.449+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 20: ACCEPTED after 1 attempt(s); valid 20/50, errors 0
+2026-10-21T13:11:40.831+03:00  WARN 40587 --- [keristra-core] [           main] dev.langchain4j.internal.RetryUtils      : A retriable exception occurred. Remaining retries: 2 of 2
+
+dev.langchain4j.exception.TimeoutException: request timed out
+	at dev.langchain4j.http.client.jdk.JdkHttpClient.execute(JdkHttpClient.java:58) ~[langchain4j-http-client-jdk-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.internal.SyncRequestExecutor.execute(SyncRequestExecutor.java:20) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.internal.RequestExecutor.executeRaw(RequestExecutor.java:44) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.OpenAiChatModel.lambda$doChat$0(OpenAiChatModel.java:150) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.ExceptionMapper.withExceptionMapper(ExceptionMapper.java:29) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.lambda$withRetryMappingExceptions$2(RetryUtils.java:322) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils$RetryPolicy.withRetry(RetryUtils.java:204) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetry(RetryUtils.java:259) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetryMappingExceptions(RetryUtils.java:322) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetryMappingExceptions(RetryUtils.java:305) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.OpenAiChatModel.doChat(OpenAiChatModel.java:149) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.chat.ChatModel.chat(ChatModel.java:46) ~[langchain4j-core-1.5.0.jar!/:na]
+	at com.grimels.keristra.core.llm.ChatModelSupportKt.completeTimed(ChatModelSupport.kt:18) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.llm.OpenAiCompatibleLlmClient.complete(OpenAiCompatibleLlmClient.kt:32) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.generation.tests.TestSuiteGenerator.generate(TestSuiteGenerator.kt:67) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.orchestration.Dispatcher.runCycle(Dispatcher.kt:157) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.experiment.ExperimentRunner.run(ExperimentRunner.kt:80) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.experiment.ExperimentCommand.run(ExperimentCommand.kt:31) ~[!/:0.0.1-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.lambda$callRunner$4(SpringApplication.java:786) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:786) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184) ~[na:na]
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:510) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596) ~[na:na]
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:342) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at com.grimels.keristra.core.KeristraCoreApplicationKt.main(KeristraCoreApplication.kt:13) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:91) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:53) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:58) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:949) ~[java.net.http:na]
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133) ~[java.net.http:na]
+	at dev.langchain4j.http.client.jdk.JdkHttpClient.execute(JdkHttpClient.java:50) ~[langchain4j-http-client-jdk-1.5.0.jar!/:na]
+	... 42 common frames omitted
+
+2026-10-21T13:35:20.762+03:00  WARN 40587 --- [keristra-core] [           main] dev.langchain4j.internal.RetryUtils      : A retriable exception occurred. Remaining retries: 1 of 2
+
+dev.langchain4j.exception.TimeoutException: request timed out
+	at dev.langchain4j.http.client.jdk.JdkHttpClient.execute(JdkHttpClient.java:58) ~[langchain4j-http-client-jdk-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.internal.SyncRequestExecutor.execute(SyncRequestExecutor.java:20) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.internal.RequestExecutor.executeRaw(RequestExecutor.java:44) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.OpenAiChatModel.lambda$doChat$0(OpenAiChatModel.java:150) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.ExceptionMapper.withExceptionMapper(ExceptionMapper.java:29) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.lambda$withRetryMappingExceptions$2(RetryUtils.java:322) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils$RetryPolicy.withRetry(RetryUtils.java:204) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetry(RetryUtils.java:259) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetryMappingExceptions(RetryUtils.java:322) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.internal.RetryUtils.withRetryMappingExceptions(RetryUtils.java:305) ~[langchain4j-core-1.5.0.jar!/:na]
+	at dev.langchain4j.model.openai.OpenAiChatModel.doChat(OpenAiChatModel.java:149) ~[langchain4j-open-ai-1.5.0.jar!/:na]
+	at dev.langchain4j.model.chat.ChatModel.chat(ChatModel.java:46) ~[langchain4j-core-1.5.0.jar!/:na]
+	at com.grimels.keristra.core.llm.ChatModelSupportKt.completeTimed(ChatModelSupport.kt:18) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.llm.OpenAiCompatibleLlmClient.complete(OpenAiCompatibleLlmClient.kt:32) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.generation.tests.TestSuiteGenerator.generate(TestSuiteGenerator.kt:67) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.orchestration.Dispatcher.runCycle(Dispatcher.kt:157) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.experiment.ExperimentRunner.run(ExperimentRunner.kt:80) ~[!/:0.0.1-SNAPSHOT]
+	at com.grimels.keristra.core.experiment.ExperimentCommand.run(ExperimentCommand.kt:31) ~[!/:0.0.1-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.lambda$callRunner$4(SpringApplication.java:786) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88) ~[spring-core-6.1.8.jar!/:6.1.8]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:786) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184) ~[na:na]
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:510) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596) ~[na:na]
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:342) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.0.jar!/:3.3.0]
+	at com.grimels.keristra.core.KeristraCoreApplicationKt.main(KeristraCoreApplication.kt:13) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:91) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:53) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:58) ~[keristra-core-0.0.1-SNAPSHOT.jar:0.0.1-SNAPSHOT]
+Caused by: java.net.http.HttpTimeoutException: request timed out
+	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:949) ~[java.net.http:na]
+	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:133) ~[java.net.http:na]
+	at dev.langchain4j.http.client.jdk.JdkHttpClient.execute(JdkHttpClient.java:50) ~[langchain4j-http-client-jdk-1.5.0.jar!/:na]
+	... 42 common frames omitted
+
+2026-10-21T13:39:04.636+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 21: ACCEPTED after 1 attempt(s); valid 21/50, errors 0
+2026-10-21T13:42:06.968+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 22: ACCEPTED after 1 attempt(s); valid 22/50, errors 0
+2026-10-21T13:44:44.024+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 23: ACCEPTED after 1 attempt(s); valid 23/50, errors 0
+2026-10-21T13:51:13.649+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 24: ACCEPTED after 2 attempt(s); valid 24/50, errors 0
+2026-10-21T13:55:30.613+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 25: ACCEPTED after 1 attempt(s); valid 25/50, errors 0
+2026-10-21T13:59:12.353+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 26: ACCEPTED after 1 attempt(s); valid 26/50, errors 0
+2026-10-21T14:05:00.101+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 27: ACCEPTED after 2 attempt(s); valid 27/50, errors 0
+2026-10-21T14:11:31.580+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 28: ACCEPTED after 2 attempt(s); valid 28/50, errors 0
+2026-10-21T14:14:55.031+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 29: ACCEPTED after 1 attempt(s); valid 29/50, errors 0
+2026-10-21T14:18:06.838+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 30: ACCEPTED after 1 attempt(s); valid 30/50, errors 0
+2026-10-21T14:21:26.031+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 31: ACCEPTED after 1 attempt(s); valid 31/50, errors 0
+2026-10-21T14:25:40.964+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 32: ACCEPTED after 1 attempt(s); valid 32/50, errors 0
+2026-10-21T14:30:49.632+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 33: ACCEPTED after 1 attempt(s); valid 33/50, errors 0
+2026-10-21T14:33:16.065+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 34: ACCEPTED after 1 attempt(s); valid 34/50, errors 0
+2026-10-21T14:36:17.828+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 35: ACCEPTED after 1 attempt(s); valid 35/50, errors 0
+2026-10-21T14:42:44.066+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 36: ACCEPTED after 1 attempt(s); valid 36/50, errors 0
+2026-10-21T14:46:21.023+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 37: ACCEPTED after 1 attempt(s); valid 37/50, errors 0
+2026-10-21T14:52:01.984+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 38: ACCEPTED after 1 attempt(s); valid 38/50, errors 0
+2026-10-21T14:59:24.869+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 39: ACCEPTED after 1 attempt(s); valid 39/50, errors 0
+2026-10-21T15:06:21.980+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 40: ACCEPTED after 2 attempt(s); valid 40/50, errors 0
+2026-10-21T15:09:07.927+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 41: ACCEPTED after 1 attempt(s); valid 41/50, errors 0
+2026-10-21T15:12:42.018+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 42: ACCEPTED after 1 attempt(s); valid 42/50, errors 0
+2026-10-21T15:17:31.308+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 43: ACCEPTED after 1 attempt(s); valid 43/50, errors 0
+2026-10-21T15:23:17.287+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 44: ACCEPTED after 1 attempt(s); valid 44/50, errors 0
+2026-10-21T15:26:35.668+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 45: ACCEPTED after 1 attempt(s); valid 45/50, errors 0
+2026-10-21T15:29:53.473+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 46: ACCEPTED after 1 attempt(s); valid 46/50, errors 0
+2026-10-21T15:33:28.559+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 47: ACCEPTED after 1 attempt(s); valid 47/50, errors 0
+2026-10-21T15:36:51.580+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 48: ACCEPTED after 1 attempt(s); valid 48/50, errors 0
+2026-10-21T15:41:04.663+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 49: ACCEPTED after 1 attempt(s); valid 49/50, errors 0
+2026-10-21T15:52:15.797+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3-v1-ambiguous] cycle 50: ACCEPTED after 2 attempt(s); valid 50/50, errors 0
+2026-10-21T15:52:16.112+03:00  INFO 40587 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3-v1-ambiguous.jsonl

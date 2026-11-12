@@ -1,0 +1,7 @@
+2026-10-20 07:36:08 E3: 8 runs, jar build/libs/keristra-core-0.0.1-SNAPSHOT.jar (df279b3)
+2026-10-20 07:36:08 e3-b0-ambiguous: already has 50/50 valid cycles, skipped
+2026-10-20 07:36:08 e3-b1-ambiguous: resuming (no run_finished yet/50 valid)
+2026-10-20 14:01:13 e3-b1-ambiguous: 2026-10-20T11:01:13.234308Z	e3-b1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":49,"REJECTED_BUDGET":1}	acceptedWrong=49	costUsd=2.79	session=6h25m
+2026-10-20 14:01:13 e3-a1-ambiguous: starting
+2026-10-20 19:39:48 e3-a1-ambiguous: 2026-10-20T16:39:47.484403Z	e3-a1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":36,"AMBIGUOUS":14}	acceptedWrong=36	costUsd=2.38	session=5h38m
+2026-10-20 19:39:48 e3-v1-ambiguous: starting
