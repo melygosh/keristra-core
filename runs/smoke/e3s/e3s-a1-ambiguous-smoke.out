@@ -1,0 +1,15 @@
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-12T19:37:17.338+02:00  INFO 74712 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 74712 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-12T19:37:17.341+02:00  INFO 74712 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-12T19:37:19.394+02:00  INFO 74712 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-12T19:37:19.729+02:00  INFO 74712 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 2.71 seconds (process running for 3.058)
+2026-11-12T19:38:01.107+02:00  INFO 74712 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous-smoke] cycle 1: AMBIGUOUS after 1 attempt(s); valid 1/1, errors 0
+2026-11-12T19:38:01.114+02:00  INFO 74712 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/smoke/e3s/e3s-a1-ambiguous-smoke.jsonl
