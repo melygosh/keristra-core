@@ -1,0 +1,65 @@
+=== 2026-11-12 22:19:49 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-12T22:19:50.511+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 91478 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-12T22:19:50.515+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-12T22:19:52.750+02:00  INFO 91478 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-12T22:19:53.054+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 2.837 seconds (process running for 3.121)
+2026-11-12T22:20:36.450+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 1: ACCEPTED after 1 attempt(s); valid 1/50, errors 0
+2026-11-12T22:21:16.031+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 2: ACCEPTED after 1 attempt(s); valid 2/50, errors 0
+2026-11-12T22:21:55.994+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 3: ACCEPTED after 1 attempt(s); valid 3/50, errors 0
+2026-11-12T22:22:35.463+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 4: ACCEPTED after 1 attempt(s); valid 4/50, errors 0
+2026-11-12T22:23:18.143+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 5: ACCEPTED after 1 attempt(s); valid 5/50, errors 0
+2026-11-12T22:24:00.533+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 6: ACCEPTED after 1 attempt(s); valid 6/50, errors 0
+2026-11-12T22:24:40.839+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 7: ACCEPTED after 1 attempt(s); valid 7/50, errors 0
+2026-11-12T22:25:16.435+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 8: ACCEPTED after 1 attempt(s); valid 8/50, errors 0
+2026-11-12T22:25:55.350+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 9: ACCEPTED after 1 attempt(s); valid 9/50, errors 0
+2026-11-12T22:26:33.524+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 10: ACCEPTED after 1 attempt(s); valid 10/50, errors 0
+2026-11-12T22:27:15.305+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 11: ACCEPTED after 1 attempt(s); valid 11/50, errors 0
+2026-11-12T22:27:58.711+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 12: ACCEPTED after 1 attempt(s); valid 12/50, errors 0
+2026-11-12T22:28:37.598+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 13: ACCEPTED after 1 attempt(s); valid 13/50, errors 0
+2026-11-12T22:29:17.150+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 14: ACCEPTED after 1 attempt(s); valid 14/50, errors 0
+2026-11-12T22:29:54.055+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 15: ACCEPTED after 1 attempt(s); valid 15/50, errors 0
+2026-11-12T22:30:27.909+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 16: ACCEPTED after 1 attempt(s); valid 16/50, errors 0
+2026-11-12T22:31:04.986+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 17: ACCEPTED after 1 attempt(s); valid 17/50, errors 0
+2026-11-12T22:31:39.379+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 18: ACCEPTED after 1 attempt(s); valid 18/50, errors 0
+2026-11-12T22:32:19.944+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 19: ACCEPTED after 1 attempt(s); valid 19/50, errors 0
+2026-11-12T22:32:54.923+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 20: ACCEPTED after 1 attempt(s); valid 20/50, errors 0
+2026-11-12T22:33:36.316+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 21: ACCEPTED after 1 attempt(s); valid 21/50, errors 0
+2026-11-12T22:34:12.711+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 22: ACCEPTED after 1 attempt(s); valid 22/50, errors 0
+2026-11-12T22:34:54.138+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 23: ACCEPTED after 1 attempt(s); valid 23/50, errors 0
+2026-11-12T22:35:38.649+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 24: ACCEPTED after 1 attempt(s); valid 24/50, errors 0
+2026-11-12T22:36:17.913+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 25: ACCEPTED after 1 attempt(s); valid 25/50, errors 0
+2026-11-12T22:37:41.880+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 26: ACCEPTED after 2 attempt(s); valid 26/50, errors 0
+2026-11-12T22:38:26.226+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 27: ACCEPTED after 1 attempt(s); valid 27/50, errors 0
+2026-11-12T22:39:03.436+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 28: ACCEPTED after 1 attempt(s); valid 28/50, errors 0
+2026-11-12T22:39:40.777+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 29: ACCEPTED after 1 attempt(s); valid 29/50, errors 0
+2026-11-12T22:41:05.764+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 30: ACCEPTED after 2 attempt(s); valid 30/50, errors 0
+2026-11-12T22:41:42.588+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 31: ACCEPTED after 1 attempt(s); valid 31/50, errors 0
+2026-11-12T22:42:22.505+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 32: ACCEPTED after 1 attempt(s); valid 32/50, errors 0
+2026-11-12T22:43:03.378+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 33: ACCEPTED after 1 attempt(s); valid 33/50, errors 0
+2026-11-12T22:43:45.854+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 34: ACCEPTED after 1 attempt(s); valid 34/50, errors 0
+2026-11-12T22:44:28.755+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 35: ACCEPTED after 1 attempt(s); valid 35/50, errors 0
+2026-11-12T22:45:06.372+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 36: ACCEPTED after 1 attempt(s); valid 36/50, errors 0
+2026-11-12T22:45:43.279+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 37: ACCEPTED after 1 attempt(s); valid 37/50, errors 0
+2026-11-12T22:46:25.689+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 38: ACCEPTED after 1 attempt(s); valid 38/50, errors 0
+2026-11-12T22:47:05.308+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 39: ACCEPTED after 1 attempt(s); valid 39/50, errors 0
+2026-11-12T22:47:43.836+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 40: ACCEPTED after 1 attempt(s); valid 40/50, errors 0
+2026-11-12T22:48:20.865+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 41: ACCEPTED after 1 attempt(s); valid 41/50, errors 0
+2026-11-12T22:49:03.196+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 42: ACCEPTED after 1 attempt(s); valid 42/50, errors 0
+2026-11-12T22:49:43.304+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 43: ACCEPTED after 1 attempt(s); valid 43/50, errors 0
+2026-11-12T22:50:18.330+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 44: ACCEPTED after 1 attempt(s); valid 44/50, errors 0
+2026-11-12T22:50:58.549+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 45: ACCEPTED after 1 attempt(s); valid 45/50, errors 0
+2026-11-12T22:51:37.737+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 46: ACCEPTED after 1 attempt(s); valid 46/50, errors 0
+2026-11-12T22:52:15.453+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 47: ACCEPTED after 1 attempt(s); valid 47/50, errors 0
+2026-11-12T22:52:54.930+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 48: ACCEPTED after 1 attempt(s); valid 48/50, errors 0
+2026-11-12T22:54:12.670+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 49: ACCEPTED after 2 attempt(s); valid 49/50, errors 0
+2026-11-12T22:54:55.306+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-v1-ambiguous] cycle 50: ACCEPTED after 1 attempt(s); valid 50/50, errors 0
+2026-11-12T22:54:55.365+02:00  INFO 91478 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3s-v1-ambiguous.jsonl

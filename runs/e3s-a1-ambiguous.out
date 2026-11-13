@@ -1,0 +1,65 @@
+=== 2026-11-12 19:38:11 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-12T19:38:12.494+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 74940 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-12T19:38:12.496+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-12T19:38:14.201+02:00  INFO 74940 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-12T19:38:14.537+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 2.352 seconds (process running for 2.623)
+2026-11-12T19:38:56.115+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 1: AMBIGUOUS after 1 attempt(s); valid 1/50, errors 0
+2026-11-12T19:39:35.095+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 2: AMBIGUOUS after 1 attempt(s); valid 2/50, errors 0
+2026-11-12T19:40:12.399+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 3: AMBIGUOUS after 1 attempt(s); valid 3/50, errors 0
+2026-11-12T19:40:53.192+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 4: AMBIGUOUS after 1 attempt(s); valid 4/50, errors 0
+2026-11-12T19:41:36.641+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 5: AMBIGUOUS after 1 attempt(s); valid 5/50, errors 0
+2026-11-12T19:42:23.243+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 6: AMBIGUOUS after 1 attempt(s); valid 6/50, errors 0
+2026-11-12T19:43:02.492+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 7: AMBIGUOUS after 1 attempt(s); valid 7/50, errors 0
+2026-11-12T19:43:43.341+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 8: AMBIGUOUS after 1 attempt(s); valid 8/50, errors 0
+2026-11-12T19:44:25.688+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 9: AMBIGUOUS after 1 attempt(s); valid 9/50, errors 0
+2026-11-12T19:45:52.557+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 10: AMBIGUOUS after 2 attempt(s); valid 10/50, errors 0
+2026-11-12T19:47:29.098+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 11: AMBIGUOUS after 2 attempt(s); valid 11/50, errors 0
+2026-11-12T19:48:14.032+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 12: AMBIGUOUS after 1 attempt(s); valid 12/50, errors 0
+2026-11-12T19:48:52.941+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 13: AMBIGUOUS after 1 attempt(s); valid 13/50, errors 0
+2026-11-12T19:50:26.907+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 14: AMBIGUOUS after 2 attempt(s); valid 14/50, errors 0
+2026-11-12T19:51:09.586+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 15: AMBIGUOUS after 1 attempt(s); valid 15/50, errors 0
+2026-11-12T19:52:37.616+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 16: AMBIGUOUS after 2 attempt(s); valid 16/50, errors 0
+2026-11-12T19:53:22.188+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 17: AMBIGUOUS after 1 attempt(s); valid 17/50, errors 0
+2026-11-12T19:54:03.848+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 18: AMBIGUOUS after 1 attempt(s); valid 18/50, errors 0
+2026-11-12T19:54:47.170+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 19: AMBIGUOUS after 1 attempt(s); valid 19/50, errors 0
+2026-11-12T19:55:25.335+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 20: AMBIGUOUS after 1 attempt(s); valid 20/50, errors 0
+2026-11-12T19:56:06.059+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 21: AMBIGUOUS after 1 attempt(s); valid 21/50, errors 0
+2026-11-12T19:57:35.631+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 22: AMBIGUOUS after 2 attempt(s); valid 22/50, errors 0
+2026-11-12T19:59:09.252+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 23: AMBIGUOUS after 2 attempt(s); valid 23/50, errors 0
+2026-11-12T20:00:35.614+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 24: AMBIGUOUS after 2 attempt(s); valid 24/50, errors 0
+2026-11-12T20:01:23.514+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 25: AMBIGUOUS after 1 attempt(s); valid 25/50, errors 0
+2026-11-12T20:02:05.518+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 26: AMBIGUOUS after 1 attempt(s); valid 26/50, errors 0
+2026-11-12T20:02:44.508+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 27: AMBIGUOUS after 1 attempt(s); valid 27/50, errors 0
+2026-11-12T20:03:26.993+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 28: AMBIGUOUS after 1 attempt(s); valid 28/50, errors 0
+2026-11-12T20:04:54.368+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 29: AMBIGUOUS after 2 attempt(s); valid 29/50, errors 0
+2026-11-12T20:05:32.687+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 30: AMBIGUOUS after 1 attempt(s); valid 30/50, errors 0
+2026-11-12T20:06:12.577+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 31: AMBIGUOUS after 1 attempt(s); valid 31/50, errors 0
+2026-11-12T20:06:56.983+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 32: AMBIGUOUS after 1 attempt(s); valid 32/50, errors 0
+2026-11-12T20:07:38.177+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 33: AMBIGUOUS after 1 attempt(s); valid 33/50, errors 0
+2026-11-12T20:08:23.646+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 34: AMBIGUOUS after 1 attempt(s); valid 34/50, errors 0
+2026-11-12T20:09:03.512+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 35: AMBIGUOUS after 1 attempt(s); valid 35/50, errors 0
+2026-11-12T20:09:48.715+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 36: AMBIGUOUS after 1 attempt(s); valid 36/50, errors 0
+2026-11-12T20:10:33.626+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 37: AMBIGUOUS after 1 attempt(s); valid 37/50, errors 0
+2026-11-12T20:11:12.307+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 38: AMBIGUOUS after 1 attempt(s); valid 38/50, errors 0
+2026-11-12T20:11:52.015+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 39: AMBIGUOUS after 1 attempt(s); valid 39/50, errors 0
+2026-11-12T20:12:37.304+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 40: AMBIGUOUS after 1 attempt(s); valid 40/50, errors 0
+2026-11-12T20:13:16.626+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 41: AMBIGUOUS after 1 attempt(s); valid 41/50, errors 0
+2026-11-12T20:14:45.969+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 42: AMBIGUOUS after 2 attempt(s); valid 42/50, errors 0
+2026-11-12T20:15:26.897+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 43: AMBIGUOUS after 1 attempt(s); valid 43/50, errors 0
+2026-11-12T20:16:13.911+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 44: AMBIGUOUS after 1 attempt(s); valid 44/50, errors 0
+2026-11-12T20:16:58.614+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 45: AMBIGUOUS after 1 attempt(s); valid 45/50, errors 0
+2026-11-12T20:17:39.494+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 46: AMBIGUOUS after 1 attempt(s); valid 46/50, errors 0
+2026-11-12T20:18:28.387+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 47: AMBIGUOUS after 1 attempt(s); valid 47/50, errors 0
+2026-11-12T20:19:15.835+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 48: AMBIGUOUS after 1 attempt(s); valid 48/50, errors 0
+2026-11-12T20:20:03.397+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 49: AMBIGUOUS after 1 attempt(s); valid 49/50, errors 0
+2026-11-12T20:20:41.998+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3s-a1-ambiguous] cycle 50: AMBIGUOUS after 1 attempt(s); valid 50/50, errors 0
+2026-11-12T20:20:42.056+02:00  INFO 74940 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3s-a1-ambiguous.jsonl

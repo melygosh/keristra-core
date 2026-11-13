@@ -1,0 +1,20 @@
+2026-11-12 19:38:11 E3-S: 9 runs, jar build/libs/keristra-core-0.0.1-SNAPSHOT.jar (5c138b9)
+2026-11-12 19:38:11 e3s-a1-ambiguous: starting
+2026-11-12 20:20:43 e3s-a1-ambiguous: 2026-11-12T18:20:42.050650Z	e3s-a1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"AMBIGUOUS":50}	acceptedWrong=0	costUsd=5.66	session=0h42m
+2026-11-12 20:20:43 e3s-b0-ambiguous: starting
+2026-11-12 20:54:48 e3s-b0-ambiguous: 2026-11-12T18:54:47.058120Z	e3s-b0-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=50	costUsd=4.59	session=0h34m
+2026-11-12 20:54:48 e3s-b0-ambiguous-nohp: starting
+2026-11-12 21:43:21 e3s-b0-ambiguous-nohp: 2026-11-12T19:43:20.383832Z	e3s-b0-ambiguous-nohp	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=36	costUsd=6.04	session=0h48m
+2026-11-12 21:43:21 e3s-b1-ambiguous: starting
+2026-11-12 22:19:49 e3s-b1-ambiguous: 2026-11-12T20:19:48.139253Z	e3s-b1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=50	costUsd=4.86	session=0h36m
+2026-11-12 22:19:49 e3s-v1-ambiguous: starting
+2026-11-12 22:54:56 e3s-v1-ambiguous: 2026-11-12T20:54:55.354324Z	e3s-v1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=50	costUsd=4.66	session=0h35m
+2026-11-12 22:54:57 e3s-a1-disambiguated: starting
+2026-11-12 23:37:00 e3s-a1-disambiguated: 2026-11-12T21:36:58.953486Z	e3s-a1-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=5.41	session=0h42m
+2026-11-12 23:37:00 e3s-b0-disambiguated: starting
+2026-11-13 00:15:47 e3s-b0-disambiguated: 2026-11-12T22:15:45.998826Z	e3s-b0-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=5.00	session=0h38m
+2026-11-13 00:15:47 e3s-b1-disambiguated: starting
+2026-11-13 00:56:10 e3s-b1-disambiguated: 2026-11-12T22:56:09.825717Z	e3s-b1-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=5.21	session=0h40m
+2026-11-13 00:56:11 e3s-v1-disambiguated: starting
+2026-11-13 01:36:53 e3s-v1-disambiguated: 2026-11-12T23:36:52.229356Z	e3s-v1-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=5.24	session=0h40m
+2026-11-13 01:36:53 E3-S: all runs have their valid cycles
