@@ -1,0 +1,24 @@
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-14T09:33:21.654+02:00  INFO 34631 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 34631 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-14T09:33:21.662+02:00  INFO 34631 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-14T09:33:24.026+02:00  INFO 34631 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-14T09:33:24.367+02:00  INFO 34631 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.068 seconds (process running for 3.544)
+2026-11-14T09:33:42.683+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-1: OK
+2026-11-14T09:33:59.062+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-2: OK
+2026-11-14T09:34:14.785+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-3: OK
+2026-11-14T09:34:32.527+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-4: OK
+2026-11-14T09:35:02.106+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-5: OK
+2026-11-14T09:35:33.087+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-6: OK
+2026-11-14T09:35:58.752+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-7: OK
+2026-11-14T09:36:17.475+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-8: OK
+2026-11-14T09:36:36.041+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-9: OK
+2026-11-14T09:36:55.216+02:00  INFO 34631 --- [keristra-core] [           main] c.g.keristra.core.experiment.SuiteRun    : [c0-haiku] suite gen-10: OK
+2026-11-14T09:36:55.236+02:00  INFO 34631 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/c0-haiku.jsonl

@@ -1,0 +1,24 @@
+{
+  "runId": "c0-haiku",
+  "ruleSet": "mortgage",
+  "version": "disambiguated",
+  "language": "uk",
+  "mode": "SUITES",
+  "tests": {
+    "model": "anthropic:claude-haiku-5-5",
+    "prompt": "v2",
+    "maxTokens": 16000
+  },
+  "validator": "STRICT",
+  "cycles": 10,
+  "evaluate": [
+    {
+      "mutantsOf": "mortgage/disambiguated",
+      "equivalentMutants": [
+        "RULE_SWAP:rule-1/rule-2",
+        "RULE_SWAP:rule-2/rule-3",
+        "RULE_SWAP:rule-4/rule-5"
+      ]
+    }
+  ]
+}

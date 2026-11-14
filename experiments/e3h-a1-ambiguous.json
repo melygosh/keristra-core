@@ -1,0 +1,23 @@
+{
+  "runId": "e3h-a1-ambiguous",
+  "ruleSet": "mortgage",
+  "version": "ambiguous",
+  "language": "uk",
+  "dmn": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "prompt": "v1",
+    "maxTokens": 16000
+  },
+  "tests": {
+    "model": "anthropic:claude-haiku-5-5",
+    "prompt": "v2b",
+    "maxTokens": 16000
+  },
+  "validator": "STRICT",
+  "strategy": "ESCALATE_ON_STABLE_DISAGREEMENT",
+  "conflictMemory": true,
+  "escalateOnAmbiguityFlags": true,
+  "retryBudget": 3,
+  "stableAttempts": 2,
+  "cycles": 50
+}
