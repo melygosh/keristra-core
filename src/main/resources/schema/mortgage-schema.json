@@ -2,7 +2,7 @@
   "$id": "https://example.org/schemas/mortgage-application-context.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Mortgage Application Context (Raw)",
-  "description": "Raw application data for DMN decisions. LTV and DTI are derived in DMN from these fields.",
+  "description": "Application data for DMN decisions. LTV and DTI are input values: when one is null it is missing and must not be derived from other fields.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -83,13 +83,13 @@
           "type": ["number", "null"],
           "minimum": 0,
           "maximum": 1000,
-          "description": "Loan-to-Value ratio in percent (e.g., 80 = 80%). May be provided or left null for DMN to compute."
+          "description": "Loan-to-Value ratio in percent (e.g., 80 = 80%). Null means the value is missing; it is not computed from other fields."
         },
         "dti": {
           "type": ["number", "null"],
           "minimum": 0,
           "maximum": 300,
-          "description": "Back-end Debt-to-Income ratio in percent (e.g., 42 = 42%). May be provided or left null for DMN to compute."
+          "description": "Back-end Debt-to-Income ratio in percent (e.g., 42 = 42%). Null means the value is missing; it is not computed from other fields."
         },
         "income": {
           "type": ["object", "null"],
