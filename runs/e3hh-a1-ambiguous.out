@@ -1,0 +1,65 @@
+=== 2026-11-14 13:13:42 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-14T13:13:43.174+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 51005 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-14T13:13:43.178+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-14T13:13:46.240+02:00  INFO 51005 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-14T13:13:46.542+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.669 seconds (process running for 3.938)
+2026-11-14T13:14:22.526+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 1: AMBIGUOUS after 1 attempt(s); valid 1/50, errors 0
+2026-11-14T13:14:56.120+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 2: AMBIGUOUS after 1 attempt(s); valid 2/50, errors 0
+2026-11-14T13:15:34.703+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 3: AMBIGUOUS after 1 attempt(s); valid 3/50, errors 0
+2026-11-14T13:16:46.792+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 4: AMBIGUOUS after 2 attempt(s); valid 4/50, errors 0
+2026-11-14T13:17:23.979+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 5: AMBIGUOUS after 1 attempt(s); valid 5/50, errors 0
+2026-11-14T13:18:39.563+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 6: AMBIGUOUS after 2 attempt(s); valid 6/50, errors 0
+2026-11-14T13:19:16.150+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 7: AMBIGUOUS after 1 attempt(s); valid 7/50, errors 0
+2026-11-14T13:20:30.497+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 8: AMBIGUOUS after 2 attempt(s); valid 8/50, errors 0
+2026-11-14T13:21:47.158+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 9: AMBIGUOUS after 2 attempt(s); valid 9/50, errors 0
+2026-11-14T13:23:04.042+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 10: AMBIGUOUS after 2 attempt(s); valid 10/50, errors 0
+2026-11-14T13:24:22.411+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 11: AMBIGUOUS after 2 attempt(s); valid 11/50, errors 0
+2026-11-14T13:24:58.721+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 12: AMBIGUOUS after 1 attempt(s); valid 12/50, errors 0
+2026-11-14T13:25:31.015+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 13: AMBIGUOUS after 1 attempt(s); valid 13/50, errors 0
+2026-11-14T13:26:05.868+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 14: AMBIGUOUS after 1 attempt(s); valid 14/50, errors 0
+2026-11-14T13:27:23.001+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 15: AMBIGUOUS after 2 attempt(s); valid 15/50, errors 0
+2026-11-14T13:28:39.843+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 16: AMBIGUOUS after 2 attempt(s); valid 16/50, errors 0
+2026-11-14T13:29:54.146+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 17: AMBIGUOUS after 2 attempt(s); valid 17/50, errors 0
+2026-11-14T13:30:27.769+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 18: AMBIGUOUS after 1 attempt(s); valid 18/50, errors 0
+2026-11-14T13:31:05.444+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 19: AMBIGUOUS after 1 attempt(s); valid 19/50, errors 0
+2026-11-14T13:31:42.444+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 20: AMBIGUOUS after 1 attempt(s); valid 20/50, errors 0
+2026-11-14T13:32:57.676+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 21: AMBIGUOUS after 2 attempt(s); valid 21/50, errors 0
+2026-11-14T13:33:34.789+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 22: AMBIGUOUS after 1 attempt(s); valid 22/50, errors 0
+2026-11-14T13:34:31.563+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 23: AMBIGUOUS after 1 attempt(s); valid 23/50, errors 0
+2026-11-14T13:35:40.675+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 24: AMBIGUOUS after 2 attempt(s); valid 24/50, errors 0
+2026-11-14T13:36:54.195+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 25: AMBIGUOUS after 2 attempt(s); valid 25/50, errors 0
+2026-11-14T13:38:00.984+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 26: AMBIGUOUS after 2 attempt(s); valid 26/50, errors 0
+2026-11-14T13:39:24.651+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 27: AMBIGUOUS after 2 attempt(s); valid 27/50, errors 0
+2026-11-14T13:40:45.314+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 28: AMBIGUOUS after 2 attempt(s); valid 28/50, errors 0
+2026-11-14T13:41:20.449+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 29: AMBIGUOUS after 1 attempt(s); valid 29/50, errors 0
+2026-11-14T13:41:53.517+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 30: AMBIGUOUS after 1 attempt(s); valid 30/50, errors 0
+2026-11-14T13:43:14.437+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 31: AMBIGUOUS after 2 attempt(s); valid 31/50, errors 0
+2026-11-14T13:44:24.096+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 32: AMBIGUOUS after 2 attempt(s); valid 32/50, errors 0
+2026-11-14T13:45:05.854+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 33: AMBIGUOUS after 1 attempt(s); valid 33/50, errors 0
+2026-11-14T13:45:43.843+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 34: AMBIGUOUS after 1 attempt(s); valid 34/50, errors 0
+2026-11-14T13:46:14.995+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 35: AMBIGUOUS after 1 attempt(s); valid 35/50, errors 0
+2026-11-14T13:46:46.183+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 36: AMBIGUOUS after 1 attempt(s); valid 36/50, errors 0
+2026-11-14T13:48:04.203+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 37: AMBIGUOUS after 2 attempt(s); valid 37/50, errors 0
+2026-11-14T13:48:35.689+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 38: AMBIGUOUS after 1 attempt(s); valid 38/50, errors 0
+2026-11-14T13:49:10.597+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 39: AMBIGUOUS after 1 attempt(s); valid 39/50, errors 0
+2026-11-14T13:50:26.641+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 40: AMBIGUOUS after 2 attempt(s); valid 40/50, errors 0
+2026-11-14T13:51:41.275+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 41: AMBIGUOUS after 2 attempt(s); valid 41/50, errors 0
+2026-11-14T13:52:13.862+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 42: AMBIGUOUS after 1 attempt(s); valid 42/50, errors 0
+2026-11-14T13:52:50.219+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 43: AMBIGUOUS after 1 attempt(s); valid 43/50, errors 0
+2026-11-14T13:53:23.813+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 44: AMBIGUOUS after 1 attempt(s); valid 44/50, errors 0
+2026-11-14T13:53:59.544+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 45: AMBIGUOUS after 1 attempt(s); valid 45/50, errors 0
+2026-11-14T13:54:45.469+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 46: AMBIGUOUS after 1 attempt(s); valid 46/50, errors 0
+2026-11-14T13:55:59.760+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 47: AMBIGUOUS after 2 attempt(s); valid 47/50, errors 0
+2026-11-14T13:57:13.629+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 48: AMBIGUOUS after 2 attempt(s); valid 48/50, errors 0
+2026-11-14T13:57:44.136+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 49: AMBIGUOUS after 1 attempt(s); valid 49/50, errors 0
+2026-11-14T13:58:14.112+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-a1-ambiguous] cycle 50: AMBIGUOUS after 1 attempt(s); valid 50/50, errors 0
+2026-11-14T13:58:14.166+02:00  INFO 51005 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3hh-a1-ambiguous.jsonl

@@ -1,0 +1,65 @@
+=== 2026-11-14 13:58:15 session start
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-11-14T13:58:16.393+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Starting KeristraCoreApplicationKt v0.0.1-SNAPSHOT using Java 21.0.13 with PID 53909 (/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar started by vladyslavmaliarenko in /Users/vladyslavmaliarenko/Development/keristra/keristra-core)
+2026-11-14T13:58:16.396+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : The following 1 profile is active: "experiment"
+2026-11-14T13:58:19.010+02:00  INFO 53909 --- [keristra-core] [           main] ai.djl.util.Platform                     : Found matching platform from: jar:nested:/Users/vladyslavmaliarenko/Development/keristra/keristra-core/build/libs/keristra-core-0.0.1-SNAPSHOT.jar/!BOOT-INF/lib/tokenizers-0.31.1.jar!/native/lib/tokenizers.properties
+2026-11-14T13:58:19.325+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.KeristraCoreApplicationKt     : Started KeristraCoreApplicationKt in 3.213 seconds (process running for 3.49)
+2026-11-14T13:58:54.615+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 1: ACCEPTED after 1 attempt(s); valid 1/50, errors 0
+2026-11-14T13:59:27.383+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 2: ACCEPTED after 1 attempt(s); valid 2/50, errors 0
+2026-11-14T14:00:01.698+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 3: ACCEPTED after 1 attempt(s); valid 3/50, errors 0
+2026-11-14T14:00:29.636+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 4: ACCEPTED after 1 attempt(s); valid 4/50, errors 0
+2026-11-14T14:01:01.779+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 5: ACCEPTED after 1 attempt(s); valid 5/50, errors 0
+2026-11-14T14:01:29.167+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 6: ACCEPTED after 1 attempt(s); valid 6/50, errors 0
+2026-11-14T14:01:57.987+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 7: ACCEPTED after 1 attempt(s); valid 7/50, errors 0
+2026-11-14T14:02:32.514+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 8: ACCEPTED after 1 attempt(s); valid 8/50, errors 0
+2026-11-14T14:03:03.022+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 9: ACCEPTED after 1 attempt(s); valid 9/50, errors 0
+2026-11-14T14:04:08.763+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 10: ACCEPTED after 2 attempt(s); valid 10/50, errors 0
+2026-11-14T14:04:36.525+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 11: ACCEPTED after 1 attempt(s); valid 11/50, errors 0
+2026-11-14T14:05:05.063+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 12: ACCEPTED after 1 attempt(s); valid 12/50, errors 0
+2026-11-14T14:05:32.588+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 13: ACCEPTED after 1 attempt(s); valid 13/50, errors 0
+2026-11-14T14:06:01.125+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 14: ACCEPTED after 1 attempt(s); valid 14/50, errors 0
+2026-11-14T14:07:03.646+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 15: ACCEPTED after 2 attempt(s); valid 15/50, errors 0
+2026-11-14T14:07:30.814+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 16: ACCEPTED after 1 attempt(s); valid 16/50, errors 0
+2026-11-14T14:08:05.274+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 17: ACCEPTED after 1 attempt(s); valid 17/50, errors 0
+2026-11-14T14:08:36.476+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 18: ACCEPTED after 1 attempt(s); valid 18/50, errors 0
+2026-11-14T14:09:12.923+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 19: ACCEPTED after 1 attempt(s); valid 19/50, errors 0
+2026-11-14T14:09:39.895+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 20: ACCEPTED after 1 attempt(s); valid 20/50, errors 0
+2026-11-14T14:10:07.993+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 21: ACCEPTED after 1 attempt(s); valid 21/50, errors 0
+2026-11-14T14:11:10.853+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 22: ACCEPTED after 2 attempt(s); valid 22/50, errors 0
+2026-11-14T14:11:41.681+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 23: ACCEPTED after 1 attempt(s); valid 23/50, errors 0
+2026-11-14T14:12:07.548+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 24: ACCEPTED after 1 attempt(s); valid 24/50, errors 0
+2026-11-14T14:12:36.120+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 25: ACCEPTED after 1 attempt(s); valid 25/50, errors 0
+2026-11-14T14:13:04.869+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 26: ACCEPTED after 1 attempt(s); valid 26/50, errors 0
+2026-11-14T14:13:33.629+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 27: ACCEPTED after 1 attempt(s); valid 27/50, errors 0
+2026-11-14T14:14:14.086+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 28: ACCEPTED after 1 attempt(s); valid 28/50, errors 0
+2026-11-14T14:14:42.123+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 29: ACCEPTED after 1 attempt(s); valid 29/50, errors 0
+2026-11-14T14:15:12.698+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 30: ACCEPTED after 1 attempt(s); valid 30/50, errors 0
+2026-11-14T14:15:47.313+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 31: ACCEPTED after 1 attempt(s); valid 31/50, errors 0
+2026-11-14T14:16:26.411+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 32: ACCEPTED after 1 attempt(s); valid 32/50, errors 0
+2026-11-14T14:16:57.820+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 33: ACCEPTED after 1 attempt(s); valid 33/50, errors 0
+2026-11-14T14:17:26.116+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 34: ACCEPTED after 1 attempt(s); valid 34/50, errors 0
+2026-11-14T14:17:57.034+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 35: ACCEPTED after 1 attempt(s); valid 35/50, errors 0
+2026-11-14T14:18:28.283+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 36: ACCEPTED after 1 attempt(s); valid 36/50, errors 0
+2026-11-14T14:19:00.763+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 37: ACCEPTED after 1 attempt(s); valid 37/50, errors 0
+2026-11-14T14:19:33.303+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 38: ACCEPTED after 1 attempt(s); valid 38/50, errors 0
+2026-11-14T14:20:07.778+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 39: ACCEPTED after 1 attempt(s); valid 39/50, errors 0
+2026-11-14T14:20:41.402+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 40: ACCEPTED after 1 attempt(s); valid 40/50, errors 0
+2026-11-14T14:21:17.547+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 41: ACCEPTED after 1 attempt(s); valid 41/50, errors 0
+2026-11-14T14:21:50.964+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 42: ACCEPTED after 1 attempt(s); valid 42/50, errors 0
+2026-11-14T14:22:18.199+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 43: ACCEPTED after 1 attempt(s); valid 43/50, errors 0
+2026-11-14T14:22:51.652+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 44: ACCEPTED after 1 attempt(s); valid 44/50, errors 0
+2026-11-14T14:23:20.928+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 45: ACCEPTED after 1 attempt(s); valid 45/50, errors 0
+2026-11-14T14:23:48.267+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 46: ACCEPTED after 1 attempt(s); valid 46/50, errors 0
+2026-11-14T14:24:20.123+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 47: ACCEPTED after 1 attempt(s); valid 47/50, errors 0
+2026-11-14T14:24:46.890+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 48: ACCEPTED after 1 attempt(s); valid 48/50, errors 0
+2026-11-14T14:25:20.873+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 49: ACCEPTED after 1 attempt(s); valid 49/50, errors 0
+2026-11-14T14:26:28.127+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentRunner   : [e3hh-b0-ambiguous] cycle 50: ACCEPTED after 2 attempt(s); valid 50/50, errors 0
+2026-11-14T14:26:28.177+02:00  INFO 53909 --- [keristra-core] [           main] c.g.k.core.experiment.ExperimentCommand  : Experiment finished: runs/e3hh-b0-ambiguous.jsonl

@@ -1,0 +1,8 @@
+2026-11-14T09:10:02.559993Z	e3h-a1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":1,"AMBIGUOUS":40,"REJECTED_BUDGET":9}	acceptedWrong=1	costUsd=4.41	session=1h04m
+2026-11-14T09:46:08.915468Z	e3h-b0-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=50	costUsd=2.81	session=0h36m
+2026-11-14T10:33:41.596916Z	e3h-a1-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":36,"AMBIGUOUS":12,"REJECTED_BUDGET":2}	acceptedWrong=0	costUsd=3.49	session=0h47m
+2026-11-14T11:13:40.962611Z	e3h-b0-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=3.09	session=0h39m
+2026-11-14T11:58:14.164782Z	e3hh-a1-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"AMBIGUOUS":50}	acceptedWrong=0	costUsd=0.43	session=0h44m
+2026-11-14T12:26:28.171562Z	e3hh-b0-ambiguous	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=50	costUsd=0.28	session=0h28m
+2026-11-14T12:59:13.359268Z	e3hh-a1-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":40,"AMBIGUOUS":10}	acceptedWrong=0	costUsd=0.32	session=0h32m
+2026-11-14T13:27:26.840999Z	e3hh-b0-disambiguated	validCycles=50/50	errorCycles=0	outcomes={"ACCEPTED":50}	acceptedWrong=0	costUsd=0.28	session=0h28m
